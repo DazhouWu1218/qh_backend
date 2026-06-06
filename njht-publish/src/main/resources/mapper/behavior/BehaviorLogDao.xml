@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.publish.behavior.dao.BehaviorLogDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.webyun.publish.behavior.entity.BehaviorLogEntity" id="behaviorLogMap">
+        <result property="behaviorId" column="behavior_id"/>
+        <result property="action" column="action"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="deleted" column="DELETED"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="createdBy" column="CREATED_BY"/>
+        <result property="lastUpdatedDate" column="LAST_UPDATED_DATE"/>
+        <result property="lastUpdatedBy" column="LAST_UPDATED_BY"/>
+    </resultMap>
+
+    <resultMap type="com.njht.webyun.publish.behavior.dto.BehaviorLogDto" extends="behaviorLogMap" id="BehaviorDtoMap">
+        <result property="userName" column="user_name"/>
+        <result property="userOrg" column="user_org"/>
+        <result property="tel" column="tel"/>
+        <result property="roleName" column="ROLE_NAME"/>
+        <collection property="downloadLogEntityList" ofType="TreeJson" select="selectBehaviorDownLoadLogById" column="behavior_id"></collection>
+    </resultMap>
+
+    <select id="selectBehaviorDownLoadLogById" resultType="com.njht.webyun.publish.behavior.entity.BehaviorDownloadLogEntity">
+        SELECT a.*,b.ORG_NAME as region_name FROM `publish_behavior_download_log` a
+        LEFT JOIN
+        sys_org b
+        ON a.region_id = b.ORG_CODE
+        where behavior_id = #{behavior_id}
+        ORDER BY a.LAST_UPDATED_DATE desc
+    </select>
+
+    <select id="selectBehaviorLogByPage" resultMap="BehaviorDtoMap">
+        SELECT  a.*,s.USERNAME as user_name,o.ORG_NAME as user_org,s.PHONE as tel,r.ROLE_NAME FROM
+        publish_behavior_log a
+        LEFT JOIN sys_user s
+        ON a.CREATED_BY = s.USER_ID
+        LEFT JOIN sys_role_user sr
+        ON sr.USER_ID = s.USER_ID
+        LEFT JOIN sys_org o
+        ON s.ORG_ID = o.ORG_ID
+        LEFT JOIN sys_role r
+        ON sr.ROLE_ID = r.ROLE_ID
+        WHERE
+        o.ORG_ID = #{orgId}
+        <if test="roleId != null">
+            and r.ROLE_ID= #{roleId}
+        </if>
+        <if test="startTime!=null and startTime != '' and endTime!=null and endTime != ''">
+            and TO_DAYS(a.created_date) BETWEEN TO_DAYS(#{startTime}) and TO_DAYS(#{endTime})
+        </if>
+        <if test="actionList != null and actionList.size()!=0">
+            and a.action in
+            <foreach collection="actionList" item="action" index="i" separator="," open="(" close=")">
+                #{action}
+            </foreach>
+        </if>
+        <if test="search!=null and search != ''">
+            and
+            (s.PHONE like CONCAT('%',#{search},'%')
+            or
+            s.USERNAME like CONCAT('%',#{search},'%'))
+        </if>
+        ORDER BY a.CREATED_DATE desc
+    </select>
+    <select id="selectBehaviorLogByUserIdAndNowDate"
+            resultType="com.njht.webyun.publish.behavior.entity.BehaviorLogEntity">
+        SELECT * FROM `publish_behavior_log`
+        where TO_DAYS(CREATED_DATE) = TO_DAYS(now())
+        and CREATED_BY = #{userId} and action = 1
+    </select>
+    <select id="selectViewCountInfo" resultType="java.lang.Integer">
+        SELECT SUM(num) FROM `publish_behavior_log` where action = 0
+    </select>
+</mapper>

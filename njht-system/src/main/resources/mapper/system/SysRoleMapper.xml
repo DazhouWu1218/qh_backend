@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.njht.webyun.system.dao.mapper.SysRoleMapper" >
+
+    <resultMap id="BaseResultMap" type="com.njht.webyun.system.model.sysRole.SysRole" >
+        <id column="role_id" property="roleId" jdbcType="INTEGER" />
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+        <result column="org_id" property="orgId" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="deleted" property="deleted" jdbcType="BIT" />
+        <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+        <result column="created_date" property="createdDate" jdbcType="TIMESTAMP" />
+        <result column="last_updated_by" property="lastUpdatedBy" jdbcType="INTEGER" />
+        <result column="last_updated_date" property="lastUpdatedDate" jdbcType="TIMESTAMP" />
+        <result column="updated_name" property="updatedName" jdbcType="VARCHAR" />
+        <result column="created_name" property="createdName" jdbcType="VARCHAR" />
+        <result column="inherited_name" property="inheritedName" jdbcType="VARCHAR" />
+        <result column="ORG_NAME" property="orgName" javaType="String" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="RoleMenuResultTreeMap" type="com.njht.webyun.system.model.sysRole.RoleAuthMenu">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <id column="userId" property="userId" jdbcType="INTEGER" />
+        <id column="roleId" property="roleId" jdbcType="INTEGER" />
+        <result column="parentId" property="parentId" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="menuType" property="menuType" jdbcType="INTEGER" />
+        <result column="sortNum" property="sortNum" jdbcType="INTEGER" />
+        <result column="levelNum" property="levelNum" jdbcType="INTEGER" />
+        <result column="authStatu" property="authStatu" jdbcType="BOOLEAN" />
+        <!-- ofType表示集合包含的元素类型 -->
+        <collection property="children" ofType="TreeJson" column="{parentId=id,userId=userId,roleId=roleId}" select="selectMenusByRoleIdAndUserId" />
+    </resultMap>
+
+    <resultMap id="selectRolesByUserIdMap" type="map">
+        <id column="ROLE_ID" property="roleId" javaType="int" jdbcType="NUMERIC" />
+        <result column="ROLE_NAME" property="roleName" javaType="String" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+        r.role_id, r.role_name, r.org_id, r.remark, r.deleted, r.created_by, r.created_date, r.last_updated_by, r.last_updated_date
+    </sql>
+
+    <select id="queryByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM Role r WHERE id in (SELECT rId from user_role where userId = #{userId})
+    </select>
+
+    <!-- 分页查询 模糊查询 -->
+    <select id="getRoles" resultMap="BaseResultMap" parameterType="com.njht.webyun.system.model.sysRole.RoleQuery">
+        select o.inherited_name,o.ORG_NAME,
+          <include refid="Base_Column_List"/>, GET_REAL_NAME(r.last_updated_by) AS updated_name, GET_REAL_NAME(r.created_by) AS created_name
+        from sys_role r ,sys_org o
+        where
+        r.`org_id`=o.org_id and r.`deleted`=0
+        <if test="roleName != null and roleName != ''" >
+            and  r.role_name like '%${roleName}%'
+        </if>
+        <if test="orgId != null and orgId>0" >
+            <choose>
+                <when test="containSub == true">
+                    AND  FIND_IN_SET(r.org_id, Get_OrgChild_List(#{orgId,jdbcType=NUMERIC}))
+                </when>
+                <otherwise>
+                    and r.org_id =#{orgId,jdbcType=NUMERIC}
+                </otherwise>
+            </choose>
+        </if>
+        <if test="sort != null and sort != '' and order != null and order != '' ">
+            order by ${sort} ${order}
+        </if>
+    </select>
+
+    <select id="selectRoleByName" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM SYS_ROLE r WHERE 1=1
+        <if test="roleName != null" >
+            and  r.role_name = #{roleName}
+        </if>
+    </select>
+
+    <select id="selectRoleByOrgId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM SYS_ROLE r WHERE 1=1
+        <if test="orgId != null" >
+            and  r.org_id = #{orgId,jdbcType=NUMERIC}
+        </if>
+    </select>
+
+    <insert id="addRole" parameterType="com.njht.webyun.system.model.sysRole.SysRole" >
+
+        INSERT INTO SYS_ROLE (ROLE_ID, ROLE_NAME, ORG_ID, REMARK, DELETED, CREATED_BY, CREATED_DATE, LAST_UPDATED_BY, LAST_UPDATED_DATE)
+            VALUES
+        (#{roleId,jdbcType=NUMERIC}, #{roleName,jdbcType=VARCHAR},#{orgId,jdbcType=NUMERIC},#{remark,jdbcType=VARCHAR},#{deleted,jdbcType=NUMERIC},
+        #{createdBy,jdbcType=NUMERIC}, #{createdDate,jdbcType=TIMESTAMP},#{lastUpdatedBy,jdbcType=NUMERIC},#{lastUpdatedDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="selectCountByNameAndOrgId" parameterType="map" resultType="int">
+        SELECT COUNT(1) FROM SYS_ROLE WHERE role_name = #{roleName,jdbcType=VARCHAR}
+        AND DELETED = 0
+        <if test="orgId != null and orgId != 0">
+            AND org_id = #{orgId,jdbcType=NUMERIC}
+        </if>
+        <if test="roleId > 0">
+            AND role_id != #{roleId,jdbcType=NUMERIC}
+        </if>
+    </select>
+
+    <insert id="insertRoleUser">
+        INSERT INTO sys_role_user (role_id, user_id) VALUES
+        <foreach collection="userIdlist" item="userId" index="index" separator=",">
+            (
+            #{roleId},
+            #{userId}
+            )
+        </foreach>
+    </insert>
+
+    <!--删除三张表相关数据：role,user_role,menu_role-->
+    <delete id="deleteRole" parameterType="int">
+        DELETE FROM SYS_ROLE WHERE role_id = #{roleId,jdbcType=NUMERIC}
+    </delete>
+    <delete id="deleteRoleFun" parameterType="int">
+        DELETE FROM sys_role_fun WHERE role_id = #{id,jdbcType=NUMERIC}
+    </delete>
+    <delete id="deleteRoleUser" parameterType="int">
+        DELETE FROM sys_role_user WHERE role_id = #{id,jdbcType=NUMERIC}
+    </delete>
+
+
+    <insert id="insertRoleMenu" parameterType="com.njht.webyun.system.model.sysFun.FunRole">
+        INSERT INTO sys_role_fun (role_id, fun_id) VALUES (#{roleId,jdbcType=NUMERIC}, #{funId,jdbcType=NUMERIC})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.njht.webyun.system.model.sysRole.SysRole" >
+        update sys_role
+        <set >
+            <if test="roleName != null" >
+                role_name = #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="orgId != null" >
+                org_id = #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null" >
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="deleted != null" >
+                deleted = #{deleted,jdbcType=BIT},
+            </if>
+            <if test="createdBy != null" >
+                CREATED_BY = #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="createdDate != null" >
+                CREATED_DATE = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdatedBy != null" >
+                LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdatedDate != null" >
+                LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where role_id = #{roleId,jdbcType=INTEGER}
+    </update>
+
+    <!-- 角色授权时 改成一次查询当前用户能查看的权限和此角色已有的权限 -->
+    <select id="selectMenusByRoleIdAndUserId"   resultMap="RoleMenuResultTreeMap" parameterType="com.njht.webyun.system.model.sysRole.RoleAuthMenu">
+        <choose>
+            <when test="userId > 1">
+                SELECT
+                m.id,m.`name`,m.`parentId`,m.`menuType`,m.`url`,m.`sortNum`,m.`levelNum`,#{userId}
+                AS userId,#{roleId} AS roleId,
+                if(m.id in (SELECT  m1.id FROM menu m1 where m1.`id` in (select mr1.mid from menu_role mr1 where mr1.rid=#{roleId,jdbcType=NUMERIC})),1,0) as authStatu
+                FROM menu m
+                WHERE m.`parentId`=#{parentId,jdbcType=NUMERIC}
+                AND m.`id` IN (SELECT mr.`mid` FROM user_role ur,menu_role mr WHERE ur.`rId`=mr.`rid` AND ur.`userId`=#{userId,jdbcType=NUMERIC})
+                order by m.sortNum asc
+            </when>
+
+            <otherwise>
+                SELECT
+                m.id,m.url,m.`path`,m.`iconCls`,m.`keepAlive`,m.`requireAuth`,m.`name`,m.`parentId`,m.`menuType`,m.`sortNum`,m.`levelNum`,#{userId,jdbcType=NUMERIC}
+                AS userId,#{roleId} AS roleId,
+                if(m.id in (SELECT  m1.id FROM menu m1 where m1.`id` in (select mr1.mid from menu_role mr1 where mr1.rid=#{roleId,jdbcType=NUMERIC})),1,0) as authStatu
+                FROM menu m
+                WHERE m.`parentId`=#{parentId,jdbcType=NUMERIC}
+                order by m.sortNum asc
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="selectRolesByUserId" parameterType="int" resultMap="selectRolesByUserIdMap">
+        SELECT r.ROLE_ID, r.ROLE_NAME from SYS_ROLE_USER u, SYS_ROLE r where u.ROLE_ID = r.ROLE_ID and u.USER_ID = #{userId,jdbcType=NUMERIC} and r.deleted = 0
+    </select>
+
+    <delete id="deleteRoleMenuFun" parameterType="int">
+        delete from sys_role_menu where role_id = #{roleId,jdbcType = INTEGER};
+        delete from sys_role_fun where role_id = #{roleId,jdbcType = INTEGER};
+    </delete>
+    <delete id="deleteRoleMenu" parameterType="int">
+        delete from sys_role_menu where role_id = #{roleId,jdbcType = INTEGER};
+    </delete>
+
+    <insert id="addRoleMenu" parameterType="com.njht.webyun.system.model.sysRole.RoleMenuFun">
+        insert into sys_role_menu (role_id,menu_id,operation) values
+        <foreach collection="menuList" item="menu" index="index" separator=",">
+            (
+            #{roleId,jdbcType=INTEGER},
+            #{menu.id,jdbcType=INTEGER},
+            #{menu.operation,jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="addRoleFun" parameterType="com.njht.webyun.system.model.sysRole.RoleMenuFun">
+        insert into sys_role_fun (role_id,fun_id,operation) values
+        <foreach collection="funList" item="fun" index="index" separator=",">
+            (
+            #{roleId,jdbcType=INTEGER},
+            #{fun.id,jdbcType=INTEGER},
+            #{fun.operation,jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

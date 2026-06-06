@@ -1,0 +1,160 @@
+version: '3'
+#服务列表
+services:
+  #服务1，服务名叫nginx
+  nginx:
+    #设置开机自启
+    restart: always
+    volumes:
+      #设置容器时区为东八区
+      - ./Shanghai:/etc/localtime:ro
+      #替换配置文件
+      - ./nginx/conf/proxy.conf:/etc/nginx/proxy.conf
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/html/:/etc/nginx/html/
+      - ./nginx/logs/:/var/log/nginx/
+#      - /mpool/htdata:/mpool/htdata
+    #使用的镜像
+    image: "nginx:latest"
+    #容器名称
+    container_name: nginx
+    #转发端口
+    ports:
+      - "8088:8088"
+    #是否赋予root权限
+    privileged: true
+    #如果启动后停止就加上这个参数
+    tty: true
+    network_mode: host
+  #服务5，服务名叫njht_eureka
+  njht_eureka:
+    #设置开机自启
+    restart: always
+    #配置时区
+    environment:
+      - TZ=Asia/Shanghai
+    image: "njht_eureka:${EUREKA_VERSION}"
+    container_name: njht_eureka
+    privileged: true
+    volumes:
+      - ./logs/eureka:/logs/
+    ports:
+      - "7001:7001"
+    #依赖启动顺序
+    depends_on:
+      - nginx
+    network_mode: host
+  #服务6，服务名叫njht_system
+  njht_system:
+    #设置开机自启
+    restart: always
+    #配置时区
+    environment:
+      - TZ=Asia/Shanghai
+    image: "njht_system:${SYSTEM_VERSION}"
+    container_name: njht_system
+    privileged: true
+    volumes:
+      - ./logs/system:/logs/
+#      - /mpool/htdata:/mpool/htdata
+    ports:
+      - "7002:7002"
+    #依赖启动顺序
+    depends_on:
+      - njht_eureka
+    network_mode: host
+    # 调度中心
+  njht_data_center:
+    #设置开机自启
+    restart: always
+    #配置时区
+    environment:
+      - TZ=Asia/Shanghai
+    image: "njht_data_center:${DATA_CENTER_VERSION}"
+    container_name: njht_data_center
+    privileged: true
+    volumes:
+      - ./logs/data_center:/logs/
+    #      - /mpool/htdata:/mpool/htdata
+    ports:
+      - "7010:7010"
+    #依赖启动顺序
+    depends_on:
+      - njht_eureka
+    network_mode: host
+    # 调度中心
+  njht_admin:
+    #设置开机自启
+    restart: always
+    #配置时区
+    environment:
+      - TZ=Asia/Shanghai
+    image: "njht_admin:${ADMIN_VERSION}"
+    container_name: njht_admin
+    privileged: true
+    volumes:
+      - ./logs/admin:/logs/
+    #      - /mpool/htdata:/mpool/htdata
+    ports:
+      - "7008:7008"
+    #依赖启动顺序
+    depends_on:
+      - njht_data_center
+    network_mode: host
+  #服务7，服务名叫njht_publish
+#  njht_publish:
+#    #设置开机自启
+#    restart: always
+#    #配置时区
+#    environment:
+#      - TZ=Asia/Shanghai
+#    image: "njht_publish:${PUBLISH_VERSION}"
+#    container_name: njht_publish
+#    privileged: true
+#    volumes:
+#      - ./logs/publish:/logs/
+#      - /mpool/htdata:/mpool/htdata
+#    ports:
+#      - "7003:7003"
+#    #依赖启动顺序
+#    depends_on:
+#      - njht_eureka
+#    network_mode: host
+#  #服务8，服务名叫njht_business
+#  njht_business:
+#    #设置开机自启
+#    restart: always
+#    #配置时区
+#    environment:
+#      - TZ=Asia/Shanghai
+#    image: "njht_business:${BUSINESS_VERSION}"
+#    container_name: njht_business
+#    privileged: true
+#    volumes:
+#      - ./logs/business:/logs/
+#      - /mpool/htdata:/mpool/htdata
+#    ports:
+#      - "7004:7004"
+#    #依赖启动顺序
+#    depends_on:
+#      - njht_eureka
+#    network_mode: host
+#    #服务9，服务名叫njht_management
+#  njht_management:
+#    #设置开机自启
+#    restart: always
+#    #配置时区
+#    environment:
+#      - TZ=Asia/Shanghai
+#    image: "njht_management:${MANAGEMENT_VERSION}"
+#    container_name: njht_management
+#    privileged: true
+#    volumes:
+#      - ./logs/management:/logs/
+#      - /mpool/htdata:/mpool/htdata
+#    ports:
+#      - "7006:7006"
+#    #依赖启动顺序
+#    depends_on:
+#      - njht_eureka
+#    network_mode: host

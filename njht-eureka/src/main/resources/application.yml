@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: eureka-service
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 7001
+
+eureka:
+  client:
+    registerWithEureka: false # 是否向 Eureka 注册服务。该应用为服务注册中心，不需要自注册，设置为 false
+    fetchRegistry: false # 是否检索服务。该应用为服务注册中心，职责为注册和发现服务，无需检索服务，设置为 false
+    serviceUrl:
+      defaultZone: http://localhost:${server.port}/eureka/

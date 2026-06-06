@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.product.dao.ProductDao">
+
+	<!-- 查询字段 -->
+	<sql id="selectFields">id, create_time, update_time, version, bz, feature_name, gdb_path, icon_path, is_release, map_url, mark, name, sort_no, product_path, tree_id, issue, featurename, gdbpath, mapurl, menu, menu_id, storagepath, userid, trigger_param</sql>
+
+	<!-- 新增 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+			htht_cluster_schedule_product (id,create_time, update_time, version, bz,cycle,feature_name, gdb_path, icon_path, is_release, map_url, mark, name, sort_no, product_path, tree_id, issue, featurename, gdbpath, mapurl, menu, menu_id, storagepath, userid, trigger_param)
+		VALUES
+			(#{id},#{createTime}, #{updateTime}, #{version}, #{bz}, #{cycle},#{featureName}, #{gdbPath}, #{iconPath}, #{isRelease}, #{mapUrl}, #{mark}, #{name}, #{sortNo}, #{productPath}, #{treeId}, #{issue}, #{featurename}, #{gdbpath}, #{mapurl}, #{menu}, #{menuId}, #{storagepath}, #{userid}, #{triggerParam})
+	</insert>
+
+	<delete id="deleteByIds">
+		DELETE FROM
+			htht_cluster_schedule_product
+		WHERE
+			tree_id in
+		<foreach collection="idList" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+    <select id="selectCountByProductIdList" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM `htht_cluster_schedule_product_info` a
+		LEFT JOIN  htht_cluster_schedule_product b
+		ON a.product_id = b.id
+		WHERE b.tree_id in
+		<foreach collection="idList" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+    <!-- 更新 -->
+	<update id="update">
+		UPDATE
+			htht_cluster_schedule_product
+		<set>
+			<if test="createTime != null">
+			create_time = #{createTime},
+			</if>
+			<if test="updateTime != null">
+			update_time = #{updateTime},
+			</if>
+			<if test="version != null">
+			version = #{version},
+			</if>
+			<if test="bz != null">
+			bz = #{bz},
+			</if>
+			<if test="featureName != null">
+			feature_name = #{featureName},
+			</if>
+			<if test="gdbPath != null">
+			gdb_path = #{gdbPath},
+			</if>
+			<if test="iconPath != null">
+			icon_path = #{iconPath},
+			</if>
+			<if test="isRelease != null">
+			is_release = #{isRelease},
+			</if>
+			<if test="mapUrl != null">
+			map_url = #{mapUrl},
+			</if>
+			<if test="mark != null">
+			mark = #{mark},
+			</if>
+			<if test="cycle != null">
+			cycle = #{cycle},
+			</if>
+			<if test="name != null">
+			name = #{name},
+			</if>
+			<if test="sortNo != null">
+			sort_no = #{sortNo},
+			</if>
+			<if test="productPath != null">
+			product_path = #{productPath},
+			</if>
+			<if test="issue != null">
+			issue = #{issue},
+			</if>
+			<if test="featurename != null">
+			featurename = #{featurename},
+			</if>
+			<if test="gdbpath != null">
+			gdbpath = #{gdbpath},
+			</if>
+			<if test="mapurl != null">
+			mapurl = #{mapurl},
+			</if>
+			<if test="menu != null">
+			menu = #{menu},
+			</if>
+			<if test="menuId != null">
+			menu_id = #{menuId},
+			</if>
+			<if test="storagepath != null">
+			storagepath = #{storagepath},
+			</if>
+			<if test="userid != null">
+			userid = #{userid},
+			</if>
+			<if test="triggerParam != null">
+			trigger_param = #{triggerParam}
+			</if>
+		</set>
+		WHERE
+			tree_id = #{id}
+	</update>
+
+</mapper>

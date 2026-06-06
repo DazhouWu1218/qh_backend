@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.management.order.dao.ShoppingCartListDao">
+
+    <resultMap type="com.njht.webyun.management.order.entity.ShoppingCartList" id="BaseResultMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="cartId" column="cart_id"/>
+        <result property="dataId" column="data_id"/>
+        <result property="identifier" column="identifier"/>
+    </resultMap>
+
+    <resultMap id="ResultPageMap2" type="com.njht.webyun.management.satellite.vo.HthtDmsSateDataInfoVO">
+        <result property="id" column="id"/>
+        <result property="satelliteId" column="satellite_id"/>
+        <result property="sensorId" column="sensor_id"/>
+        <result property="date" column="date"/>
+        <result property="time" column="time"/>
+        <result property="name" column="name"/>
+        <result property="resolution" column="resolution"/>
+        <result property="type" column="type"/>
+        <result property="bands" column="bands"/>
+        <result property="cloud" column="cloud"/>
+        <result property="topleftlatitude" column="topleftlatitude"/>
+        <result property="topleftlongitude" column="topleftlongitude"/>
+        <result property="toprightlatitude" column="toprightlatitude"/>
+        <result property="toprightlongitude" column="toprightlongitude"/>
+        <result property="bottomleftlatitude" column="bottomleftlatitude"/>
+        <result property="bottomleftlongitude" column="bottomleftlongitude"/>
+        <result property="bottomrightlatitude" column="bottomrightlatitude"/>
+        <result property="bottomrightlongitude" column="bottomrightlongitude"/>
+        <result property="centerlongitude" column="centerlongitude"/>
+        <result property="centerlatitude" column="centerlatitude"/>
+        <result property="level" column="level"/>
+        <result property="pngId" column="png_id"/>
+        <result property="smallPngId" column="small_png_id"/>
+        <result property="pngurl" column="png_url"/>
+        <result property="smallPngurl" column="small_png_url"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap2" type="com.njht.webyun.management.order.entity.ShoppingCartList">
+        <result property="id" column="id"/>
+        <result property="cartId" column="cart_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="dataId" column="data_id"/>
+        <result property="identifier" column="identifier"/>
+        <result property="dataType" column="data_type"/>
+    </resultMap>
+
+    <insert id="updateShoppingCart">
+        insert into shoppingcart_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cartId != null and cartId != ''">cart_id,</if>
+            create_time,
+            <if test="dataId != null and dataId != ''">data_id,</if>
+            <if test="identifier != null and identifier != ''">identifier</if>
+        </trim>
+        values
+        (#{cartId},now(),#{dataId},#{identifier})
+    </insert>
+
+    <select id="selectList" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select id,cart_id,create_time,data_id,identifier,data_type
+        from shoppingcart_list
+        <where>
+            <if test="cartId != null and cartId != ''">
+                cart_id = #{cartId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteDatas">
+        delete from shoppingcart_list
+        <where>
+            data_id = #{dataId}
+            <if test="cartId != null and cartId != ''">and cart_id = #{cartId}</if>
+        </where>
+    </delete>
+
+    <select id="queryCartDataIdList" parameterType="String" resultMap="BaseResultMap2">
+        SELECT sl.*
+        FROM `shoppingcart_list` sl
+                 inner join shoppingcart_info si
+                            on sl.cart_id = si.id and sl.cart_id = #{id}
+        order by create_time desc
+    </select>
+
+    <select id="queryDataTableName" parameterType="java.lang.String" resultType="java.lang.String">
+        select mi.table_name
+        from shopping_menu_info mi
+        where menu_id = #{identifier}
+    </select>
+
+    <select id="queryBusinessDataList" resultType="Map">
+        select *
+        from ${tableName} tn
+        where tn.id = #{dataId}
+    </select>
+
+    <select id="querySateDataList" resultType="Map">
+        select di.*, fi.thumbnail_file_url as pngurl
+        from ${tableName} di
+        left join htht_dms_sate_data_file_info fi
+        on di.id = #{dataId} and fi.data_id = #{dataId}
+        where fi.thumbnail_file_url is not null
+    </select>
+
+    <select id="selectBasicDataList" resultType="String">
+        select name
+        from ${tableName}
+        where tree_id = #{dataId}
+    </select>
+
+    <insert id="updateShoppingCartList">
+        insert into shoppingcart_list
+        (cart_id, create_time,data_id,identifier,data_type)
+        values
+        <foreach collection="datas" item="item" index="index" separator=",">
+            (#{item.cartId},#{item.time},#{item.dataId},#{item.identifier},#{item.dataType})
+        </foreach>
+    </insert>
+
+    <delete id="deleteDatas2">
+        delete from shoppingcart_list
+        <where>
+            data_id in
+            <foreach collection="dataIdList" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            and cart_id = #{cartId}
+        </where>
+    </delete>
+
+    <insert id="updateThematicShoppingCartList">
+        insert into shoppingcart_list
+        (cart_id, create_time,data_id,identifier,query_time)
+        values
+        <foreach collection="datas" item="item" index="index" separator=",">
+            (#{item.cartId},#{item.time},#{item.dataId},#{item.identifier},#{item.queryTime})
+        </foreach>
+    </insert>
+
+    <select id="selectThematicDataList" resultType="Map">
+        select di.name,fi.cycle,fi.data_source,fi.mark
+        from htht_thematic_data_file_info as fi
+        inner join htht_thematic_data_info as di
+        on fi.thematic_id = di.id
+        where fi.id = #{dataId}
+    </select>
+
+    <select id="selectImageData" resultType="Map">
+        select *
+        from htht_thematic_tif_info
+        where thematic_file_id = #{dataId}
+    </select>
+    <select id="querySatelliteThematicdDataList"
+            resultMap="thematicData">
+        SELECT
+        d.id as d_id,
+        d.file_name as d_file_name,
+        d.space_resolution,
+        d.time_resolution,
+        d.data_type,
+        d.mark,
+        d.issue,
+        d.cycle,
+        d.file_type as d_file_type,
+        f.id as f_id,
+        f.file_type as f_file_type,
+        f.file_url,
+        f.file_name as f_file_name
+        FROM `htht_satellite_thematic_data_info` as d
+        ,htht_satellite_thematic_data_file_info as f
+        where
+            d.id=f.data_id
+        and d.id=#{dataId}
+        and f.file_type ='png'
+        and f.version='0'
+    </select>
+    <select id="getBusinessProductParentName" resultType="java.lang.String">
+        SELECT d.text FROM `htht_cluster_schedule_product_info` a
+        LEFT JOIN htht_cluster_schedule_product b
+        on a.product_id = b.id
+        LEFT JOIN htht_cluster_schedule_data_category c
+        on b.tree_id = c.id
+        LEFT JOIN htht_cluster_schedule_data_category d
+        on c.parent_id = d.id
+        where a.id = #{dataId}
+    </select>
+    <resultMap id="thematicData" type="com.njht.webyun.management.thematicData.entity.SatelliteThematicDataInfoDTO">
+        <id property="id" column="d_id"/>
+        <result property="fileName" column="d_file_name"/>
+        <result property="spaceResolution" column="space_resolution"/>
+        <result property="timeResolution" column="time_resolution"/>
+        <result property="fileType" column="d_file_type"/>
+        <result property="dataType" column="data_type"/>
+        <result property="mark" column="mark"/>
+        <result property="issue" column="issue"/>
+        <result property="cycle" column="cycle"/>
+        <collection property="listFiles" ofType="com.njht.webyun.management.thematicData.entity.SatelliteThematicFileDataInfoDTO">
+            <id property="id" column="f_id"/>
+            <result property="fileName"  column="f_file_name"/>
+            <result property="fileType" column="f_file_type"/>
+            <result property="fileUrl" column="file_url"/>
+        </collection>
+    </resultMap>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.executor.satellite.dao.SateDataInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.htht.executor.satellite.entity.SateDataInfoEntity" id="sateDataInfoMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="catalogId" column="catalog_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="satelliteId" column="satellite_id"/>
+        <result property="satelliteType" column="satellite_type"/>
+        <result property="sensorId" column="sensor_id"/>
+        <result property="level" column="level"/>
+        <result property="type" column="type"/>
+        <result property="bands" column="bands"/>
+        <result property="resolution" column="resolution"/>
+        <result property="date" column="date"/>
+        <result property="time" column="time"/>
+        <result property="cloud" column="cloud"/>
+        <result property="theGeom" column="the_geom"/>
+        <result property="area" column="area"/>
+        <result property="mosaicFile" column="mosaic_file"/>
+        <result property="topleftlatitude" column="topleftlatitude"/>
+        <result property="topleftlongitude" column="topleftlongitude"/>
+        <result property="toprightlatitude" column="toprightlatitude"/>
+        <result property="toprightlongitude" column="toprightlongitude"/>
+        <result property="bottomleftlatitude" column="bottomleftlatitude"/>
+        <result property="bottomleftlongitude" column="bottomleftlongitude"/>
+        <result property="bottomrightlatitude" column="bottomrightlatitude"/>
+        <result property="bottomrightlongitude" column="bottomrightlongitude"/>
+        <result property="centerlatitude" column="centerlatitude"/>
+        <result property="centerlongitude" column="centerlongitude"/>
+        <result property="pngtopleftlatitude" column="pngtopleftlatitude"/>
+        <result property="pngtopleftlongitude" column="pngtopleftlongitude"/>
+        <result property="pngtoprightlatitude" column="pngtoprightlatitude"/>
+        <result property="pngtoprightlongitude" column="pngtoprightlongitude"/>
+        <result property="pngbottomleftlatitude" column="pngbottomleftlatitude"/>
+        <result property="pngbottomleftlongitude" column="pngbottomleftlongitude"/>
+        <result property="pngbottomrightlatitude" column="pngbottomrightlatitude"/>
+        <result property="pngbottomrightlongitude" column="pngbottomrightlongitude"/>
+        <result property="dataType" column="data_type"/>
+    </resultMap>
+
+
+</mapper>

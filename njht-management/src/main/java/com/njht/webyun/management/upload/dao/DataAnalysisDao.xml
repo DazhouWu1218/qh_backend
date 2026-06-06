@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.management.upload.dao.DataAnalysisDao">
+
+    <select id="getBusinessStatisticInfo" resultType="com.njht.webyun.management.upload.entity.BusinessStatisticEntity">
+        SELECT a.file_type, a.issue, a.file_size, c.tree_id
+        FROM `htht_cluster_schedule_product_file_info` a
+                 left Join htht_cluster_schedule_product_info b
+                           on a.product_info_id = b.id
+                 left Join htht_cluster_schedule_product c
+                           on c.id = b.product_id
+    </select>
+
+
+    <select id="countAllBusinessStatisticInfo" resultType="long">
+        SELECT sum(a.file_size)
+        FROM `htht_cluster_schedule_product_file_info` a
+                 left Join htht_cluster_schedule_product_info b
+                           on a.product_info_id = b.id
+                 left Join htht_cluster_schedule_product c
+                           on c.id = b.product_id;
+    </select>
+
+</mapper>

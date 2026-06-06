@@ -1,0 +1,1682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.management.satellite.dao.HthtDmsSateDataInfoDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo" id="BaseResultMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="satelliteId" column="satellite_id"/>
+        <result property="sensorId" column="sensor_id"/>
+        <result property="date" column="date"/>
+        <result property="time" column="time"/>
+        <result property="name" column="name"/>
+        <result property="resolution" column="resolution"/>
+        <result property="type" column="type"/>
+        <result property="bands" column="bands"/>
+        <result property="cloud" column="cloud"/>
+        <result property="topleftlatitude" column="topleftlatitude"/>
+        <result property="topleftlongitude" column="topleftlongitude"/>
+        <result property="toprightlatitude" column="toprightlatitude"/>
+        <result property="toprightlongitude" column="toprightlongitude"/>
+        <result property="bottomleftlatitude" column="bottomleftlatitude"/>
+        <result property="bottomleftlongitude" column="bottomleftlongitude"/>
+        <result property="bottomrightlatitude" column="bottomrightlatitude"/>
+        <result property="bottomrightlongitude" column="bottomrightlongitude"/>
+        <result property="centerlongitude" column="centerlongitude"/>
+        <result property="centerlatitude" column="centerlatitude"/>
+        <result property="area" column="area"/>
+        <result property="level" column="level"/>
+        <result property="filessize" column="filessize"/>
+    </resultMap>
+
+    <resultMap id="ResultPageMap" type="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfoVO">
+        <result property="id" column="id"/>
+        <result property="satelliteId" column="satellite_id"/>
+        <result property="sensorId" column="sensor_id"/>
+        <result property="date" column="date"/>
+        <result property="time" column="time"/>
+        <result property="name" column="name"/>
+        <result property="resolution" column="resolution"/>
+        <result property="type" column="type"/>
+        <result property="bands" column="bands"/>
+        <result property="cloud" column="cloud"/>
+        <result property="topleftlatitude" column="topleftlatitude"/>
+        <result property="topleftlongitude" column="topleftlongitude"/>
+        <result property="toprightlatitude" column="toprightlatitude"/>
+        <result property="toprightlongitude" column="toprightlongitude"/>
+        <result property="bottomleftlatitude" column="bottomleftlatitude"/>
+        <result property="bottomleftlongitude" column="bottomleftlongitude"/>
+        <result property="bottomrightlatitude" column="bottomrightlatitude"/>
+        <result property="bottomrightlongitude" column="bottomrightlongitude"/>
+        <result property="pngtopleftlatitude" column="pngtopleftlatitude"/>
+        <result property="pngtopleftlongitude" column="pngtopleftlongitude"/>
+        <result property="pngtoprightlatitude" column="pngtoprightlatitude"/>
+        <result property="pngtoprightlongitude" column="pngtoprightlongitude"/>
+        <result property="pngbottomleftlatitude" column="pngbottomleftlatitude"/>
+        <result property="pngbottomleftlongitude" column="pngbottomleftlongitude"/>
+        <result property="pngbottomrightlatitude" column="pngbottomrightlatitude"/>
+        <result property="pngbottomrightlongitude" column="pngbottomrightlongitude"/>
+        <result property="centerlongitude" column="centerlongitude"/>
+        <result property="centerlatitude" column="centerlatitude"/>
+        <result property="level" column="level"/>
+        <result property="pngId" column="png_id"/>
+        <result property="smallPngId" column="small_png_id"/>
+        <result property="pngurl" column="png_url"/>
+        <result property="smallPngurl" column="small_png_url"/>
+    </resultMap>
+
+    <resultMap id="ResultPageMap1" type="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfoVO">
+        <result property="id" column="id"/>
+        <result property="satelliteId" column="satellite_id"/>
+        <result property="sensorId" column="sensor_id"/>
+        <result property="date" column="date"/>
+        <result property="time" column="time"/>
+        <result property="name" column="name"/>
+        <result property="resolution" column="resolution"/>
+        <result property="type" column="type"/>
+        <result property="bands" column="bands"/>
+        <result property="cloud" column="cloud"/>
+        <result property="topleftlatitude" column="topleftlatitude"/>
+        <result property="topleftlongitude" column="topleftlongitude"/>
+        <result property="toprightlatitude" column="toprightlatitude"/>
+        <result property="toprightlongitude" column="toprightlongitude"/>
+        <result property="bottomleftlatitude" column="bottomleftlatitude"/>
+        <result property="bottomleftlongitude" column="bottomleftlongitude"/>
+        <result property="bottomrightlatitude" column="bottomrightlatitude"/>
+        <result property="bottomrightlongitude" column="bottomrightlongitude"/>
+        <result property="pngtopleftlatitude" column="pngtopleftlatitude"/>
+        <result property="pngtopleftlongitude" column="pngtopleftlongitude"/>
+        <result property="pngtoprightlatitude" column="pngtoprightlatitude"/>
+        <result property="pngtoprightlongitude" column="pngtoprightlongitude"/>
+        <result property="pngbottomleftlatitude" column="pngbottomleftlatitude"/>
+        <result property="pngbottomleftlongitude" column="pngbottomleftlongitude"/>
+        <result property="pngbottomrightlatitude" column="pngbottomrightlatitude"/>
+        <result property="pngbottomrightlongitude" column="pngbottomrightlongitude"/>
+        <result property="centerlongitude" column="centerlongitude"/>
+        <result property="centerlatitude" column="centerlatitude"/>
+        <result property="level" column="level"/>
+        <result property="pngId" column="png_id"/>
+        <result property="smallPngId" column="small_png_id"/>
+        <result property="pngurl" column="png_url"/>
+        <result property="smallPngurl" column="small_png_url"/>
+        <result property="the_geom" column="the_geom"/>
+        <result property="productId" column="product_id"/>
+    </resultMap>
+    <!--
+          选择性插入
+        -->
+    <sql id="Base_Insert_Selective">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="satelliteId != null">
+                satellite_id,
+            </if>
+            <if test="sensorId != null">
+                sensor_id,
+            </if>
+            <if test="date != null">
+                date,
+            </if>
+            <if test="time != null">
+                time,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="resolution != null">
+                resolution,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="bands != null">
+                bands,
+            </if>
+            <if test="cloud != null">
+                cloud,
+            </if>
+            <if test="topleftlatitude != null">
+                topleftlatitude,
+            </if>
+            <if test="topleftlongitude != null">
+                topleftlongitude,
+            </if>
+            <if test="toprightlatitude != null">
+                toprightlatitude,
+            </if>
+            <if test="toprightlongitude != null">
+                toprightlongitude,
+            </if>
+            <if test="bottomleftlatitude != null">
+                bottomleftlatitude,
+            </if>
+            <if test="bottomleftlongitude != null">
+                bottomleftlongitude,
+            </if>
+            <if test="bottomrightlatitude != null">
+                bottomrightlatitude,
+            </if>
+            <if test="bottomrightlongitude != null">
+                bottomrightlongitude,
+            </if>
+            <if test="centerlongitude != null">
+                centerlongitude,
+            </if>
+            <if test="centerlatitude != null">
+                centerlatitude,
+            </if>
+            <if test="area != null">
+                area,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="filessize != null">
+                filessize
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="satelliteId != null">
+                #{satelliteId,jdbcType=VARCHAR},
+            </if>
+            <if test="sensorId != null">
+                #{sensorId,jdbcType=VARCHAR},
+            </if>
+            <if test="date != null">
+                #{date,jdbcType=TIMESTAMP},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="resolution != null">
+                #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="bands != null">
+                #{bands,jdbcType=INTEGER},
+            </if>
+            <if test="cloud != null">
+                #{cloud,jdbcType=INTEGER},
+            </if>
+            <if test="topleftlatitude != null">
+                #{topleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="topleftlongitude != null">
+                #{topleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlatitude != null">
+                #{toprightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlongitude != null">
+                #{toprightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlatitude != null">
+                #{bottomleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlongitude != null">
+                #{bottomleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlatitude != null">
+                #{bottomrightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlongitude != null">
+                #{bottomrightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlongitude != null">
+                #{centerlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlatitude != null">
+                #{centerlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="area != null">
+                #{area,jdbcType=DOUBLE},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="filessize != null">
+                #{filessize}
+            </if>
+        </trim>
+    </sql>
+
+    <!--
+      数据库表的基本查询列名集合
+    -->
+    <sql id="Base_Column_List">
+        id, create_time, update_time, satellite_id, sensor_id, date, time, name, resolution, type, bands, cloud,
+        topleftlatitude, topleftlongitude, toprightlatitude, toprightlongitude, bottomleftlatitude, bottomleftlongitude,
+        bottomrightlatitude, bottomrightlongitude, centerlongitude, centerlatitude, area, level, filessize
+    </sql>
+
+    <!--
+        Where子句
+      -->
+    <sql id="Base_Query_Where">
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="createTime != null">
+            and create_time = #{createTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="updateTime != null">
+            and update_time = #{updateTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="satelliteId != null">
+            and satellite_id = #{satelliteId,jdbcType=VARCHAR}
+        </if>
+        <if test="sensorId != null">
+            and sensor_id = #{sensorId,jdbcType=VARCHAR}
+        </if>
+        <if test="date != null">
+            and date = #{date,jdbcType=TIMESTAMP}
+        </if>
+        <if test="time != null">
+            and time = #{time,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null">
+            and name = #{name,jdbcType=VARCHAR}
+        </if>
+        <if test="resolution != null">
+            and resolution = #{resolution,jdbcType=VARCHAR}
+        </if>
+        <if test="type != null">
+            and type = #{type,jdbcType=INTEGER}
+        </if>
+        <if test="bands != null">
+            and bands = #{bands,jdbcType=INTEGER}
+        </if>
+        <if test="cloud != null">
+            and cloud = #{cloud,jdbcType=INTEGER}
+        </if>
+        <if test="topleftlatitude != null">
+            and topleftlatitude = #{topleftlatitude,jdbcType=DOUBLE}
+        </if>
+        <if test="topleftlongitude != null">
+            and topleftlongitude = #{topleftlongitude,jdbcType=DOUBLE}
+        </if>
+        <if test="toprightlatitude != null">
+            and toprightlatitude = #{toprightlatitude,jdbcType=DOUBLE}
+        </if>
+        <if test="toprightlongitude != null">
+            and toprightlongitude = #{toprightlongitude,jdbcType=DOUBLE}
+        </if>
+        <if test="bottomleftlatitude != null">
+            and bottomleftlatitude = #{bottomleftlatitude,jdbcType=DOUBLE}
+        </if>
+        <if test="bottomleftlongitude != null">
+            and bottomleftlongitude = #{bottomleftlongitude,jdbcType=DOUBLE}
+        </if>
+        <if test="bottomrightlatitude != null">
+            and bottomrightlatitude = #{bottomrightlatitude,jdbcType=DOUBLE}
+        </if>
+        <if test="bottomrightlongitude != null">
+            and bottomrightlongitude = #{bottomrightlongitude,jdbcType=DOUBLE}
+        </if>
+        <if test="centerlongitude != null">
+            and centerlongitude = #{centerlongitude,jdbcType=DOUBLE}
+        </if>
+        <if test="centerlatitude != null">
+            and centerlatitude = #{centerlatitude,jdbcType=DOUBLE}
+        </if>
+        <if test="area != null">
+            and area = #{area,jdbcType=DOUBLE}
+        </if>
+        <if test="level != null">
+            and level = #{level,jdbcType=VARCHAR}
+        </if>
+        <if test="filessize != null">
+            and filessize = #{filessize}
+        </if>
+    </sql>
+
+    <!--
+        基本更新字段
+    -->
+    <sql id="Base_Update_Column">
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="satelliteId != null">
+                satellite_id = #{satelliteId,jdbcType=VARCHAR},
+            </if>
+            <if test="sensorId != null">
+                sensor_id = #{sensorId,jdbcType=VARCHAR},
+            </if>
+            <if test="date != null">
+                date = #{date,jdbcType=TIMESTAMP},
+            </if>
+            <if test="time != null">
+                time = #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="resolution != null">
+                resolution = #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="bands != null">
+                bands = #{bands,jdbcType=INTEGER},
+            </if>
+            <if test="cloud != null">
+                cloud = #{cloud,jdbcType=INTEGER},
+            </if>
+            <if test="topleftlatitude != null">
+                topleftlatitude = #{topleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="topleftlongitude != null">
+                topleftlongitude = #{topleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlatitude != null">
+                toprightlatitude = #{toprightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlongitude != null">
+                toprightlongitude = #{toprightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlatitude != null">
+                bottomleftlatitude = #{bottomleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlongitude != null">
+                bottomleftlongitude = #{bottomleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlatitude != null">
+                bottomrightlatitude = #{bottomrightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlongitude != null">
+                bottomrightlongitude = #{bottomrightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlongitude != null">
+                centerlongitude = #{centerlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlatitude != null">
+                centerlatitude = #{centerlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=DOUBLE},
+            </if>
+            <if test="level != null">
+                level = #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="filessize != null">
+                filessize = #{filessize}
+            </if>
+        </set>
+    </sql>
+
+    <!--
+        分页查询数据库表
+      -->
+    <select id="selectPaged" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from htht_dms_sate_data_info
+    </select>
+
+    <!--and hd.data_type=#{data_type}-->
+
+    <select id="selectPagedOrderF" resultMap="ResultPageMap1">
+        SELECT
+        hd.id,
+        hd.satellite_id,
+        hd.sensor_id,
+        hd.date,
+        hd.time,
+        hd.resolution,
+        hd.type,
+        hd.bands,
+        hd.cloud,
+        hd.topleftlatitude,
+        hd.topleftlongitude,
+        hd.toprightlatitude,
+        hd.toprightlongitude,
+        hd.bottomleftlatitude,
+        hd.bottomleftlongitude,
+        hd.bottomrightlatitude,
+        hd.bottomrightlongitude,
+        hd.centerlongitude,
+        hd.centerlatitude,
+        hd.LEVEL,
+        hd.pngtopleftlatitude,
+        hd.pngtopleftlongitude,
+        hd.pngtoprightlatitude,
+        hd.pngtoprightlongitude,
+        hd.pngbottomleftlatitude,
+        hd.pngbottomleftlongitude,
+        hd.pngbottomrightlatitude,
+        hd.product_id,
+        hd.pngbottomrightlongitude,
+        hd.data_type,
+        hd.the_geom as the_geom,
+        hfi.id AS png_id,
+        hfi.thumbnail_file_url AS png_url,
+        hfi.thumb_chart_file_url AS small_png_url
+        FROM
+        htht_dms_sate_data_info hd
+        LEFT JOIN htht_dms_sate_data_file_info hfi
+        ON ( hd.id = hfi.data_id)
+        WHERE
+        1 = 1
+        <if test="resolution!=null and resolution!=''">
+            and hd.resolution=#{resolution}
+        </if>
+        <if test="beginTime!=null and endTime!=null">
+            and hd.date <![CDATA[>=]]> #{beginTime} and hd.date<![CDATA[<=]]>#{endTime}
+        </if>
+        and hd.cloud<![CDATA[<=]]>#{cloud}
+        and
+        <foreach item="item" collection="list" separator="or" open="(" close=")" index="">
+            <if test="item.sensorId==null or item.sensorId==''">
+                (hd.satellite_id=#{item.satelliteId})
+            </if>
+            <if test="item.sensorId!=null and item.sensorId!=''">
+                (hd.satellite_id=#{item.satelliteId} and hd.sensor_id like CONCAT(#{item.sensorId},'%'))
+            </if>
+        </foreach>
+        <if test="dataType!=null and dataType.size()!=0">
+            and hd.data_type in
+            <foreach collection="dataType" item="item" separator="," index="index" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        <choose>
+            <when test="sorts ==null ">
+                order by date desc,time desc
+            </when>
+            <otherwise>
+                order by
+                <foreach item="item" collection="sorts" separator="," index="">
+                    <choose>
+                        <when test="item.sort=='date'">
+                            date ${item.sortord},time ${item.sortord}
+                        </when>
+                        <otherwise>
+                            ${item.sort} ${item.sortord}
+                        </otherwise>
+                    </choose>
+                </foreach>
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="selectPagedOrder" resultMap="ResultPageMap">
+        select l.*,hfi.id AS png_id,
+        hfi1.id AS small_png_id,hfi.file_url AS png_url,
+        hfi1.file_url AS small_png_url from (SELECT
+        hd.id,
+        hd.satellite_id,
+        hd.sensor_id,
+        hd.date,
+        hd.time,
+        hd.NAME,
+        hd.resolution,
+        hd.type,
+        hd.bands,
+        hd.cloud,
+        hd.topleftlatitude,
+        hd.topleftlongitude,
+        hd.toprightlatitude,
+        hd.toprightlongitude,
+        hd.bottomleftlatitude,
+        hd.bottomleftlongitude,
+        hd.bottomrightlatitude,
+        hd.bottomrightlongitude,
+        hd.centerlongitude,
+        hd.centerlatitude,
+        hd.LEVEL,
+        hd.pngtopleftlatitude,
+        hd.pngtopleftlongitude,
+        hd.pngtoprightlatitude,
+        hd.pngtoprightlongitude,
+        hd.pngbottomleftlatitude,
+        hd.pngbottomleftlongitude,
+        hd.pngbottomrightlatitude,
+        hd.pngbottomrightlongitude
+        FROM
+        htht_dms_sate_data_info hd
+        INNER JOIN htht_dms_sate_data_meta hc ON hd.id = hc.data_id
+        WHERE
+        1 = 1
+        <if test="resolution!=null and resolution!=''">
+            and hd.resolution=#{resolution}
+        </if>
+        <if test="beginTime!=null and endTime!=null">
+            and hd.date <![CDATA[>=]]> #{beginTime} and hd.date<![CDATA[<=]]>#{endTime}
+        </if>
+        and hd.cloud<![CDATA[<=]]>#{cloud}
+        and hd.data_type=#{dataType}
+        and
+        <foreach item="item" collection="list" separator="or" open="(" close=")" index="">
+            <if test="item.sensorId==null or item.sensorId==''">
+                (hd.satellite_id=#{item.satelliteId})
+            </if>
+            <if test="item.sensorId!=null and item.sensorId!=''">
+                (hd.satellite_id=#{item.satelliteId} and hd.sensor_id like CONCAT(#{item.sensorId},'%'))
+            </if>
+        </foreach>
+        <if test="geostr!=null and geostr!=''">
+            and ST_Intersects(hc.the_geom,ST_GeometryFromText(#{geostr}))
+        </if>
+
+        <choose>
+            <when test="sorts ==null ">
+                order by date desc,time desc
+            </when>
+            <otherwise>
+                order by
+                <foreach item="item" collection="sorts" separator="," index="">
+                    <choose>
+                        <when test="item.sort=='date'">
+                            date ${item.sortord},time ${item.sortord}
+                        </when>
+                        <otherwise>
+                            ${item.sortord} ${item.sortord}
+                        </otherwise>
+                    </choose>
+                </foreach>
+            </otherwise>
+        </choose>
+        limit #{start},#{end}
+        ) l
+        LEFT JOIN htht_dms_sate_data_file_info hfi ON ( l.id = hfi.data_id )
+        LEFT JOIN htht_dms_sate_data_file_info hfi1 ON (
+        l.id = hfi1.data_id
+
+        )
+    </select>
+
+    <select id="countHthtDmsSateDataInfo" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM
+        htht_dms_sate_data_info hi INNER JOIN htht_dms_sate_data_meta hm on hm.data_id=hi.id where 1=1
+        <if test="resolution!=null and resolution!=''">
+            and hi.resolution=#{resolution}
+        </if>
+        <if test="beginTime!=null and endTime!=null">
+            and hi.date<![CDATA[>=]]>#{beginTime} and hi.date<![CDATA[<=]]>#{endTime}
+        </if>
+        and hi.cloud<![CDATA[<=]]>#{cloud}
+        and hi.data_type=#{dataType}
+        and
+        <foreach item="item" collection="list" separator="or" open="(" close=")" index="">
+            <if test="item.sensorId==null or item.sensorId==''">
+                (hi.satellite_id=#{item.satelliteId})
+            </if>
+            <if test="item.sensorId!=null and item.sensorId!=''">
+                (hi.satellite_id=#{item.satelliteId} and hi.sensor_id like CONCAT(#{item.sensorId},'%'))
+            </if>
+        </foreach>
+        <if test="geostr!=null and geostr!=''">
+            and ST_Intersects(hm.the_geom,ST_GeometryFromText(#{geostr}))
+        </if>
+    </select>
+
+
+    <select id="selectPolygen" resultType="java.util.Map">
+        SELECT ST_AsText(ST_Intersection(the_geom,ST_GeometryFromText(#{geostr}))) as intersectgeostr FROM
+        htht_dms_sate_data_info hi
+        INNER JOIN htht_dms_sate_data_meta hm on hm.data_id=hi.id
+        where 1=1
+        <if test="resolution!=null and resolution!=''">
+            and hi.resolution=#{resolution}
+        </if>
+        <if test="beginTime!=null and endTime!=null">
+            and hi.date <![CDATA[>=]]>#{beginTime} and hi.date<![CDATA[<=]]>#{endTime}
+        </if>
+        and hi.cloud<![CDATA[<=]]>#{cloud}
+        <if test="data_type!=null">
+            and hi.data_type=#{dataType}
+        </if>
+        and
+        <foreach item="item" collection="list" separator="or" open="(" close=")" index="">
+            <if test="item.sensorId==null or item.sensorId==''">
+                (hi.satellite_id=#{item.satelliteId})
+            </if>
+            <if test="item.sensorId!=null and item.sensorId!=''">
+                (hi.satellite_id=#{item.satelliteId} and hi.sensor_id like CONCAT(#{item.sensorId},'%'))
+            </if>
+        </foreach>
+        <if test="geostr!=null and geostr!=''">
+            and ST_Intersects(hm.the_geom,ST_GeometryFromText(#{geostr}))
+        </if>
+    </select>
+
+
+    <select id="selectSumArea" resultType="java.util.Map">
+        SELECT cast(sum(area) as signed) sumarea,count(*) as count FROM
+        htht_dms_sate_data_info hi
+        INNER JOIN htht_dms_sate_data_meta hm on hm.data_id=hi.id
+        where 1=1
+        <if test="resolution!=null and resolution!=''">
+            and hi.resolution=#{resolution}
+        </if>
+        <if test="beginTime!=null and endTime!=null">
+            and hi.date<![CDATA[>=]]>#{beginTime} and hi.date<![CDATA[<=]]>#{endTime}
+        </if>
+        and hi.cloud<![CDATA[<=]]>#{cloud}
+        <if test="data_type!=null">
+            and hi.data_type=#{dataType}
+        </if>
+        and
+        <foreach item="item" collection="list" separator="or" open="(" close=")" index="">
+            <if test="item.sensorId==null or item.sensorId==''">
+                (hi.satellite_id=#{item.satelliteId})
+            </if>
+            <if test="item.sensorId!=null and item.sensorId!=''">
+                (hi.satellite_id=#{item.satelliteId} and hi.sensor_id like CONCAT(#{item.sensorId},'%'))
+            </if>
+        </foreach>
+        <if test="geostr!=null and geostr!=''">
+            and ST_Intersects(hm.the_geom,ST_GeometryFromText(#{geostr}))
+        </if>
+    </select>
+
+    <select id="selectRegionGeoStr" resultType="java.lang.String">
+        select the_gemo
+        from htht_region_geo_info
+        where regionid = #{regionId}
+    </select>
+
+
+    <select id="union" resultType="java.lang.String">
+        select ST_AsText(ST_Union(ST_GeometryFromText(#{geomjsona}), ST_GeometryFromText(#{geomjsonb})))
+    </select>
+
+    <select id="getAreageo" resultType="java.lang.String">
+        SELECT hi.the_geom as geostr
+        FROM
+        htht_dms_sate_data_info hi
+        where 1=1
+        <if test="resolution!=null and resolution!=''">
+            and hi.resolution=#{resolution}
+        </if>
+        <if test="beginTime!=null and endTime!=null">
+            and hi.date<![CDATA[>=]]>#{beginTime} and hi.date<![CDATA[<=]]>#{endTime}
+        </if>
+        and hi.cloud<![CDATA[<=]]>#{cloud}
+        <if test="dataType!=null">
+            and hi.data_type=#{dataType}
+        </if>
+        and
+        <foreach item="item" collection="list" separator="or" open="(" close=")" index="">
+            <if test="item.sensorId==null or item.sensorId==''">
+                (hi.satellite_id=#{item.satelliteId})
+            </if>
+            <if test="item.sensorId!=null and item.sensorId!=''">
+                (hi.satellite_id=#{item.satelliteId} and hi.sensor_id like CONCAT(#{item.sensorId},'%'))
+            </if>
+        </foreach>
+    </select>
+
+
+    <resultMap id="ResultMap2" type="com.njht.webyun.management.satellite.vo.DataInfoStatics">
+        <result property="area" column="area"/>
+        <result property="data_type" column="dataType"/>
+        <result property="geostr" column="geostr"/>
+    </resultMap>
+
+
+    <select id="getAllDataInfo" resultMap="ResultMap2">
+        SELECT hi.the_geom as geostr,hi.area,hi.data_type
+        FROM
+        htht_dms_sate_data_info hi
+        where 1=1
+        <if test="resolution!=null and resolution!=''">
+            and hi.resolution=#{resolution}
+        </if>
+        <if test="beginTime!=null and endTime!=null">
+            and hi.date<![CDATA[>=]]>#{beginTime} and hi.date<![CDATA[<=]]>#{endTime}
+        </if>
+        and hi.cloud<![CDATA[<=]]>#{cloud}
+        and
+        <foreach item="item" collection="list" separator="or" open="(" close=")" index="">
+            <if test="item.sensorId==null or item.sensorId==''">
+                (hi.satellite_id=#{item.satelliteId})
+            </if>
+            <if test="item.sensorId!=null and item.sensorId!=''">
+                (hi.satellite_id=#{item.satelliteId} and hi.sensor_id like CONCAT(#{item.sensorId},'%'))
+            </if>
+        </foreach>
+    </select>
+
+    <select id="getArea" resultType="java.util.Map">
+        select l.centerlatitude,
+        l.centerlongitude,
+        l.topleftlatitude,
+        l.topleftlongitude,
+        l.toprightlatitude,
+        l.bottomrightlongitude,
+        l.bottomrightlatitude,
+        l.bottomleftlongitude,
+        l.bottomleftlatitude,
+        l.toprightlongitude,hfi.id as pngId from (SELECT hi.id,hi.centerlatitude,
+        hi.centerlongitude,
+        hi.topleftlatitude,
+        hi.topleftlongitude,
+        hi.toprightlatitude,
+        hi.bottomrightlongitude,
+        hi.bottomrightlatitude,
+        hi.bottomleftlongitude,
+        hi.bottomleftlatitude,
+        hi.toprightlongitude
+        FROM
+        htht_dms_sate_data_info hi
+        INNER JOIN htht_dms_sate_data_meta hm on hm.data_id=hi.id
+        where 1=1
+        <if test="resolution!=null and resolution!=''">
+            and hi.resolution=#{resolution}
+        </if>
+        <if test="beginTime!=null and endTime!=null">
+            and hi.date<![CDATA[>=]]>#{beginTime} and hi.date<![CDATA[<=]]>#{endTime}
+        </if>
+        and hi.cloud<![CDATA[<=]]>#{cloud}
+        <if test="data_type!=null">
+            and hi.data_type=#{dataType}
+        </if>
+        and
+        <foreach item="item" collection="list" separator="or" open="(" close=")" index="">
+            <if test="item.sensorId==null or item.sensorId==''">
+                (hi.satellite_id=#{item.satelliteId})
+            </if>
+            <if test="item.sensorId!=null and item.sensorId!=''">
+                (hi.satellite_id=#{item.satelliteId} and hi.sensor_id like CONCAT(#{item.sensorId},'%'))
+            </if>
+        </foreach>
+        <if test="geostr!=null and geostr!=''">
+            and ST_Intersects(hm.the_geom,ST_GeometryFromText(#{geostr}))
+        </if>) l LEFT JOIN htht_dms_sate_data_file_info hfi ON ( l.id = hfi.data_id )
+    </select>
+
+
+    <select id="selectByPngId" resultMap="ResultPageMap">
+        select hd.id,
+               hd.satellite_id,
+               hd.sensor_id,
+               hd.date,
+               hd.time,
+               hd.NAME,
+               hd.resolution,
+               hd.type,
+               hd.bands,
+               hd.cloud,
+               hd.topleftlatitude,
+               hd.topleftlongitude,
+               hd.toprightlatitude,
+               hd.toprightlongitude,
+               hd.bottomleftlatitude,
+               hd.bottomleftlongitude,
+               hd.bottomrightlatitude,
+               hd.bottomrightlongitude,
+               hd.centerlongitude,
+               hd.centerlatitude,
+               hd.LEVEL,
+               hd.pngtopleftlatitude,
+               hd.pngtopleftlongitude,
+               hd.pngtoprightlatitude,
+               hd.pngtoprightlongitude,
+               hd.pngbottomleftlatitude,
+               hd.pngbottomleftlongitude,
+               hd.pngbottomrightlatitude,
+               hd.pngbottomrightlongitude,
+               hf.id       AS png_id,
+               hf.id       AS small_png_id,
+               hf.file_url AS png_url,
+               hf.file_url AS small_png_url
+        from htht_dms_sate_data_info hd
+                 left join htht_dms_sate_data_file_info hf on hd.id = hf.data_id
+        where hf.id = #{id}
+    </select>
+
+    <!--
+      根据主键查询数据库表
+    -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from htht_dms_sate_data_info_copy1
+        where id = #{id}
+    </select>
+    <!--
+      根据主键删除数据库表中的记录
+    -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        FROM htht_dms_sate_data_info
+        where id = #{id}
+    </delete>
+
+    <!--
+      添加一条记录到数据库表中
+    -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo">
+        insert into htht_dms_sate_data_info
+        (<include refid="Base_Column_List"/>)
+        values (
+        <if test="id != null">
+            #{id},
+        </if>
+        <if test="createTime != null">
+            #{createTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="updateTime != null">
+            #{updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="satelliteId != null">
+            #{satelliteId,jdbcType=VARCHAR},
+        </if>
+        <if test="sensorId != null">
+            #{sensorId,jdbcType=VARCHAR},
+        </if>
+        <if test="date != null">
+            #{date,jdbcType=TIMESTAMP},
+        </if>
+        <if test="time != null">
+            #{time,jdbcType=VARCHAR},
+        </if>
+        <if test="name != null">
+            #{name,jdbcType=VARCHAR},
+        </if>
+        <if test="resolution != null">
+            #{resolution,jdbcType=VARCHAR},
+        </if>
+        <if test="type != null">
+            #{type,jdbcType=INTEGER},
+        </if>
+        <if test="bands != null">
+            #{bands,jdbcType=INTEGER},
+        </if>
+        <if test="cloud != null">
+            #{cloud,jdbcType=INTEGER},
+        </if>
+        <if test="topleftlatitude != null">
+            #{topleftlatitude,jdbcType=DOUBLE},
+        </if>
+        <if test="topleftlongitude != null">
+            #{topleftlongitude,jdbcType=DOUBLE},
+        </if>
+        <if test="toprightlatitude != null">
+            #{toprightlatitude,jdbcType=DOUBLE},
+        </if>
+        <if test="toprightlongitude != null">
+            #{toprightlongitude,jdbcType=DOUBLE},
+        </if>
+        <if test="bottomleftlatitude != null">
+            #{bottomleftlatitude,jdbcType=DOUBLE},
+        </if>
+        <if test="bottomleftlongitude != null">
+            #{bottomleftlongitude,jdbcType=DOUBLE},
+        </if>
+        <if test="bottomrightlatitude != null">
+            #{bottomrightlatitude,jdbcType=DOUBLE},
+        </if>
+        <if test="bottomrightlongitude != null">
+            #{bottomrightlongitude,jdbcType=DOUBLE},
+        </if>
+        <if test="centerlongitude != null">
+            #{centerlongitude,jdbcType=DOUBLE},
+        </if>
+        <if test="centerlatitude != null">
+            #{centerlatitude,jdbcType=DOUBLE},
+        </if>
+        <if test="area != null">
+            #{area,jdbcType=DOUBLE},
+        </if>
+        <if test="level != null">
+            #{level,jdbcType=VARCHAR},
+        </if>
+        <if test="filessize != null">
+            #{filessize}
+        </if>
+        )
+    </insert>
+
+    <!--
+     有选择的添加一条记录到数据库表中
+   -->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo">
+        insert into htht_dms_sate_data_info_copy1
+        <include refid="Base_Insert_Selective"/>
+    </insert>
+
+    <!--
+      有选择的可忽略添加一条记录到数据库表中
+    -->
+    <insert id="insertSelectiveIgnore" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo">
+        insert ignore into htht_dms_sate_data_info
+        <include refid="Base_Insert_Selective"/>
+    </insert>
+
+    <!--
+      根据主键有选择的更新数据库表
+    -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo">
+        update htht_dms_sate_data_info
+        <include refid="Base_Update_Column"></include>
+        where id = #{id}
+    </update>
+
+
+    <!--
+      根据主键更新数据库表
+    -->
+    <update id="updateByPrimaryKey" parameterType="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo">
+        update htht_dms_sate_data_info
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="satelliteId != null">
+                satellite_id = #{satelliteId,jdbcType=VARCHAR},
+            </if>
+            <if test="sensorId != null">
+                sensor_id = #{sensorId,jdbcType=VARCHAR},
+            </if>
+            <if test="date != null">
+                date = #{date,jdbcType=TIMESTAMP},
+            </if>
+            <if test="time != null">
+                time = #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="resolution != null">
+                resolution = #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="bands != null">
+                bands = #{bands,jdbcType=INTEGER},
+            </if>
+            <if test="cloud != null">
+                cloud = #{cloud,jdbcType=INTEGER},
+            </if>
+            <if test="topleftlatitude != null">
+                topleftlatitude = #{topleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="topleftlongitude != null">
+                topleftlongitude = #{topleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlatitude != null">
+                toprightlatitude = #{toprightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlongitude != null">
+                toprightlongitude = #{toprightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlatitude != null">
+                bottomleftlatitude = #{bottomleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlongitude != null">
+                bottomleftlongitude = #{bottomleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlatitude != null">
+                bottomrightlatitude = #{bottomrightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlongitude != null">
+                bottomrightlongitude = #{bottomrightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlongitude != null">
+                centerlongitude = #{centerlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlatitude != null">
+                centerlatitude = #{centerlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=DOUBLE},
+            </if>
+            <if test="level != null">
+                level = #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="filessize != null">
+                filessize = #{filessize}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--
+      批量添加记录到数据库表中
+    -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into htht_dms_sate_data_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, create_time, update_time, satellite_id, sensor_id, date, time, name, resolution, type, bands, cloud,
+            topleftlatitude, topleftlongitude, toprightlatitude, toprightlongitude, bottomleftlatitude,
+            bottomleftlongitude, bottomrightlatitude, bottomrightlongitude, centerlongitude, centerlatitude, area,
+            level, filessize
+        </trim>
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.id}, #{item.createTime,jdbcType=TIMESTAMP},
+                #{item.updateTime,jdbcType=TIMESTAMP}, #{item.satelliteId,jdbcType=VARCHAR},
+                #{item.sensorId,jdbcType=VARCHAR}, #{item.date,jdbcType=TIMESTAMP}, #{item.time,jdbcType=VARCHAR},
+                #{item.name,jdbcType=VARCHAR}, #{item.resolution,jdbcType=VARCHAR}, #{item.type,jdbcType=INTEGER},
+                #{item.bands,jdbcType=INTEGER}, #{item.cloud,jdbcType=INTEGER}, #{item.topleftlatitude,jdbcType=DOUBLE},
+                #{item.topleftlongitude,jdbcType=DOUBLE}, #{item.toprightlatitude,jdbcType=DOUBLE},
+                #{item.toprightlongitude,jdbcType=DOUBLE}, #{item.bottomleftlatitude,jdbcType=DOUBLE},
+                #{item.bottomleftlongitude,jdbcType=DOUBLE}, #{item.bottomrightlatitude,jdbcType=DOUBLE},
+                #{item.bottomrightlongitude,jdbcType=DOUBLE}, #{item.centerlongitude,jdbcType=DOUBLE},
+                #{item.centerlatitude,jdbcType=DOUBLE}, #{item.area,jdbcType=DOUBLE}, #{item.level,jdbcType=VARCHAR},
+                #{item.filessize}
+            </trim>
+        </foreach>
+    </insert>
+
+
+    <insert id="batchInsert1" parameterType="java.util.List">
+        insert into htht_dms_sate_data_info_copy1
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, satellite_id, sensor_id, date, time,cloud
+        </trim>
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.id}, #{item.satelliteId,jdbcType=VARCHAR},
+                #{item.sensorId,jdbcType=VARCHAR}, #{item.date,jdbcType=TIMESTAMP}, #{item.time},
+                #{item.cloud}
+            </trim>
+        </foreach>
+    </insert>
+
+    <!--
+      根据主键批量更新数据库表中的记录
+    -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" index="index" item="item" separator=";">
+            update htht_dms_sate_data_info
+            <set>
+                <trim suffixOverrides=",">
+                    <if test="item.id != null">
+                        id = #{item.id},
+                    </if>
+                    <if test="item.createTime != null">
+                        create_time = #{item.createTime,jdbcType=TIMESTAMP},
+                    </if>
+                    <if test="item.updateTime != null">
+                        update_time = #{item.updateTime,jdbcType=TIMESTAMP},
+                    </if>
+                    <if test="item.satelliteId != null">
+                        satellite_id = #{item.satelliteId,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.sensorId != null">
+                        sensor_id = #{item.sensorId,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.date != null">
+                        date = #{item.date,jdbcType=TIMESTAMP},
+                    </if>
+                    <if test="item.time != null">
+                        time = #{item.time,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.name != null">
+                        name = #{item.name,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.resolution != null">
+                        resolution = #{item.resolution,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.type != null">
+                        type = #{item.type,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.bands != null">
+                        bands = #{item.bands,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.cloud != null">
+                        cloud = #{item.cloud,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.topleftlatitude != null">
+                        topleftlatitude = #{item.topleftlatitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.topleftlongitude != null">
+                        topleftlongitude = #{item.topleftlongitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.toprightlatitude != null">
+                        toprightlatitude = #{item.toprightlatitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.toprightlongitude != null">
+                        toprightlongitude = #{item.toprightlongitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.bottomleftlatitude != null">
+                        bottomleftlatitude = #{item.bottomleftlatitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.bottomleftlongitude != null">
+                        bottomleftlongitude = #{item.bottomleftlongitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.bottomrightlatitude != null">
+                        bottomrightlatitude = #{item.bottomrightlatitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.bottomrightlongitude != null">
+                        bottomrightlongitude = #{item.bottomrightlongitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.centerlongitude != null">
+                        centerlongitude = #{item.centerlongitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.centerlatitude != null">
+                        centerlatitude = #{item.centerlatitude,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.area != null">
+                        area = #{item.area,jdbcType=DOUBLE},
+                    </if>
+                    <if test="item.level != null">
+                        level = #{item.level,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.filessize != null">
+                        filessize = #{item.filessize}
+                    </if>
+                </trim>
+            </set>
+            <where>
+                <trim suffixOverrides=",">
+                    where id = #{item.id}
+                </trim>
+            </where>
+        </foreach>
+    </update>
+
+    <!--
+     使用给定的字段名定义Where子句
+   -->
+    <sql id="Identifiers_Array_Conditions">
+        <foreach collection="array" index="index" item="item" separator=" and ">
+            <if test="item == 'id'">
+                id = #{id}
+            </if>
+            <if test="item == 'createTime'">
+                create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="item == 'updateTime'">
+                update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="item == 'satelliteId'">
+                satellite_id = #{satelliteId,jdbcType=VARCHAR}
+            </if>
+            <if test="item == 'sensorId'">
+                sensor_id = #{sensorId,jdbcType=VARCHAR}
+            </if>
+            <if test="item == 'date'">
+                date = #{date,jdbcType=TIMESTAMP}
+            </if>
+            <if test="item == 'time'">
+                time = #{time,jdbcType=VARCHAR}
+            </if>
+            <if test="item == 'name'">
+                name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="item == 'resolution'">
+                resolution = #{resolution,jdbcType=VARCHAR}
+            </if>
+            <if test="item == 'type'">
+                type = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="item == 'bands'">
+                bands = #{bands,jdbcType=INTEGER}
+            </if>
+            <if test="item == 'cloud'">
+                cloud = #{cloud,jdbcType=INTEGER}
+            </if>
+            <if test="item == 'topleftlatitude'">
+                topleftlatitude = #{topleftlatitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'topleftlongitude'">
+                topleftlongitude = #{topleftlongitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'toprightlatitude'">
+                toprightlatitude = #{toprightlatitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'toprightlongitude'">
+                toprightlongitude = #{toprightlongitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'bottomleftlatitude'">
+                bottomleftlatitude = #{bottomleftlatitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'bottomleftlongitude'">
+                bottomleftlongitude = #{bottomleftlongitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'bottomrightlatitude'">
+                bottomrightlatitude = #{bottomrightlatitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'bottomrightlongitude'">
+                bottomrightlongitude = #{bottomrightlongitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'centerlongitude'">
+                centerlongitude = #{centerlongitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'centerlatitude'">
+                centerlatitude = #{centerlatitude,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'area'">
+                area = #{area,jdbcType=DOUBLE}
+            </if>
+            <if test="item == 'level'">
+                level = #{level,jdbcType=VARCHAR}
+            </if>
+            <if test="item == 'filessize'">
+                filessize = #{filessize}
+            </if>
+        </foreach>
+    </sql>
+
+    <!--
+      存在即更新否则插入
+    -->
+    <update id="upsert" parameterType="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo">
+        insert into htht_dms_sate_data_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, create_time, update_time, satellite_id, sensor_id, date, time, name, resolution, type, bands, cloud,
+            topleftlatitude, topleftlongitude, toprightlatitude, toprightlongitude, bottomleftlatitude,
+            bottomleftlongitude, bottomrightlatitude, bottomrightlongitude, centerlongitude, centerlatitude, area,
+            level, filessize
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{id}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+            #{satelliteId,jdbcType=VARCHAR}, #{sensorId,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP},
+            #{time,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{resolution,jdbcType=VARCHAR},
+            #{type,jdbcType=INTEGER}, #{bands,jdbcType=INTEGER}, #{cloud,jdbcType=INTEGER},
+            #{topleftlatitude,jdbcType=DOUBLE}, #{topleftlongitude,jdbcType=DOUBLE},
+            #{toprightlatitude,jdbcType=DOUBLE}, #{toprightlongitude,jdbcType=DOUBLE},
+            #{bottomleftlatitude,jdbcType=DOUBLE}, #{bottomleftlongitude,jdbcType=DOUBLE},
+            #{bottomrightlatitude,jdbcType=DOUBLE}, #{bottomrightlongitude,jdbcType=DOUBLE},
+            #{centerlongitude,jdbcType=DOUBLE}, #{centerlatitude,jdbcType=DOUBLE}, #{area,jdbcType=DOUBLE},
+            #{level,jdbcType=VARCHAR}, #{filessize}
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            #{id}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+            #{satelliteId,jdbcType=VARCHAR}, #{sensorId,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP},
+            #{time,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{resolution,jdbcType=VARCHAR},
+            #{type,jdbcType=INTEGER}, #{bands,jdbcType=INTEGER}, #{cloud,jdbcType=INTEGER},
+            #{topleftlatitude,jdbcType=DOUBLE}, #{topleftlongitude,jdbcType=DOUBLE},
+            #{toprightlatitude,jdbcType=DOUBLE}, #{toprightlongitude,jdbcType=DOUBLE},
+            #{bottomleftlatitude,jdbcType=DOUBLE}, #{bottomleftlongitude,jdbcType=DOUBLE},
+            #{bottomrightlatitude,jdbcType=DOUBLE}, #{bottomrightlongitude,jdbcType=DOUBLE},
+            #{centerlongitude,jdbcType=DOUBLE}, #{centerlatitude,jdbcType=DOUBLE}, #{area,jdbcType=DOUBLE},
+            #{level,jdbcType=VARCHAR}, #{filessize}
+        </trim>
+    </update>
+
+
+    <!--
+      带有空值检查的存在即更新否则插入
+    -->
+    <update id="upsertSelective" parameterType="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo">
+        insert into htht_dms_sate_data_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id !=null ">
+                id,
+            </if>
+            <if test="createTime !=null ">
+                create_time,
+            </if>
+            <if test="updateTime !=null ">
+                update_time,
+            </if>
+            <if test="satelliteId !=null ">
+                satellite_id,
+            </if>
+            <if test="sensorId !=null ">
+                sensor_id,
+            </if>
+            <if test="date !=null ">
+                date,
+            </if>
+            <if test="time !=null ">
+                time,
+            </if>
+            <if test="name !=null ">
+                name,
+            </if>
+            <if test="resolution !=null ">
+                resolution,
+            </if>
+            <if test="type !=null ">
+                type,
+            </if>
+            <if test="bands !=null ">
+                bands,
+            </if>
+            <if test="cloud !=null ">
+                cloud,
+            </if>
+            <if test="topleftlatitude !=null ">
+                topleftlatitude,
+            </if>
+            <if test="topleftlongitude !=null ">
+                topleftlongitude,
+            </if>
+            <if test="toprightlatitude !=null ">
+                toprightlatitude,
+            </if>
+            <if test="toprightlongitude !=null ">
+                toprightlongitude,
+            </if>
+            <if test="bottomleftlatitude !=null ">
+                bottomleftlatitude,
+            </if>
+            <if test="bottomleftlongitude !=null ">
+                bottomleftlongitude,
+            </if>
+            <if test="bottomrightlatitude !=null ">
+                bottomrightlatitude,
+            </if>
+            <if test="bottomrightlongitude !=null ">
+                bottomrightlongitude,
+            </if>
+            <if test="centerlongitude !=null ">
+                centerlongitude,
+            </if>
+            <if test="centerlatitude !=null ">
+                centerlatitude,
+            </if>
+            <if test="area !=null ">
+                area,
+            </if>
+            <if test="level !=null ">
+                level,
+            </if>
+            <if test="filessize !=null ">
+                filessize
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id !=null ">
+                id = #{id},
+            </if>
+            <if test="createTime !=null ">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime !=null ">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="satelliteId !=null ">
+                satellite_id = #{satelliteId,jdbcType=VARCHAR},
+            </if>
+            <if test="sensorId !=null ">
+                sensor_id = #{sensorId,jdbcType=VARCHAR},
+            </if>
+            <if test="date !=null ">
+                date = #{date,jdbcType=TIMESTAMP},
+            </if>
+            <if test="time !=null ">
+                time = #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="name !=null ">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="resolution !=null ">
+                resolution = #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="type !=null ">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="bands !=null ">
+                bands = #{bands,jdbcType=INTEGER},
+            </if>
+            <if test="cloud !=null ">
+                cloud = #{cloud,jdbcType=INTEGER},
+            </if>
+            <if test="topleftlatitude !=null ">
+                topleftlatitude = #{topleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="topleftlongitude !=null ">
+                topleftlongitude = #{topleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlatitude !=null ">
+                toprightlatitude = #{toprightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlongitude !=null ">
+                toprightlongitude = #{toprightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlatitude !=null ">
+                bottomleftlatitude = #{bottomleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlongitude !=null ">
+                bottomleftlongitude = #{bottomleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlatitude !=null ">
+                bottomrightlatitude = #{bottomrightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlongitude !=null ">
+                bottomrightlongitude = #{bottomrightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlongitude !=null ">
+                centerlongitude = #{centerlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlatitude !=null ">
+                centerlatitude = #{centerlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="area !=null ">
+                area = #{area,jdbcType=DOUBLE},
+            </if>
+            <if test="level !=null ">
+                level = #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="filessize !=null ">
+                filessize = #{filessize}
+            </if>
+        </trim>
+        on duplicate key update
+        <trim suffixOverrides=",">
+            <if test="id !=null ">
+                id = #{id},
+            </if>
+            <if test="createTime !=null ">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime !=null ">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="satelliteId !=null ">
+                satellite_id = #{satelliteId,jdbcType=VARCHAR},
+            </if>
+            <if test="sensorId !=null ">
+                sensor_id = #{sensorId,jdbcType=VARCHAR},
+            </if>
+            <if test="date !=null ">
+                date = #{date,jdbcType=TIMESTAMP},
+            </if>
+            <if test="time !=null ">
+                time = #{time,jdbcType=VARCHAR},
+            </if>
+            <if test="name !=null ">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="resolution !=null ">
+                resolution = #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="type !=null ">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="bands !=null ">
+                bands = #{bands,jdbcType=INTEGER},
+            </if>
+            <if test="cloud !=null ">
+                cloud = #{cloud,jdbcType=INTEGER},
+            </if>
+            <if test="topleftlatitude !=null ">
+                topleftlatitude = #{topleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="topleftlongitude !=null ">
+                topleftlongitude = #{topleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlatitude !=null ">
+                toprightlatitude = #{toprightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="toprightlongitude !=null ">
+                toprightlongitude = #{toprightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlatitude !=null ">
+                bottomleftlatitude = #{bottomleftlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomleftlongitude !=null ">
+                bottomleftlongitude = #{bottomleftlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlatitude !=null ">
+                bottomrightlatitude = #{bottomrightlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="bottomrightlongitude !=null ">
+                bottomrightlongitude = #{bottomrightlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlongitude !=null ">
+                centerlongitude = #{centerlongitude,jdbcType=DOUBLE},
+            </if>
+            <if test="centerlatitude !=null ">
+                centerlatitude = #{centerlatitude,jdbcType=DOUBLE},
+            </if>
+            <if test="area !=null ">
+                area = #{area,jdbcType=DOUBLE},
+            </if>
+            <if test="level !=null ">
+                level = #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="filessize !=null ">
+                filessize = #{filessize}
+            </if>
+        </trim>
+    </update>
+
+    <select id="query" resultMap="BaseResultMap" parameterType="com.njht.webyun.management.satellite.entity.HthtDmsSateDataInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from htht_dms_sate_data_info
+        <where>
+            <include refid="Base_Query_Where"></include>
+        </where>
+    </select>
+
+    <select id="queryTotal" resultType="long">
+        select count(*)
+        from htht_dms_sate_data_info
+    </select>
+
+
+    <delete id="deleteBatch">
+        delete from htht_dms_sate_data_info where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectRegion" resultType="java.util.Map">
+        SELECT regionid, fullname
+        from htht_dms_region_info
+        where t_m_regionid = #{id}
+    </select>
+
+    <select id="selectGeom" resultType="java.util.Map">
+        SELECT the_geom as geomstr
+        from htht_dms_region_info
+        where regionid = #{id}
+    </select>
+
+    <select id="areaPercent" resultType="java.lang.Double">
+        select ST_Area(ST_GeomFromGeoJSON(#{covergeojson})) / ST_Area(ST_GeomFromGeoJSON(#{areageojson}))
+    </select>
+
+    <select id="findByCondition" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select id from htht_dms_sate_data_info
+        <where>
+            <if test="beginTime != null and beginTime != '' and endTime != null and endTime != ''">
+                STR_TO_DATE(date,"%Y-%m-%d") BETWEEN #{beginTime} AND #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSateField" resultType="Map">
+        select *
+        from htht_sate_sensor_relationship
+    </select>
+    <resultMap id="thematicData" type="com.njht.webyun.management.satellite.vo.SatelliteThematicDataInfoDTO">
+        <id property="id" column="d_id"/>
+        <result property="fileName" column="d_file_name"/>
+        <result property="region" column="region"/>
+        <result property="spaceResolution" column="space_resolution"/>
+        <result property="timeResolution" column="time_resolution"/>
+        <result property="fileType" column="d_file_type"/>
+        <result property="dataType" column="data_type"/>
+        <result property="mark" column="mark"/>
+        <result property="issue" column="issue"/>
+        <result property="cycle" column="cycle"/>
+        <collection property="listFiles" ofType="com.njht.webyun.management.satellite.vo.SatelliteThematicFileDataInfoDTO">
+            <id property="id" column="f_id"/>
+            <result property="fileName"  column="f_file_name"/>
+            <result property="fileType" column="f_file_type"/>
+            <result property="fileUrl" column="file_url"/>
+        </collection>
+    </resultMap>
+    <select id="selectThematicByTreeId" resultMap="thematicData">
+        SELECT
+             d.id as d_id,
+             d.region,
+             d.file_name as d_file_name,
+             d.space_resolution,
+             d.time_resolution,
+             d.data_type,
+             d.file_type as d_file_type,
+             d.mark,
+             d.issue,
+             d.cycle,
+             f.id as f_id,
+             f.file_type as f_file_type,
+             f.file_url,
+             f.file_name as f_file_name
+             FROM `htht_satellite_thematic_data_info` as d
+             ,htht_satellite_thematic_data_file_info as f
+             where
+             d.tree_id in
+             <foreach collection="treeIds" item="item" open="(" close=")" separator="," index="index">
+                 #{item}
+             </foreach>
+              and d.issue BETWEEN #{beginTimeStr} and #{endTimeStr}
+              and d.id=f.data_id
+              and f.file_type in ('jpg','png')
+              and f.version='0'
+              order by issue desc
+    </select>
+</mapper>

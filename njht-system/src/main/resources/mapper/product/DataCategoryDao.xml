@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.product.dao.DataCategoryDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.webyun.product.entity.DataCategoryEntity" id="dataCategoryMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="iconPath" column="icon_path"/>
+        <result property="menu" column="menu"/>
+        <result property="menuId" column="menu_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="text" column="text"/>
+        <result property="treeKey" column="tree_key"/>
+        <result property="sortKey" column="sort_key"/>
+    </resultMap>
+
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+			htht_cluster_schedule_data_category (id,create_time, update_time, version, icon_path, menu, menu_id, parent_id, text, tree_key, sort_key, img_url, is_hot, hot_img_url, is_index)
+		VALUES
+			(#{id},#{createTime}, #{updateTime}, #{version}, #{iconPath}, #{menu}, #{menuId}, #{parentId}, #{text}, #{treeKey}, #{sortKey}, #{imgUrl}, #{isHot}, #{hotImgUrl}, #{isIndex})
+	</insert>
+
+    <delete id="deleteByIds">
+        DELETE FROM
+			htht_cluster_schedule_data_category
+		WHERE
+		id in
+        <foreach collection="idList" item="item" index="index" open="(" separator="," close=")">
+		    #{item}
+        </foreach>
+    </delete>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE
+        htht_cluster_schedule_data_category
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="version != null">
+                version = #{version},
+            </if>
+            <if test="iconPath != null">
+                icon_path = #{iconPath},
+            </if>
+            <if test="menu != null">
+                menu = #{menu},
+            </if>
+            <if test="menuId != null">
+                menu_id = #{menuId},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="text != null">
+                text = #{text},
+            </if>
+            <if test="treeKey != null">
+                tree_key = #{treeKey},
+            </if>
+            <if test="sortKey != null">
+                sort_key = #{sortKey},
+            </if>
+            <if test="imgUrl != null">
+                img_url = #{imgUrl},
+            </if>
+            <if test="isHot != null">
+                is_hot = #{isHot},
+            </if>
+            <if test="hotImgUrl != null">
+                hot_img_url = #{hotImgUrl},
+            </if>
+            <if test="isIndex != null">
+                is_index = #{isIndex}
+            </if>
+        </set>
+        WHERE
+        id = #{id}
+    </update>
+
+
+    <select id="selectCategoryList" resultType="com.njht.webyun.product.entity.DataCategoryEntity">
+        SELECT id,parent_id,text FROM `htht_cluster_schedule_data_category` order by sort_key asc
+    </select>
+    <select id="selectCategoryIdList" resultType="java.lang.String">
+        SELECT category_id FROM `htht_role_category` where role_id = #{roleId}
+    </select>
+
+    <select id="selectCategoryAndProductList" resultType="com.njht.webyun.product.dto.DataCategoryDto">
+        SELECT
+            c.*,p.mark,p.product_path,p.cycle,p.is_release
+        FROM `htht_cluster_schedule_data_category` c
+        LEFT JOIN htht_cluster_schedule_product p
+        ON c.id = p.tree_id
+        WHERE 1=1
+        <if test="productIdentify != null and productIdentify != '' ">
+            and c.tree_key = #{productIdentify}
+        </if>
+        <if test="isIndex != null">
+            and is_index = #{isIndex}
+        </if>
+        <if test="isHot != null">
+            and is_hot = #{isHot}
+        </if>
+        ORDER BY sort_key asc
+    </select>
+    <select id="selectMenuInfoById" resultType="com.njht.webyun.product.entity.DataCategoryEntity">
+        SELECT * FROM `htht_cluster_schedule_data_category` where id = #{id}
+    </select>
+    <select id="selectProductId" resultType="com.njht.webyun.product.entity.ProductEntity">
+        SELECT id FROM `htht_cluster_schedule_product` where tree_id = #{treeId}
+    </select>
+    <select id="selectChildCategoryListById" resultType="com.njht.webyun.product.entity.DataCategoryEntity">
+        SELECT id FROM `htht_cluster_schedule_data_category` where parent_id = #{id}
+    </select>
+
+
+</mapper>

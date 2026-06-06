@@ -1,0 +1,10 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.njht.webyun.security.config.TokenConfig,\
+  com.njht.webyun.security.config.UserInterceptor,\
+  com.njht.webyun.security.config.FeignInterceptor,\
+  com.njht.webyun.security.filter.SecurityFilter,\
+  com.njht.webyun.security.filter.TokenUpdateFilter,\
+  com.njht.webyun.security.aspect.PreAuthorizeAspect
+
+
+  

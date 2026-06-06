@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.njht.webyun.system.dao.mapper.SysOrgMapper" >
+
+    <resultMap id="BaseResultMap" type="com.njht.webyun.system.model.sysOrg.SysOrg" >
+        <id column="ORG_ID" property="orgId" jdbcType="INTEGER" />
+        <result column="ORG_CODE" property="orgCode" jdbcType="VARCHAR" />
+        <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+		<result column="PARENT_ID" property="parentId" javaType="int" jdbcType="NUMERIC" />
+		<result column="INHERITED_ID" property="inheritedId" javaType="String" jdbcType="VARCHAR" />
+		<result column="INHERITED_NAME" property="inheritedName" javaType="String" jdbcType="VARCHAR" />
+		<result column="SORT_NUM" property="sortNum" javaType="int" jdbcType="NUMERIC" />
+		<result column="LEVEL_NUM" property="levelNum" javaType="int" jdbcType="NUMERIC" />
+		<result column="ADDRESS" property="address" javaType="String" jdbcType="VARCHAR" />
+		<result column="TEL" property="tel" javaType="String" jdbcType="VARCHAR" />
+		<result column="REMARK" property="remark" javaType="String" jdbcType="VARCHAR" />
+        <result column="CREATED_BY" property="createdBy" jdbcType="INTEGER" />
+		<result column="CREATED_BY_NAME" property="createdByName" javaType="String" jdbcType="VARCHAR" />
+		<result column="CREATED_DATE" property="createdDate" javaType="Date" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATED_DATE" property="lastUpdatedDate" javaType="Date" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATED_BY_NAME" property="lastUpdatedByName" javaType="String" jdbcType="VARCHAR" />
+        <result column="DELETED" property="deleted" jdbcType="INTEGER" />
+
+    </resultMap>
+
+	<resultMap id="orgTreeAttrMap" type="map">
+		<result column="PARENT_ID" property="parentId" javaType="int" jdbcType="NUMERIC" />
+		<result column="INHERITED_ID" property="inheritedId" javaType="String" jdbcType="VARCHAR" />
+		<result column="INHERITED_NAME" property="inheritedName" javaType="String" jdbcType="VARCHAR" />
+		<result column="SORT_NUM" property="sortNum" javaType="int" jdbcType="NUMERIC" />
+		<result column="LEVEL_NUM" property="levelNum" javaType="int" jdbcType="NUMERIC" />
+		<result column="ADDRESS" property="address" javaType="String" jdbcType="VARCHAR" />
+		<result column="TEL" property="tel" javaType="String" jdbcType="VARCHAR" />
+		<result column="REMARK" property="remark" javaType="String" jdbcType="VARCHAR" />
+		<result column="CREATED_DATE" property="createdDate" javaType="Date" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATED_DATE" property="lastUpdatedDate" javaType="Date" jdbcType="TIMESTAMP" />
+		<result column="CREATED_BY_NAME" property="createdByName" javaType="String" jdbcType="VARCHAR" />
+		<result column="LAST_UPDATED_BY_NAME" property="lastUpdatedByName" javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="orgTreeMap" type="map">
+		<id column="ORG_ID" property="id" javaType="int" jdbcType="NUMERIC" />
+		<result column="ORG_NAME" property="orgName" javaType="String" jdbcType="VARCHAR" />
+		<result column="STATE" property="state" javaType="String" jdbcType="VARCHAR" />
+		<result column="ORG_CODE" property="orgCode" javaType="String" jdbcType="VARCHAR" />
+		<association property="attributes" javaType="map" resultMap="orgTreeAttrMap" />
+		<collection property="children" ofType="map" column="ORG_ID" select="selectOrgsByParentId" />
+	</resultMap>
+
+	<resultMap id="departmentTreeMap" type="map">
+		<id column="DEPARTMENT_ID" property="departmentId" javaType="int" jdbcType="NUMERIC" />
+		<result column="DEPARTMENT_NAME" property="departmentName" javaType="String" jdbcType="VARCHAR" />
+		<result column="STATE" property="state" javaType="String" jdbcType="VARCHAR" />
+		<result column="DEPARTMENT_CODE" property="departmentCode" javaType="String" jdbcType="VARCHAR" />
+		<association property="attributes" javaType="map" resultMap="orgTreeAttrMap" />
+		<collection property="children" ofType="map" column="DEPARTMENT_ID" select="selectDepartmentsByParentId" />
+	</resultMap>
+
+	<resultMap id="orgVipTreeMap" type="map">
+	    <id column="org_id" property="orgId" jdbcType="INTEGER" />
+        <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+		<result column="vip_num" property="vipNum" javaType="String" jdbcType="VARCHAR" />
+	    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="deleted" property="deleted" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+	    <collection property="children"  ofType="TreeJson"  column="ORG_ID" select="selectOrgsAndVipByParentId" />
+  	</resultMap>
+
+  	<resultMap id="orgTreeMap4Export" type="com.njht.webyun.system.model.sysOrg.OrgExportModel">
+	    <id column="RowNum" property="rowNum" javaType="int" jdbcType="NUMERIC" />
+	    <id column="ORG_ID" property="orgId" javaType="int" jdbcType="NUMERIC" />
+	    <result column="ORG_CODE" property="orgCode" javaType="String" jdbcType="VARCHAR" />
+	    <result column="ORG_NAME" property="orgName" javaType="String" jdbcType="VARCHAR" />
+	    <result column="P_ORG_CODE" property="parentOrgCode" javaType="String" jdbcType="VARCHAR" />
+	    <result column="ADDRESS" property="address" javaType="String" jdbcType="VARCHAR" />
+	    <result column="TEL" property="tel" javaType="String" jdbcType="VARCHAR" />
+	    <result column="remark" property="remark" javaType="String" jdbcType="VARCHAR" />
+  	</resultMap>
+
+  	<resultMap id="orgMap" type="map">
+	    <id column="ORG_ID" property="orgId" javaType="int" jdbcType="NUMERIC" />
+	    <result column="ORG_CODE" property="orgCode" javaType="String" jdbcType="VARCHAR" />
+	    <result column="ORG_NAME" property="orgName" javaType="String" jdbcType="VARCHAR" />
+	    <result column="PARENT_ID" property="parentId" javaType="int" jdbcType="NUMERIC" />
+	    <result column="SORT_NUM" property="sortNum" javaType="int" jdbcType="NUMERIC" />
+	    <result column="LEVEL_NUM" property="levelNum" javaType="int" jdbcType="NUMERIC" />
+	    <result column="ADDRESS" property="address" javaType="String" jdbcType="VARCHAR" />
+	    <result column="TEL" property="tel" javaType="String" jdbcType="VARCHAR" />
+	    <result column="INHERITED_ID" property="inheritedId" javaType="String" jdbcType="VARCHAR" />
+	    <result column="INHERITED_NAME" property="inheritedName" javaType="String" jdbcType="VARCHAR" />
+
+  	</resultMap>
+
+    <sql id="Base_Column_List" >
+        org_id, org_code, org_name, parent_id, inherited_name, inherited_id, sort_num, level_num,
+        tel, address, deleted, created_by, created_date, last_updated_by, last_updated_date,
+        remark
+    </sql>
+
+
+	<select id="selectOrgsForTree" parameterType="int" resultMap="orgTreeMap">
+		SELECT o.ORG_ID, o.ORG_CODE, o.ORG_NAME, o.PARENT_ID,o.INHERITED_ID,o.INHERITED_NAME,o.SORT_NUM, o.LEVEL_NUM,
+		(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_org where DELETED = 0 AND parent_id = o.org_id) as state,
+		o.ADDRESS,o.TEL,o.REMARK,o.CREATED_DATE, o.LAST_UPDATED_DATE, GET_REAL_NAME(o.CREATED_BY) AS CREATED_BY_NAME,
+		 GET_REAL_NAME(o.LAST_UPDATED_BY) AS LAST_UPDATED_BY_NAME FROM SYS_ORG o WHERE o.DELETED = 0 AND ORG_ID = #{orgId,jdbcType=NUMERIC}
+    </select>
+
+	<select id="selectDepartmentsForTree" parameterType="int" resultMap="departmentTreeMap">
+		SELECT o.DEPARTMENT_ID, o.DEPARTMENT_CODE, o.DEPARTMENT_NAME, o.PARENT_ID,o.INHERITED_ID,o.INHERITED_NAME,o.SORT_NUM, o.LEVEL_NUM,
+		(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_department where DELETED = 0 AND parent_id = o.department_id) as state,
+		o.ADDRESS,o.TEL,o.REMARK,o.CREATED_DATE, o.LAST_UPDATED_DATE, GET_REAL_NAME(o.CREATED_BY) AS CREATED_BY_NAME,
+		 GET_REAL_NAME(o.LAST_UPDATED_BY) AS LAST_UPDATED_BY_NAME FROM SYS_DEPARTMENT o WHERE o.DELETED = 0 AND DEPARTMENT_ID = 1
+    </select>
+
+
+
+	<insert id="insertOrg" parameterType="com.njht.webyun.system.model.sysOrg.SysOrg" keyProperty="orgId" useGeneratedKeys="true">
+		INSERT INTO sys_org
+		    (ORG_NAME, PARENT_ID, INHERITED_ID, INHERITED_NAME, SORT_NUM, LEVEL_NUM, ADDRESS,TEL, REMARK, DELETED,
+		    CREATED_BY, CREATED_DATE,LAST_UPDATED_BY, LAST_UPDATED_DATE,ORG_CODE)
+		VALUES
+		    (#{orgName,jdbcType=VARCHAR},#{parentId,jdbcType=NUMERIC},'${parentInheritedId}/${orgId}',
+		    #{inheritedName,jdbcType=VARCHAR},#{sortNum,jdbcType=NUMERIC},#{levelNum,jdbcType=NUMERIC},#{address,jdbcType=VARCHAR},
+		    #{tel,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{deleted,jdbcType=NUMERIC}, #{createdBy,jdbcType=NUMERIC},
+		    #{createdDate,jdbcType=TIMESTAMP},#{lastUpdatedBy,jdbcType=NUMERIC},#{lastUpdatedDate,jdbcType=TIMESTAMP},
+		    #{orgCode,jdbcType=VARCHAR})
+	 </insert>
+
+	<update id="updateInheritedId" parameterType="com.njht.webyun.system.model.sysOrg.SysOrg">
+		UPDATE sys_org
+			SET
+				INHERITED_ID = '${parentInheritedId}/${orgId}'
+			WHERE ORG_ID =	#{orgId,jdbcType=NUMERIC}
+	</update>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.njht.webyun.system.model.sysOrg.SysOrg" >
+		update sys_org
+		<set >
+			<if test="orgCode != null" >
+				org_code = #{orgCode,jdbcType=VARCHAR},
+			</if>
+			<if test="orgName != null" >
+				org_name = #{orgName,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null" >
+				parent_id = #{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="inheritedName != null" >
+				inherited_name = #{inheritedName,jdbcType=VARCHAR},
+			</if>
+			<if test="inheritedId != null" >
+				inherited_id = #{inheritedId,jdbcType=VARCHAR},
+			</if>
+			<if test="sortNum != null" >
+				sort_num = #{sortNum,jdbcType=INTEGER},
+			</if>
+			<if test="levelNum != null" >
+				level_num = #{levelNum,jdbcType=INTEGER},
+			</if>
+			<if test="tel != null" >
+				tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null" >
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="deleted != null" >
+				deleted = #{deleted,jdbcType=INTEGER},
+			</if>
+			<if test="createdBy != null" >
+				created_by = #{createdBy,jdbcType=INTEGER},
+			</if>
+			<if test="createdDate != null" >
+				created_date = #{createdDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedBy != null" >
+				last_updated_by = #{lastUpdatedBy,jdbcType=INTEGER},
+			</if>
+			<if test="lastUpdatedDate != null" >
+				last_updated_date = #{lastUpdatedDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="remark != null" >
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+
+		</set>
+		where org_id = #{orgId,jdbcType=INTEGER}
+	</update>
+
+	<delete id="deleteOrg" parameterType="map">
+    DELETE FROM SYS_ORG WHERE EXISTS (select 1 from (select  GET_ORG_CHILD(#{orgId,jdbcType=NUMERIC}) orgs) t  where FIND_IN_SET(ORG_ID,orgs ))
+  </delete>
+
+
+	<select id="selectOrgsForTree4Export" parameterType="int" resultMap="orgTreeMap4Export">
+	    SELECT (@i:=@i+1) as RowNum,o.ORG_ID, o.ORG_CODE, o.ORG_NAME, p.ORG_CODE P_ORG_CODE,o.ADDRESS,o.TEL,o.remark
+	    FROM (Select @i:=0) B,sys_org o
+	    left join sys_org p on (o.PARENT_ID = p.ORG_ID)
+	    WHERE o.DELETED = 0 AND FIND_IN_SET(#{orgId,jdbcType=NUMERIC},REPLACE(o.INHERITED_ID,"/",","))
+  	</select>
+
+
+
+	<select id="selectOrgsByParentId" parameterType="int" resultMap="orgTreeMap">
+		SELECT o.ORG_ID, o.ORG_CODE, o.ORG_NAME,o.PARENT_ID,o.INHERITED_ID,o.INHERITED_NAME,o.SORT_NUM, o.LEVEL_NUM,
+			(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_org where DELETED = 0 AND parent_id = o.org_id) as state,
+			o.ADDRESS,o.TEL, o.REMARK, o.CREATED_DATE, o.LAST_UPDATED_DATE, GET_REAL_NAME(o.CREATED_BY) AS CREATED_BY_NAME,
+			GET_REAL_NAME(o.LAST_UPDATED_BY) AS LAST_UPDATED_BY_NAME
+		FROM SYS_ORG o WHERE o.DELETED = 0 AND PARENT_ID = #{parentId,jdbcType=NUMERIC} ORDER BY SORT_NUM ASC
+  </select>
+
+	<select id="selectDepartmentsByParentId" parameterType="int" resultMap="departmentTreeMap">
+		SELECT o.DEPARTMENT_ID, o.DEPARTMENT_CODE, o.DEPARTMENT_NAME,o.PARENT_ID,o.INHERITED_ID,o.INHERITED_NAME,o.SORT_NUM, o.LEVEL_NUM,
+			(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_department where DELETED = 0 AND parent_id = o.department_id) as state,
+			o.ADDRESS,o.TEL, o.REMARK, o.CREATED_DATE, o.LAST_UPDATED_DATE, GET_REAL_NAME(o.CREATED_BY) AS CREATED_BY_NAME,
+			GET_REAL_NAME(o.LAST_UPDATED_BY) AS LAST_UPDATED_BY_NAME
+		FROM SYS_DEPARTMENT o WHERE o.DELETED = 0 AND PARENT_ID = #{parentId,jdbcType=NUMERIC} ORDER BY SORT_NUM ASC
+  </select>
+
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from SYS_ORG
+        where ORG_ID = #{orgId,jdbcType=INTEGER}
+    </select>
+
+
+
+	<update id="updateOrg" parameterType="map">
+    UPDATE SYS_ORG SET ORG_NAME = #{orgName,jdbcType=VARCHAR},
+    INHERITED_NAME = #{inheritedName,jdbcType=VARCHAR},
+    SORT_NUM = #{sortNum,jdbcType=NUMERIC},
+    ORG_CODE = #{orgCode,jdbcType=VARCHAR},
+    ADDRESS = #{address,jdbcType=VARCHAR},
+    TEL = #{tel,jdbcType=VARCHAR},
+    REMARK = #{remark,jdbcType=NUMERIC},
+     LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+     LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+    WHERE ORG_ID = #{orgId,jdbcType=NUMERIC}
+  </update>
+
+
+    	<!--  验证同一机构下机构名称的唯一性-->
+      <select id="selectCountByOrgNameAndParentId" parameterType="com.njht.webyun.system.model.sysOrg.SysOrg" resultType="int">
+	    SELECT COUNT(1) FROM sys_org where ORG_NAME = #{orgName,jdbcType=VARCHAR} AND PARENT_ID = #{parentId,jdbcType=NUMERIC} AND DELETED = 0
+	    <if test="orgId > 0">
+	      AND ORG_ID != #{orgId,jdbcType=NUMERIC}
+	    </if>
+	  </select>
+
+	<select id="selectCountByOrgCode" parameterType="com.njht.webyun.system.model.sysOrg.SysOrg" resultType="int">
+		SELECT COUNT(1) FROM sys_org where ORG_CODE = #{orgCode,jdbcType=VARCHAR} and DELETED = 0
+		<if test="orgId > 0">
+			AND ORG_ID != #{orgId,jdbcType=NUMERIC}
+		</if>
+	</select>
+
+
+
+
+
+	<update id="updateOrgParent" parameterType="map">
+		UPDATE sys_org
+			SET
+			 	LEVEL_NUM = #{levelNum,jdbcType=NUMERIC},
+				PARENT_ID = #{parentId,jdbcType=NUMERIC},
+				INHERITED_ID = #{inheritedId,jdbcType=VARCHAR},
+				INHERITED_NAME =	#{inheritedName,jdbcType=VARCHAR},
+				LAST_UPDATED_BY =#{lastUpdatedBy,jdbcType=NUMERIC},
+				LAST_UPDATED_DATE =#{lastUpdatedDate,jdbcType=TIMESTAMP}
+			WHERE ORG_ID =	#{orgId,jdbcType=NUMERIC}
+	</update>
+
+
+
+	<!-- 拖拽机构树时 重新排序-->
+	  <update id="updateOrgSortNum" parameterType="map">
+	    UPDATE sys_org SET SORT_NUM = #{sortNum,jdbcType=NUMERIC}
+	    	WHERE ORG_ID = #{orgId,jdbcType=NUMERIC}
+	  </update>
+
+    <update id="updateOrgLevel" parameterType="map">
+	    UPDATE sys_org SET
+	        LEVEL_NUM = #{levelNum,jdbcType=NUMERIC},
+	        INHERITED_ID = #{inheritedId,jdbcType=VARCHAR},
+	        INHERITED_NAME = #{inheritedName,jdbcType=VARCHAR},
+	         LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+	          LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+	    WHERE ORG_ID = #{orgId,jdbcType=NUMERIC}
+	  </update>
+
+   	 <select id="selectRootOrg" parameterType="java.lang.String" resultMap="orgMap">
+	    SELECT o.ORG_ID, o.ORG_CODE, o.ORG_NAME,o.PARENT_ID,o.INHERITED_ID,o.INHERITED_NAME,o.SORT_NUM,
+	    o.LEVEL_NUM,o.ADDRESS,o.TEL, o.REMARK FROM sys_org o WHERE o.DELETED = 0 AND o.PARENT_ID = 0
+ 	 </select>
+
+   	<select id="selectOrgByOrgCode" parameterType="java.lang.String" resultMap="orgMap">
+	    SELECT o.ORG_ID, o.ORG_CODE, o.ORG_NAME,o.PARENT_ID,o.INHERITED_ID,
+	    o.INHERITED_NAME,o.SORT_NUM, o.LEVEL_NUM,o.ADDRESS,o.TEL,o.REMARK
+	    FROM sys_org o WHERE o.DELETED = 0 AND ORG_CODE = #{orgCode,jdbcType=VARCHAR}
+  	</select>
+
+  	<select id="selectMaxSortNumByParentId" parameterType="int" resultType="Integer">
+	    SELECT max(o.SORT_NUM) FROM sys_org o WHERE o.DELETED = 0 AND PARENT_ID = #{parentId,jdbcType=NUMERIC}
+  	</select>
+
+  	<update id="updateOrg4Import" parameterType="map">
+	    UPDATE sys_org SET PARENT_ID = #{parentId,jdbcType=NUMERIC},INHERITED_ID = #{inheritedId,jdbcType=VARCHAR},
+	    INHERITED_NAME = #{inheritedName,jdbcType=VARCHAR},ORG_NAME = #{orgName,jdbcType=VARCHAR},
+	    SORT_NUM = #{sortNum,jdbcType=NUMERIC},ORG_CODE = #{orgCode,jdbcType=VARCHAR},ADDRESS = #{address,jdbcType=VARCHAR},
+	    TEL = #{tel,jdbcType=VARCHAR},
+	    REMARK = #{remark,jdbcType=NUMERIC}, LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC}, LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+	    WHERE ORG_ID = #{orgId,jdbcType=NUMERIC}
+	</update>
+
+	<select id="getAllHallOrgs"  resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sys_org
+  	</select>
+
+	<select id="selectOrgsAndVipForTree" parameterType="int" resultMap="orgVipTreeMap">
+		SELECT o.ORG_ID, o.ORG_CODE, o.ORG_NAME, o.ADDRESS,o.TEL,COUNT(c.`CUST_NAME`) vip_num
+		 FROM SYS_ORG o left join crm_cust_info c on o.`ORG_ID`=c.`ORG_ID` and  o.DELETED = 0 WHERE o.ORG_ID = #{orgId,jdbcType=NUMERIC}
+		 GROUP BY o.ORG_ID, o.ORG_CODE, o.ORG_NAME,o.ADDRESS,o.TEL
+	</select>
+
+	<!-- 增加vip的人数 -->
+	<select id="selectOrgsAndVipByParentId" parameterType="int" resultMap="orgVipTreeMap">
+		SELECT o.ORG_ID, o.ORG_CODE, o.ORG_NAME,o.ADDRESS,o.TEL,COUNT(c.`CUST_NAME`) vip_num
+		 FROM SYS_ORG o left join crm_cust_info c on o.`ORG_ID`=c.`ORG_ID` and  o.DELETED = 0 WHERE o.PARENT_ID = #{parentId,jdbcType=NUMERIC}
+		 GROUP BY o.ORG_ID, o.ORG_CODE, o.ORG_NAME,o.ADDRESS,o.TEL
+	</select>
+
+	<select id="getChildOrgByOrgId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT
+		<include refid="Base_Column_List" />
+		FROM SYS_ORG WHERE  FIND_IN_SET(ORG_ID, GET_ORG_CHILD(#{orgId,jdbcType=NUMERIC}))
+  	</select>
+
+	<select id="selectOrgIdAndName"  resultMap="BaseResultMap">
+		SELECT org_id,org_name
+		FROM SYS_ORG so WHERE so.deleted = 0 and so.PARENT_ID &lt;&gt; 0
+	</select>
+
+
+</mapper>

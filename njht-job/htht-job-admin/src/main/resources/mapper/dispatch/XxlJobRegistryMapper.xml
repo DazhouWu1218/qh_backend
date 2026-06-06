@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.htht.job.admin.dispatch.dao.XxlJobRegistryDao">
+	
+	<resultMap id="XxlJobRegistry" type="com.njht.entity.xxljob.XxlJobRegistry" >
+		<result column="id" property="id" />
+	    <result column="registry_group" property="registryGroup" />
+	    <result column="registry_key" property="registryKey" />
+	    <result column="registry_value" property="registryValue" />
+		<result column="update_time" property="updateTime" />
+		<result column="total_physical_memory_size" property="totalPhysicalMemorySize" />
+		<result column="free_physical_memory_size" property="freePhysicalMemorySize" />
+		<result column="system_cpu_load" property="systemCpuLoad" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.registry_group,
+		t.registry_key,
+		t.registry_value,
+		t.update_time,
+		t.total_physical_memory_size,
+		t.free_physical_memory_size,
+		t.system_cpu_load
+	</sql>
+
+	<select id="findDead" parameterType="java.util.HashMap" resultType="java.lang.Integer" >
+		SELECT t.id
+		FROM xxl_job_registry AS t
+		WHERE t.update_time <![CDATA[ < ]]> DATE_ADD(#{nowTime},INTERVAL -#{timeout} SECOND)
+	</select>
+	
+	<delete id="removeDead" parameterType="java.lang.Integer" >
+		DELETE FROM xxl_job_registry
+		WHERE id in
+		<foreach collection="ids" item="item" open="(" close=")" separator="," >
+			#{item}
+		</foreach>
+	</delete>
+
+	<select id="findAll" parameterType="java.util.HashMap" resultMap="XxlJobRegistry">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_job_registry AS t
+		WHERE t.update_time <![CDATA[ > ]]> DATE_ADD(#{nowTime},INTERVAL -#{timeout} SECOND)
+	</select>
+	<select id="findRegistryValueList" resultType="java.lang.String">
+		SELECT registry_value
+		FROM xxl_job_registry AS t
+		WHERE t.registry_key = #{appName}
+		and t.update_time <![CDATA[ > ]]> DATE_ADD(#{nowTime},INTERVAL -#{timeout} SECOND)
+	</select>
+
+	<update id="registryUpdate" >
+		UPDATE
+		xxl_job_registry
+		<set>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			<if test="totalPhysicalMemorySize != null">
+				total_physical_memory_size = #{totalPhysicalMemorySize},
+			</if>
+			<if test="freePhysicalMemorySize != null">
+				free_physical_memory_size = #{freePhysicalMemorySize},
+			</if>
+			<if test="systemCpuLoad != null">
+				system_cpu_load = #{systemCpuLoad}
+			</if>
+		</set>
+        WHERE `registry_group` = #{registryGroup}
+          AND `registry_key` = #{registryKey}
+          AND `registry_value` = #{registryValue}
+    </update>
+
+    <insert id="registrySave" >
+        INSERT INTO
+			xxl_job_registry (registry_group,registry_key, registry_value, update_time, total_physical_memory_size, free_physical_memory_size, system_cpu_load)
+		VALUES
+			(#{registryGroup},#{registryKey}, #{registryValue}, #{updateTime}, #{totalPhysicalMemorySize}, #{freePhysicalMemorySize}, #{systemCpuLoad})
+    </insert>
+
+	<delete id="registryDelete" >
+		DELETE FROM xxl_job_registry
+		WHERE registry_group = #{registryGroup}
+			AND registry_key = #{registryKey}
+			AND registry_value = #{registryValue}
+	</delete>
+
+</mapper>

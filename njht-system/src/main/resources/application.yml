@@ -1,0 +1,100 @@
+#数据库连接相关
+### 数据库连接相关
+spring:
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+      # redis 默认存储 10个小时
+      time-to-live: 36000000
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+#  datasource:
+#    dynamic:
+#      primary: mysql
+#      strict: false
+#      datasource:
+#        mysql:
+#          url: jdbc:mysql://10.181.22.247:3308/njht_webyun_pro?serverTimezone=GMT%2B8&characterEncoding=utf-8
+#          username: root
+#          password: Modis@6151653
+#          type: com.alibaba.druid.pool.DruidDataSource
+#          driver-class-name: com.mysql.cj.jdbc.Driver
+#        mysql1:
+#          url: jdbc:mysql://10.181.22.247:3308/qh_shuguan?serverTimezone=GMT%2B8&characterEncoding=utf-8
+#          username: root
+#          password: Modis@6151653
+#          type: com.alibaba.druid.pool.DruidDataSource
+#          driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        minimum-idle: 10
+        maximum-pool-size: 30
+        auto-commit: true
+        idle-timeout: 30000
+        pool-name: HikariCP
+        max-lifetime: 900000
+        connection-timeout: 60000
+        connection-test-query: SELECT 1
+      active: dev
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 512MB  # 允许上传最大文件大小
+      max-request-size: 1024MB # 设置最大的请求文件的大小
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml, classpath:mapper/**/*.xml
+  configuration:
+    call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  excepted: com.njht.webyun.system.dao.mapper.LogMapper
+
+
+default:
+  password:
+    value: htht@123
+    error:
+      lock: true
+      times: 5
+    change:
+      recentTimes: 2 #新密码不能与最近几次使用的密码相同
+      recentTimesisEnable: true
+      force: false #是否强制修改密码
+      unit: 2 #	修改单位周期：0:year 1:month 2:day 3:hour 4:minute
+      interval: 100
+  validate:
+    code: false
+  heartbeat:
+    interval: 60 #单位：秒
+  behaviorlog:
+    enabled: true
+  decryptParam: true #参数是否加密传递
+  mips:
+    enable: false
+    chooseLED: false #led加载模块 (true代表盒子转发，false代表jar包/动态库发送）
+
+swagger:
+  enable: true
+
+host:
+  connect-timeout-millis:60000
+  socket-timeout-millis:60000
+
+
+hystrix:
+  command:
+    default:
+      excution:
+        isolation:
+          thread:
+            timeOutInMilliseconds: 60000
+          strategy: SEMAPHORE
+#  用于解决 Feign 调用 session失效的问题
+zuul:
+  sensitive-headers:
+
+image:
+  path1: /home/htht/data
+  path2: /HTHT/uus/avatar

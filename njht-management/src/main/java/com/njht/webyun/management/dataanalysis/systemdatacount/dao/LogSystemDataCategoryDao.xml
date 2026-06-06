@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.management.dataanalysis.systemdatacount.dao.LogSystemDataCategoryDao">
+
+    <select id="getIdByDataType" resultType="long">
+        select id
+        from htht_uus_log_sys_data_category
+        where data_type = #{dataType}
+    </select>
+
+    <select id="getIdByDataName" resultType="long">
+        select id
+        from htht_uus_log_sys_data_category
+        where data_name = #{dataName}
+    </select>
+
+    <select id="selectByAssertDownload"
+            resultType="com.njht.webyun.management.dataanalysis.systemdatacount.entity.LogSystemDataCategoryEntity">
+        select *
+        from htht_uus_log_sys_data_category
+        where assert_download = #{assertDownload} and status =1
+        order by data_type_sort asc, data_name_sort asc
+    </select>
+
+
+</mapper>

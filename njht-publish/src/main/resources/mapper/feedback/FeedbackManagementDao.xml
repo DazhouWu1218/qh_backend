@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.publish.feedback.dao.FeedbackManagementDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.webyun.publish.feedback.dto.FeedBackDto" id="feedbackManagementMap">
+        <result property="feedbackId" column="feedback_id"/>
+        <result property="feedbackContent" column="feedback_content"/>
+        <result property="parentsId" column="parents_id"/>
+        <result property="replyStatus" column="reply_status"/>
+        <result property="createdDate" column="created_date"/>
+        <collection property="imgUrlList" ofType="TreeJson" select="selectImgUrlListById" column="feedback_id"></collection>
+    </resultMap>
+    <select id="selectFeedBackList" resultMap="feedbackManagementMap" >
+        SELECT a.created_date,a.feedback_content,a.feedback_id,a.parents_id,
+        b.REAL_NAME as toUserName,c.REAL_NAME as USERNAME,a.feedback_type as type
+        FROM `publish_feedback_management` a
+        LEFT JOIN sys_user b
+        ON a.to_user_id = b.USER_ID
+        LEFT JOIN sys_user c
+        ON a.CREATED_BY = c.USER_ID
+        where
+        a.deleted = 0 and
+        a.feedback_id in
+        <foreach collection="idList" index="index" item="id" separator="," open="(" close=")">
+             #{id}
+        </foreach>
+        or a.parents_id in
+        <foreach collection="idList" index="index" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        order BY a.created_date desc
+    </select>
+    <select id="selectImgUrlListById" resultType="java.lang.String">
+        SELECT imgurl FROM `publish_feedback_imgurl` where feedback_id = #{id}
+    </select>
+    <select id="selectFeedBackListByQueryInfo" resultType="com.njht.webyun.publish.feedback.dto.FeedBackDto">
+        SELECT
+            a.created_date,a.feedback_content,a.feedback_id,a.parents_id,a.reply_status,
+            b.REAL_NAME as toUserName,b.USER_ID as to_user_id,b.USER_PIC_DATA as to_user_img_url,
+            c.REAL_NAME as USERNAME,c.USER_ID as createdBy,c.USER_PIC_DATA as user_img_url,
+            a.feedback_type
+        FROM
+            `publish_feedback_management` a
+        LEFT JOIN
+            sys_user b
+        ON
+            a.to_user_id = b.USER_ID
+        LEFT JOIN
+            sys_user c
+        ON
+            a.CREATED_BY = c.USER_ID
+        WHERE a.deleted = 0
+        <if test="replyStatus == 0 || replyStatus == 1">
+            AND a.reply_status = #{replyStatus}
+        </if>
+        <if test="userId!=null">
+            AND a.created_by = #{userId}
+        </if>
+        <if test="parentsId!=null">
+            AND a.parents_id = #{parentsId}
+        </if>
+        <if test="startTime!=null and startTime!='' ">
+            AND a.last_updated_date &gt;= #{startTime}
+        </if>
+        <if test="endTime!=null and endTime!='' ">
+            AND a.last_updated_date &lt;= #{endTime}
+        </if>
+        <if test="queryInfo!=null and queryInfo!='' ">
+            AND (a.feedback_content like concat('%', #{queryInfo}, '%')
+            or a.feedback_type like  concat('%', #{queryInfo}, '%')
+            or c.REAL_NAME like concat('%', #{queryInfo}, '%'))
+        </if>
+        order by a.last_updated_date desc
+    </select>
+
+
+</mapper>

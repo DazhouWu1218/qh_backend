@@ -1,0 +1,27 @@
+1、系统模块（system）集成在zuul中
+
+2、系统模块提供了国际化的切换：
+    2.1 前端请求头中需要有参数"LANG" 中文传“zh_CN” 英文传“en_US”
+    2.2 resources\locale 中 framework_zh.properties 和 framework_en.properties 分别记录中英文的配置信息
+    2.3 编写常量KEY，对应properties配置。常量类路径：com.aoto.system.constant
+
+3、系统安全控制采用 SpringSecurity + JWT
+
+4、日志文件的记录：前端调用的API请求和响应日志有统一记录：
+    4.1 zuul上的接口日志是在ApiLogAspect.java中记录
+    4.2 微服务上的接口日志是在LogRecodePostFilter.java中记录
+
+5、系统行为日志表【sys_behavior_log】的记录：
+    5.1 记录后台系统登陆用户的菜单点击，增删改查操作的记录
+    5.2 前端请求头中需要有参数"route" 传值为当前页面的路由，如菜单管理页面的操作就传“/system/menu”，后台根据路由获取页面的中文名层级“权限管理/菜单管理”
+    5.3 页面级菜单需要添加页面中的功能，功能要设置页面对应的接口URL，角色要设置对应的权限
+    5.4 功能的URL表【sys_url】 的字段值需要完善：
+        5.4.1 URL_PATTERN 正则匹配接口地址、 HTTP_METHOD匹配方法类型
+        5.4.2 ACTION_CODE和ARGS_CODE匹配framework_zh.properties中对应的操作日志模板的key
+
+6、 系统数据表【sys_data_log】的记录：
+    6.1 记录mybatis中涉及到的update操作记录，update指：insert、update、delete
+    6.2 insert 和 delete 操作时，表中的字段TABLE_NAME记录 涉及的表名，KEY_VALUE记录涉及的表的主键ID值；update 操作时，表中会另外记录字段修改前的值以及修改后的值
+    6.3 mybatis拦截器：com.aoto.system.mybatis.UpdateInterceptor.java
+
+7、application.yml 和 application.properties 中的配置通过配置类引入，调用时注入配置类获取配置的值信息

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.job.admin.param.dao.TaskParametersDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.htht.job.core.biz.model.TaskParametersEntity" id="taskParametersMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="dynamicParameter" column="dynamic_parameter"/>
+        <result property="fixedParameter" column="fixed_parameter"/>
+        <result property="jobId" column="job_id"/>
+        <result property="modelParameters" column="model_parameters"/>
+        <result property="productId" column="product_id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		t.id,
+		t.create_time,
+		t.update_time,
+		t.version,
+		t.dynamic_parameter,
+		t.fixed_parameter,
+		t.job_id,
+		t.model_parameters,
+		t.product_id
+	</sql>
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+			htht_cluster_schedule_task_parameters (id,create_time, update_time, version, dynamic_parameter, fixed_parameter, job_id, model_parameters, product_id,cycle,satellite,sensor)
+		VALUES
+			(#{id},now(),now(), 0, #{dynamicParameter}, #{fixedParameter}, #{jobId}, #{modelParameters}, #{productId},#{cycle},#{satellite},#{sensor})
+	</insert>
+    <!-- 按ID删除 -->
+    <delete id="deleteByJobId">
+		DELETE FROM
+			htht_cluster_schedule_task_parameters
+		where job_id = #{jobId}
+	</delete>
+    <select id="loadByJobId" resultMap="taskParametersMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM
+            `htht_cluster_schedule_task_parameters` t
+        where job_id = #{jobId}
+    </select>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE
+        htht_cluster_schedule_task_parameters
+        <set>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="version != null">
+                version = #{version},
+            </if>
+            <if test="dynamicParameter != null and dynamicParameter != ''">
+                dynamic_parameter = #{dynamicParameter},
+            </if>
+            <if test="fixedParameter != null and fixedParameter != ''">
+                fixed_parameter = #{fixedParameter},
+            </if>
+            <if test="jobId != null">
+                job_id = #{jobId},
+            </if>
+            <if test="modelParameters != null and modelParameters !=''">
+                model_parameters = #{modelParameters},
+            </if>
+            <if test="productId != null">
+                product_id = #{productId},
+            </if>
+            <if test="cycle != null">
+                cycle = #{cycle},
+            </if>
+            <if test="satellite != null">
+                satellite = #{satellite},
+            </if>
+            <if test="sensor != null">
+                sensor = #{sensor}
+            </if>
+        </set>
+        WHERE
+        job_id = #{jobId}
+    </update>
+
+
+</mapper>

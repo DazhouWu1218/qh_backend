@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.executor.fileStatistic.dao.DataBaseInfoDao">
+
+    <insert id="insertAll">
+        INSERT INTO `htht_cluster_schedule_data_base_info`
+        (`id`, `create_time`, `update_time`, `version`, `name`,  `cycle`,  `sum_num`, `identify`, `correction_time`)
+        VALUES
+        <foreach collection="dataBaseInfoEntityList" item="item" separator=",">
+            (#{item.id}, now(), now(), #{item.version}, #{item.name}, #{item.cycle}, #{item.sumNum}, #{item.identify},#{item.correctionTime})
+        </foreach>
+    </insert>
+
+</mapper>

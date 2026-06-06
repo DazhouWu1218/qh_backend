@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.njht.webyun.system.dao.mapper.SysUrlMapper" >
+
+    <resultMap id="BaseResultMap" type="com.njht.webyun.system.model.sysUrl.SysUrl" >
+        <id column="URL_ID" property="urlId" javaType="int" jdbcType="NUMERIC" />
+        <id column="FUN_ID" property="funId" javaType="int" jdbcType="NUMERIC" />
+        <result column="URL_NAME" property="urlName" javaType="String" jdbcType="VARCHAR" />
+        <result column="URL_NAME_EN" property="urlNameEn" javaType="String" jdbcType="VARCHAR" />
+        <result column="FUN_NAME" property="funName" javaType="String" jdbcType="VARCHAR" />
+        <result column="URL_PATTERN" property="urlPattern" javaType="String" jdbcType="VARCHAR" />
+        <result column="HTTP_METHOD" property="httpMethod" javaType="String" jdbcType="VARCHAR" />
+        <result column="ACTION_CODE" property="actionCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="ARGS_CODE" property="argsCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="LOGGED_DATA_CHANGED" property="loggedDataChanged" javaType="INTEGER" jdbcType="NUMERIC" />
+    </resultMap>
+
+    <resultMap id="selectUrlsAndRoleMap" type="com.njht.webyun.system.model.sysUrl.SysUrl" >
+        <id column="URL_ID" property="urlId" javaType="int" jdbcType="NUMERIC" />
+        <result column="URL_NAME" property="urlName" javaType="String" jdbcType="VARCHAR" />
+        <result column="URL_NAME_EN" property="urlNameEn" javaType="String" jdbcType="VARCHAR" />
+        <result column="URL_PATTERN" property="urlPattern" javaType="String" jdbcType="VARCHAR" />
+        <result column="HTTP_METHOD" property="httpMethod" javaType="String" jdbcType="VARCHAR" />
+        <result column="ACTION_CODE" property="actionCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="ARGS_CODE" property="argsCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="LOGGED_DATA_CHANGED" property="loggedDataChanged" javaType="INTEGER" jdbcType="NUMERIC" />
+
+        <collection property="roles" ofType="com.njht.webyun.system.model.sysRole.SysRole">
+            <id column="role_id" property="roleId" jdbcType="INTEGER" />
+            <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+        </collection>
+    </resultMap>
+    <resultMap type="map" id="selectUrlsByMethodMap">
+        <id column="ROLE_ID" property="roleId" javaType="int" jdbcType="NUMERIC" />
+        <id column="URL_ID" property="urlId" javaType="int" jdbcType="NUMERIC" />
+        <result column="URL_NAME" property="urlName" javaType="String" jdbcType="VARCHAR" />
+        <result column="URL_NAME_EN" property="urlEnName" javaType="String" jdbcType="VARCHAR" />
+        <result column="URL_PATTERN" property="urlPattern" javaType="String" jdbcType="VARCHAR" />
+        <result column="HTTP_METHOD" property="httpMethod" javaType="String" jdbcType="VARCHAR" />
+        <result column="ACTION_CODE" property="actionCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="ARGS_CODE" property="argsCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="LOGGED_DATA_CHANGED" property="loggedDataChanged" javaType="boolean" jdbcType="NUMERIC" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    URL_ID, URL_NAME, URL_PATTERN, HTTP_METHOD, ACTION_CODE, ARGS_CODE, LOGGED_DATA_CHANGED,
+    CREATED_BY, CREATED_DATE, LAST_UPDATED_BY, LAST_UPDATED_DATE
+  </sql>
+
+    <!-- 分页查询list-->
+    <select id="getUrl" resultMap="BaseResultMap" parameterType="com.njht.webyun.system.model.sysUrl.SysUrlQuery">
+        SELECT URL_ID,URL_NAME,URL_NAME_EN,URL_PATTERN,HTTP_METHOD,ACTION_CODE,ARGS_CODE,LOGGED_DATA_CHANGED,
+        GET_REAL_NAME(LAST_UPDATED_BY) AS LAST_UPDATED_BY_NAME,LAST_UPDATED_DATE
+        FROM SYS_URL WHERE 1=1
+        <if test="urlName != null and urlName != ''">
+            AND INSTR(URL_NAME, #{urlName,jdbcType=VARCHAR}) > 0 OR INSTR(URL_NAME_EN,#{urlName,jdbcType=VARCHAR})
+        </if>
+        ORDER BY LAST_UPDATED_DATE DESC, URL_ID DESC
+    </select>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from sys_url
+        where url_id = #{urlId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.util.List" >
+        delete from sys_url
+        where url_id in
+        (
+            <foreach collection="list" item="urlId" index="index" separator=",">
+                #{urlId,jdbcType=INTEGER}
+            </foreach>
+        )
+    </delete>
+
+
+    <insert id="insertUrl" parameterType="com.njht.webyun.system.model.sysUrl.SysUrl" >
+        insert into sys_url (url_name,URL_NAME_EN, url_pattern,
+            http_method, action_code, args_code,
+            logged_data_changed, created_by, created_date,
+            last_updated_by, last_updated_date)
+        values (#{urlName,jdbcType=VARCHAR},#{urlNameEn,jdbcType=VARCHAR}, #{urlPattern,jdbcType=VARCHAR},
+            #{httpMethod,jdbcType=VARCHAR}, #{actionCode,jdbcType=VARCHAR}, #{argsCode,jdbcType=VARCHAR},
+            #{loggedDataChanged,jdbcType=INTEGER}, #{createdBy,jdbcType=INTEGER}, #{createdDate,jdbcType=TIMESTAMP},
+            #{lastUpdatedBy,jdbcType=INTEGER}, #{lastUpdatedDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.njht.webyun.system.model.sysUrl.SysUrl" >
+        insert into sys_url
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="urlId != null" >
+                url_id,
+            </if>
+            <if test="urlName != null" >
+                url_name,
+            </if>
+            <if test="urlNameEn != null" >
+                url_name_en,
+            </if>
+            <if test="urlPattern != null" >
+                url_pattern,
+            </if>
+            <if test="httpMethod != null" >
+                http_method,
+            </if>
+            <if test="actionCode != null" >
+                action_code,
+            </if>
+            <if test="argsCode != null" >
+                args_code,
+            </if>
+            <if test="loggedDataChanged != null" >
+                logged_data_changed,
+            </if>
+            <if test="createdBy != null" >
+                created_by,
+            </if>
+            <if test="createdDate != null" >
+                created_date,
+            </if>
+            <if test="lastUpdatedBy != null" >
+                last_updated_by,
+            </if>
+            <if test="lastUpdatedDate != null" >
+                last_updated_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="urlId != null" >
+                #{urlId,jdbcType=INTEGER},
+            </if>
+            <if test="urlName != null" >
+                #{urlName,jdbcType=VARCHAR},
+            </if>
+            <if test="urlNameEn != null" >
+                #{urlNameEn,jdbcType=VARCHAR},
+            </if>
+            <if test="urlPattern != null" >
+                #{urlPattern,jdbcType=VARCHAR},
+            </if>
+            <if test="httpMethod != null" >
+                #{httpMethod,jdbcType=VARCHAR},
+            </if>
+            <if test="actionCode != null" >
+                #{actionCode,jdbcType=VARCHAR},
+            </if>
+            <if test="argsCode != null" >
+                #{argsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="loggedDataChanged != null" >
+                #{loggedDataChanged,jdbcType=INTEGER},
+            </if>
+            <if test="createdBy != null" >
+                #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="createdDate != null" >
+                #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdatedBy != null" >
+                #{lastUpdatedBy,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdatedDate != null" >
+                #{lastUpdatedDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.njht.webyun.system.model.sysUrl.SysUrl" >
+        update sys_url
+        <set >
+            <if test="urlName != null and urlName != ''" >
+                url_name = #{urlName,jdbcType=VARCHAR},
+            </if>
+            <if test="urlNameEn != null and urlNameEn != ''" >
+                url_name_en = #{urlNameEn,jdbcType=VARCHAR},
+            </if>
+            <if test="urlPattern != null and urlPattern != ''" >
+                url_pattern = #{urlPattern,jdbcType=VARCHAR},
+            </if>
+            <if test="httpMethod != null" >
+                http_method = #{httpMethod,jdbcType=VARCHAR},
+            </if>
+            <if test="actionCode != null" >
+                action_code = #{actionCode,jdbcType=VARCHAR},
+            </if>
+            <if test="argsCode != null" >
+                args_code = #{argsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="loggedDataChanged != null" >
+                logged_data_changed = #{loggedDataChanged,jdbcType=INTEGER},
+            </if>
+            <if test="createdBy != null" >
+                created_by = #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="createdDate != null" >
+                created_date = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdatedBy != null" >
+                last_updated_by = #{lastUpdatedBy,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdatedDate != null" >
+                last_updated_date = #{lastUpdatedDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where url_id = #{urlId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.njht.webyun.system.model.sysUrl.SysUrl" >
+        update sys_url
+        set
+            url_name = #{urlName,jdbcType=VARCHAR},
+            url_name_en = #{urlNameEn,jdbcType=VARCHAR},
+            url_pattern = #{urlPattern,jdbcType=VARCHAR},
+            http_method = #{httpMethod,jdbcType=VARCHAR},
+            action_code = #{actionCode,jdbcType=VARCHAR},
+            args_code = #{argsCode,jdbcType=VARCHAR},
+            logged_data_changed = #{loggedDataChanged,jdbcType=INTEGER},
+            created_by = #{createdBy,jdbcType=INTEGER},
+            created_date = #{createdDate,jdbcType=TIMESTAMP},
+            last_updated_by = #{lastUpdatedBy,jdbcType=INTEGER},
+            last_updated_date = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+        where url_id = #{urlId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectCountName" parameterType="com.njht.webyun.system.model.sysUrl.SysUrl" resultType="int">
+        SELECT COUNT(1) FROM SYS_URL where URL_NAME = #{urlName,jdbcType=VARCHAR}
+        <if test="urlId > 0">
+            AND URL_ID != #{urlId,jdbcType=NUMERIC}
+        </if>
+    </select>
+
+    <!-- 查询所有url 以及对应的role -->
+    <select id="selectUrlsAndRole" parameterType="String" resultMap="selectUrlsAndRoleMap">
+        SELECT
+              r.role_id,sr.role_name,
+              l.url_id,
+              l.url_name,
+              l.url_name_en,
+              l.url_pattern,
+              l.http_method,
+              l.action_code,
+              l.args_code,
+              l.logged_data_changed
+            FROM
+              sys_fun_url f,
+              sys_role_fun r,
+              sys_url l,
+              sys_role sr
+            WHERE f.fun_id = r.fun_id
+              AND f.url_id = l.url_id
+              AND r.`ROLE_ID` = sr.`ROLE_ID`
+            ORDER BY l.url_pattern DESC
+    </select>
+
+    <!-- 功能设置URL 时用 -->
+    <select id="selectUrlsByFunId" parameterType="int" resultMap="BaseResultMap">
+    select u.URL_ID,u.URL_NAME,u.URL_NAME_EN,u.URL_PATTERN,u.HTTP_METHOD,u.ACTION_CODE,u.ARGS_CODE,u.LOGGED_DATA_CHANGED from SYS_FUN_URL f, SYS_URL
+    u where u.URL_ID = f.URL_ID and f.FUN_ID = #{funId,jdbcType=NUMERIC}
+    </select>
+
+    <!-- 功能设置URL 时用  查询除某些URL外的所有URL-->
+    <select id="selectUrlsExceptByPage" parameterType="map" resultMap="BaseResultMap">
+        SELECT u.URL_ID,u.URL_NAME,u.URL_NAME_EN,u.URL_PATTERN,u.HTTP_METHOD,u.ACTION_CODE,u.ARGS_CODE,u.LOGGED_DATA_CHANGED FROM SYS_URL u WHERE 1=1
+        <if test="excepted != null and excepted != ''">
+            AND NOT EXISTS (SELECT a.URL_ID FROM SYS_URL a WHERE u.URL_ID = a.URL_ID AND a.URL_ID IN (${excepted}))
+        </if>
+        <if test="urlName != null and urlName != ''">
+            AND INSTR(u.URL_NAME, #{urlName,jdbcType=VARCHAR}) > 0
+        </if>
+        ORDER BY u.LAST_UPDATED_DATE DESC, u.URL_ID DESC
+    </select>
+
+    <delete id="deleteFunUrl" parameterType="int">
+        DELETE FROM sys_fun_url WHERE fun_id = #{funId,jdbcType=NUMERIC}
+    </delete>
+
+    <!-- 功能设置URL 时用 -->
+    <insert id="insertFunUrl">
+        INSERT INTO sys_fun_url (fun_id, url_id) VALUES
+        <foreach collection="urlId" item="id" index="index" separator=",">
+            (
+            #{funId},
+            #{id}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectUrlsByMethod" parameterType="String" resultMap="selectUrlsByMethodMap">
+    select r.role_id, l.url_id, l.url_name, l.url_pattern,l.URL_NAME_EN,
+    l.http_method, l.action_code, l.args_code, l.logged_data_changed from sys_fun_url f, sys_role_fun r, sys_url l WHERE
+    f.fun_id = r.fun_id AND f.url_id = l.url_id AND l.http_method = #{method,jdbcType=VARCHAR} ORDER BY l.url_pattern DESC
+  </select>
+
+</mapper>

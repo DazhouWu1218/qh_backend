@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.publish.notice.dao.NoticeInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.webyun.publish.notice.entity.NoticeInfoEntity" id="noticeInfoMap">
+        <result property="id" column="id"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="createdBy" column="CREATED_BY"/>
+        <result property="lastUpdatedDate" column="LAST_UPDATED_DATE"/>
+        <result property="lastUpdatedBy" column="LAST_UPDATED_BY"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="imgUrl" column="img_url"/>
+        <result property="imgPath" column="img_path"/>
+        <result property="isTop" column="is_top"/>
+        <result property="deleted" column="deleted"/>
+    </resultMap>
+    <select id="selectTopNoticeInfo" resultType="com.njht.webyun.publish.notice.dto.NoticeInfoDto">
+        SELECT a.*,s.USERNAME as user_name FROM `publish_notice_info` a
+        LEFT JOIN sys_user s
+        ON a.CREATED_BY = s.USER_ID
+        WHERE a.is_top = "1" and a.time &lt; #{timeMillis} and a.deleted = 0 ORDER BY a.LAST_UPDATED_DATE desc LIMIT 1
+    </select>
+    <select id="selectNoticeListNoTopId" resultType="com.njht.webyun.publish.notice.dto.NoticeInfoDto">
+        SELECT a.*,s.USERNAME as user_name FROM `publish_notice_info` a
+        LEFT JOIN sys_user s
+        ON a.CREATED_BY = s.USER_ID
+        WHERE a.id != #{id} and a.time &lt; #{timeMillis} and a.deleted = 0
+        ORDER BY a.time desc
+    </select>
+    <select id="selectNewNoticeInfo" resultType="com.njht.webyun.publish.notice.dto.NoticeInfoDto">
+        SELECT a.*,s.USERNAME as user_name FROM `publish_notice_info` a
+        LEFT JOIN sys_user s
+        ON a.CREATED_BY = s.USER_ID
+        WHERE a.time &lt; #{timeMillis} and a.deleted = 0 ORDER BY a.LAST_UPDATED_DATE desc LIMIT 1
+    </select>
+
+
+</mapper>

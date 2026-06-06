@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.njht.webyun.system.dao.mapper.SysRouteMapper" >
+
+    <resultMap id="getRouteMap" type="com.njht.webyun.system.model.sysRoute.RouteResp" >
+        <result column="ROUTE_ID" property="routeId" javaType="int" jdbcType="NUMERIC" />
+        <result column="ROUTE_NAME" property="routeName" javaType="String" jdbcType="VARCHAR" />
+        <result column="ROUTE_URL" property="routeUrl" javaType="String" jdbcType="VARCHAR" />
+        <result column="CREATED_NAME" property="createdName" javaType="String" jdbcType="TIMESTAMP" />
+        <result column="CREATED_DATE" property="createdDate" jdbcType="TIMESTAMP" />
+        <result column="LAST_UPDATED_NAME" property="lastUpdatedName" javaType="String" jdbcType="VARCHAR" />
+        <result column="LAST_UPDATED_DATE" property="lastUpdatedDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="getFunsInRouteMap" type="com.njht.webyun.system.model.sysRoute.FunModel" >
+        <result column="FUN_ID" property="funId" javaType="int" jdbcType="NUMERIC" />
+        <result column="FUN_CODE" property="funCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="FUN_NAME" property="funName" javaType="String" jdbcType="VARCHAR" />
+        <result column="FUN_TYPE" property="funType" javaType="int" jdbcType="NUMERIC" />
+        <result column="URL_ID" property="urlId" javaType="int" jdbcType="NUMERIC" />
+        <result column="URL_PATTERN" property="urlPattern" javaType="String" jdbcType="VARCHAR" />
+        <result column="ROUTE_ID" property="routeId" javaType="int" jdbcType="NUMERIC" />
+    </resultMap>
+
+    <resultMap id="selectRouteMap" type="com.njht.webyun.system.model.sysRoute.FunModel" >
+        <result column="FUN_ID" property="funId" javaType="int" jdbcType="NUMERIC" />
+        <result column="FUN_CODE" property="funCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="FUN_NAME" property="funName" javaType="String" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!-- 分页查询list-->
+    <select id="getRoute" resultMap="getRouteMap" parameterType="com.njht.webyun.system.model.sysRoute.RouteRes">
+        SELECT sr.route_id,sr.route_name,sr.route_url,u1.real_name as created_name,sr.created_date,u2.real_name as last_updated_name,sr.last_updated_date
+        FROM sys_route sr
+        left join sys_user u1 on sr.created_by = u1.user_id
+        left join sys_user u2 on sr.last_updated_by = u2.user_id
+        WHERE sr.deleted = 0
+        <if test="routeName != null and routeName != ''">
+            AND INSTR(sr.route_name, #{routeName,jdbcType=VARCHAR}) > 0
+        </if>
+        ORDER BY sr.last_updated_date DESC, sr.route_id DESC
+    </select>
+
+
+    <insert id="addRoute" parameterType="com.njht.webyun.system.model.sysRoute.RouteRes">
+        insert into sys_route(
+            route_name,route_url,deleted,created_by,created_date,last_updated_by,last_updated_date
+        )values(
+            #{routeName,jdbcType=VARCHAR},
+            #{routeUrl,jdbcType=VARCHAR},
+            0,
+            #{createdBy,jdbcType=INTEGER},
+            #{createdDate,jdbcType=TIMESTAMP},
+            #{lastUpdatedBy,jdbcType=INTEGER},
+            #{lastUpdatedDate,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+
+    <update id="editRoute" parameterType="com.njht.webyun.system.model.sysRoute.RouteRes" >
+        update sys_route set
+            route_name = #{routeName,jdbcType=VARCHAR},
+            route_url = #{routeUrl,jdbcType=VARCHAR},
+            last_updated_by = #{lastUpdatedBy,jdbcType=INTEGER},
+            last_updated_date = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+        where route_id = #{routeId,jdbcType= INTEGER}
+    </update>
+
+    <delete id="deleteRoutes" parameterType="java.util.List" >
+        delete from sys_route
+        where route_id in
+        (
+        <foreach collection="list" item="routeId" index="index" separator=",">
+            #{routeId,jdbcType=INTEGER}
+        </foreach>
+        )
+    </delete>
+
+    <delete id="deleteFuns" parameterType="java.util.List" >
+        delete from sys_fun
+        where route_id in
+        (
+        <foreach collection="list" item="routeId" index="index" separator=",">
+            #{routeId,jdbcType=INTEGER}
+        </foreach>
+        )
+    </delete>
+
+    <delete id="deleteFun" parameterType="java.lang.Integer">
+        delete from sys_route where route_id = #{routeId,jdbcType=INTEGER};
+        delete from sys_fun where route_id = #{routeId,jdbcType=INTEGER};
+    </delete>
+
+
+    <insert id ="addFunInRoute" parameterType="com.njht.webyun.system.model.sysRoute.FunModel" >
+        insert into sys_fun
+        (fun_code, fun_name, fun_type,route_id,url_id,deleted,created_by,created_date,last_updated_by,last_updated_date)
+        values
+            (
+            #{funCode},
+            #{funName},
+            #{funType},
+            #{routeId},
+            #{urlId},
+            0,
+            #{createdBy},
+            #{createdDate},
+            #{lastUpdatedBy},
+            #{lastUpdatedDate}
+            )
+    </insert >
+
+    <update id ="updateFunInRoute" parameterType="com.njht.webyun.system.model.sysRoute.FunModel" >
+        update sys_fun set
+        fun_code = #{funCode},
+        fun_name = #{funName},
+        fun_type = #{funType},
+        url_id = #{urlId},
+        last_updated_by = #{lastUpdatedBy},
+        last_updated_date = #{lastUpdatedDate}
+        where fun_id = #{funId}
+    </update>
+
+    <select id="getFunsInRoute" parameterType="java.lang.Integer" resultMap="getFunsInRouteMap">
+        select fun_id,fun_code,fun_name,fun_type,sf.url_id,su.url_pattern,route_id
+        from sys_fun sf
+        left join sys_url su on sf.url_id = su.url_id
+        where sf.route_id = #{routeId} and sf.deleted = 0
+    </select>
+
+    <select id="selectRoute" resultMap="selectRouteMap">
+        select fun_id,fun_code,fun_name from sys_route
+    </select>
+
+    <delete id="deleteFunsByFunIds" parameterType="java.util.List" >
+        delete from sys_fun
+        where fun_id in
+        (
+        <foreach collection="list" item="funId" index="index" separator=",">
+            #{funId,jdbcType=INTEGER}
+        </foreach>
+        )
+    </delete>
+
+    <delete id="deleteRolesFunsByFunIds" parameterType="java.util.List" >
+        delete from sys_role_fun
+        where fun_id in
+        (
+        <foreach collection="list" item="funId" index="index" separator=",">
+            #{funId,jdbcType=INTEGER}
+        </foreach>
+        )
+    </delete>
+</mapper>

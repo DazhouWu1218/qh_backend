@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.executor.product.dao.DicDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.htht.executor.product.entity.DicEntity" id="dicMap">
+        <result property="dicId" column="DIC_ID"/>
+        <result property="dicName" column="DIC_NAME"/>
+        <result property="dicType" column="DIC_TYPE"/>
+        <result property="dicKey" column="DIC_KEY"/>
+        <result property="dicValue" column="DIC_VALUE"/>
+        <result property="dicSymbol" column="DIC_SYMBOL"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="createdBy" column="CREATED_BY"/>
+        <result property="lastUpdatedDate" column="LAST_UPDATED_DATE"/>
+        <result property="lastUpdatedBy" column="LAST_UPDATED_BY"/>
+    </resultMap>
+
+
+</mapper>

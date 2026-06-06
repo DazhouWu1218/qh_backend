@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+				"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.management.order.dao.SateOrderDao">
+
+	<resultMap type="com.njht.webyun.management.order.entity.HthtDmsOrderInfo" id="listResultMap">
+		<result property="id" column="id"/>
+		<result property="orderId" column="order_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="userId" column="user_id"/>
+		<result property="state" column="state"/>
+		<result property="confirmId" column="confirm_id"/>
+		<result property="confirmBz" column="confirm_bz"/>
+		<result property="orderState" column="order_state"/>
+		<result property="bz" column="bz"/>
+		<result property="fileNum" column="file_num"/>
+		<result property="fileSize" column="file_size"/>
+		<result property="purpose" column="purpose"/>
+		<result property="docFile" column="doc_file"/>
+	</resultMap>
+
+	<resultMap type="com.njht.webyun.management.order.entity.HthtDmsOrderDetail" id="listResultMap2">
+		<result property="id" column="id"/>
+		<result property="orderState" column="order_state"/>
+		<result property="bz" column="bz"/>
+		<result property="fileNum" column="file_num"/>
+		<result property="purpose" column="purpose"/>
+
+		<result property="username" column="username"/>
+		<result property="realName" column="real_name"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="companyType" column="company_type"/>
+	</resultMap>
+
+	<resultMap id="ResultPageMap2" type="com.njht.webyun.management.order.vo.HthtOrderDataInfo">
+		<result property="id" column="id"/>
+		<result property="satelliteId" column="satellite_id"/>
+		<result property="sensorId" column="sensor_id"/>
+		<result property="date" column="date"/>
+		<result property="time" column="time"/>
+		<result property="name" column="name"/>
+		<result property="resolution" column="resolution"/>
+		<result property="type" column="type"/>
+		<result property="bands" column="bands"/>
+		<result property="cloud" column="cloud"/>
+		<result property="topleftlatitude" column="topleftlatitude"/>
+		<result property="topleftlongitude" column="topleftlongitude"/>
+		<result property="toprightlatitude" column="toprightlatitude"/>
+		<result property="toprightlongitude" column="toprightlongitude"/>
+		<result property="bottomleftlatitude" column="bottomleftlatitude"/>
+		<result property="bottomleftlongitude" column="bottomleftlongitude"/>
+		<result property="bottomrightlatitude" column="bottomrightlatitude"/>
+		<result property="bottomrightlongitude" column="bottomrightlongitude"/>
+		<result property="centerlongitude" column="centerlongitude"/>
+		<result property="centerlatitude" column="centerlatitude"/>
+		<result property="level" column="level"/>
+		<result property="pngId" column="png_id"/>
+		<result property="smallPngId" column="small_png_id"/>
+		<result property="pngurl" column="png_url"/>
+        <result property="smallPngurl" column="small_png_url"/>
+		<result property="filessize" column="filessize"/>
+		<result property="productId" column="product_id"/>
+	</resultMap>
+
+
+
+	<insert id="insertOrder">
+		insert into htht_dms_order_info
+		(order_id,purpose,create_time,user_id,state,confirm_id,confirm_bz,order_state,bz,file_num,file_size,doc_file)
+		values (
+		#{orderId},#{purpose},now(),#{userId},0,"","",1,"",#{fileNum},#{fileSize},"")
+	</insert>
+
+	<update id="updateOrderByOrderId">
+		update htht_dms_order_info
+		set doc_file = #{docPath}
+		where order_id = #{orderId}
+	</update>
+
+	<insert id="insertOrderData">
+		insert into htht_dms_order_list
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="orderId != null and orderId != ''">order_id,</if>
+			<if test="records != null and records != ''">data_id</if>
+		</trim>
+		values
+		<foreach collection="records" item="record" index="index" separator=",">
+			(#{orderId},#{record})
+		</foreach>
+	</insert>
+
+	<select id="queryOrderInfoId" resultMap="listResultMap">
+		select oi.id,oi.file_num,oi.purpose
+		from htht_dms_order_info oi
+		where oi.order_id = #{orderId}
+	</select>
+
+	<select id="queryByCondition"  resultMap="listResultMap">
+		select  oi.id,oi.order_id,oi.create_time,oi.update_time,au.USERNAMEas user_id,
+		oi.state,au2.username as confirm_id,oi.confirm_bz,oi.order_state,oi.bz,oi.file_num,oi.file_size,oi.purpose,oi.doc_file
+		from htht_dms_order_info oi
+		inner join sys_user au on(
+		oi.user_id = au.USER_ID
+		)
+		left join sys_user au2 on(
+		oi.confirm_id = au2.uid
+		)
+		<where>
+			<if test="userId != null and userId != ''">
+				 user_id = #{userId}
+			</if>
+			<if test="state != null and state != ''">
+				and state = #{state}
+			</if>
+			<if test="orderState != null and orderState != ''">
+				and order_state = #{orderState}
+			</if>
+			<if test="beginTime!=null  and endTime!=null ">
+				and STR_TO_DATE(oi.create_time,"%Y-%m-%d %H:%i") BETWEEN
+				STR_TO_DATE(#{beginTime},"%Y-%m-%d %H:%i") AND
+				STR_TO_DATE(#{endTime},"%Y-%m-%d %H:%i")
+			</if>
+		</where>
+        order by oi.create_time desc
+	</select>
+
+	<select id="queryOrderByCondition" resultMap="listResultMap2">
+		select oi.id,oi.order_state,oi.bz,oi.file_num,oi.purpose,
+		au.username,au.real_name,au.phone,au.email,au.company_type
+		from htht_dms_order_info oi
+		inner join  sys_user au on (oi.user_id = au.USER_ID)
+		<where>
+			<if test="userId != null and userId != ''">
+				user_id = #{userId}
+			</if>
+			<if test="state != null and state != ''">
+				and state = #{state}
+			</if>
+			<if test="orderState != null and orderState != ''">
+				and order_state = #{orderState}
+			</if>
+			<if test="beginTime!=null  and endTime!=null ">
+				and STR_TO_DATE(oi.create_time,"%Y-%m-%d %H:%i") BETWEEN
+				STR_TO_DATE(#{beginTime},"%Y-%m-%d %H:%i") AND
+				STR_TO_DATE(#{endTime},"%Y-%m-%d %H:%i")
+			</if>
+		</where>
+		order by oi.create_time desc
+	</select>
+
+
+    <select id="queryByConditions"  resultMap="listResultMap">
+        select  oi.id,oi.order_id,oi.create_time,oi.update_time,au.USERNAMEas user_id,
+        oi.state,au2.username as confirm_id,oi.confirm_bz,oi.order_state,oi.bz,oi.file_num,oi.file_size
+        from htht_dms_order_info oi
+        inner join sys_user au on(
+        oi.user_id = au.USER_ID
+        )
+        left join sys_user au2 on(
+        oi.confirm_id = au2.uid
+        )
+        <where>
+            <if test="year != 0">year(oi.create_time) = #{year}</if>
+        </where>
+        order  by oi.create_time desc
+    </select>
+
+	<select id="queryByOrderId" parameterType="java.lang.String" resultMap="listResultMap">
+		select id,order_id,data_id from htht_dms_order_list
+		<where>
+			<if test="orderId != bull and orderId != ''">
+				order_id = #{orderId}
+			</if>
+		</where>
+	</select>
+
+
+
+	<delete id="delOrderInNums" parameterType="java.util.List">
+		delete from htht_dms_order_info
+		<where>
+			<if test="orderIds != null and orderIds.size() != '' "> order_id in
+				<foreach collection="orderIds" index="index" item="orderId" open="(" separator="," close=")" >
+					#{orderId}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+
+	<delete id="delOrderListInNums" parameterType="java.util.List">
+		delete from htht_dms_order_list
+		<where>
+			<if test="orderIds != null and orderIds.size() != '' "> order_id in
+				<foreach collection="orderIds" index="index" item="orderId" open="(" separator="," close=")" >
+					#{orderId}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+	
+	<update id="updateOrder">
+		update htht_dms_order_info set
+		state = '1'
+		<if test="state != null and state != ''">,order_state = #{state}</if>
+		<if test="userId != null and userId != ''">,confirm_id = #{userId}</if>
+		<if test="bz != null and bz != ''">,confirm_bz = #{bz}</if>
+		<where>
+			<if test="orderIds!=null and orderIds.size()!='' "> order_id in
+				<foreach collection="orderIds" index="index" item="orderId" open="(" separator="," close=")" >
+					#{orderId}
+				</foreach>
+			</if>
+		</where>
+	</update>
+
+	<select id="queryOrderList" parameterType="java.lang.String" resultMap="ResultPageMap2">
+		SELECT DATA.*,
+		IF(fi.data_type = '1 ',fi.file_url,'') AS png_url,
+		IF(fi.data_type = '2 ',fi.file_url,'') AS small_png_url
+		FROM
+		htht_dms_order_list ord
+		INNER JOIN htht_dms_sate_data_info DATA ON ord.data_id = DATA .id
+		INNER JOIN htht_dms_sate_data_file_info fi ON DATA .id = fi.data_id
+		<where>
+			<if test="orderId != null and orderId != ''">
+				ord.order_id = #{orderId}
+			</if>
+		</where>
+	</select>
+
+    <select id="queryOrderData" parameterType="java.util.List" resultType="java.lang.String">
+        select distinct  satellite_id from htht_dms_sate_data_info where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="queryOrderdatas" parameterType="com.njht.webyun.management.order.entity.RequestParam" resultType="java.lang.String">
+        SELECT di.satellite_id from htht_dms_order_list ol left JOIN htht_dms_order_info oi on ol.order_id = oi.order_id
+INNER JOIN htht_dms_sate_data_info di on ol.data_id =  di.id
+        <where>
+            <if test="year != 0">year(oi.create_time) = #{year}</if>
+            <if test="month != 0">and month(oi.create_time) = #{month}</if>
+        </where>
+    </select>
+
+</mapper>

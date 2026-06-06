@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.management.order.dao.OrderDao">
+
+    <resultMap id="listResultMap" type="com.njht.webyun.management.order.vo.HthtOrderInfo">
+        <result property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderName" column="order_name"/>
+        <result property="dataUse" column="data_use"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="realName" column="real_name"/>
+        <result property="fileNum" column="file_num"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="orderState" column="order_state"/>
+        <result property="state" column="state"/>
+        <result property="orderReason" column="order_reason"/>
+        <result property="downloadPath" column="download_path"/>
+    </resultMap>
+
+    <insert id="insertOrderListData">
+        insert into order_list
+            (order_id, data_id, identifier)
+        values (#{orderId}, #{dataId}, #{identifier})
+    </insert>
+
+    <insert id="insertOrderInfoData">
+        insert into order_info
+        (order_id, order_name, data_use, create_time, user_id, real_name, file_num, file_size, order_state, state,
+         order_reason, download_path,message_status)
+        values (#{orderId}, #{orderName}, #{dataUse}, now(), #{userId}, #{realName}, #{fileNum}, #{fileSize}, 1, 0, '',
+                '','0')
+    </insert>
+
+
+    <select id="queryTableNameColumn" parameterType="String" resultType="Map">
+        select data_table_name, table_column
+        from shopping_menu_info
+        where menu_id = #{menuId}
+    </select>
+
+    <select id="queryDataList" resultType="Map">
+        select *
+        from ${tableName}
+        where ${tableColumn} = #{dataId}
+    </select>
+
+    <select id="queryByCondition" resultMap="listResultMap">
+        select
+        DISTINCT oi.id, oi.order_id,oi.order_name,oi.data_use,oi.create_time,oi.user_id,oi.real_name,oi.file_num,oi.file_size,oi.order_state,oi.state,oi.order_reason,oi.download_path,ol.identifier
+        from order_info oi
+        left join sys_user au
+        on oi.user_id = au.USER_ID
+        LEFT JOIN order_list ol
+        on oi.order_id = ol.order_id
+        <where>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId}
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            <if test="orderState != null and orderState != ''">
+                and order_state = #{orderState}
+            </if>
+            <if test="beginTime!=null and endTime!=null ">
+                and oi.create_time &gt;= #{beginTime} and oi.create_time &lt;= #{endTime}
+            </if>
+        </where>
+        and ol.identifier is not null
+        order by oi.create_time desc
+    </select>
+
+    <update id="checkOrder">
+        update order_info set
+        state = '1',message_status = 0
+        <if test="orderState != null and orderState != ''">,order_state = #{orderState}</if>
+        <if test="orderReason != null and orderReason != ''">,order_reason = #{orderReason}</if>
+        <where>
+            <if test="orderId !=null">
+                order_id = #{orderId}
+            </if>
+        </where>
+    </update>
+
+    <select id="queryTableNameByOrderId" parameterType="String" resultType="Map">
+        select cl.data_id,cl.query_time,cl.data_type, mi.table_name, menu_name, mi.menu_id, mi.table_column
+        from (select oi.file_size, ol.data_id, ol.identifier,ol.query_time,ol.data_type
+              from order_info oi
+                       left join order_list ol
+                                 ON
+                                     (ol.order_id = #{orderId} and oi.order_id = ol.order_id)) cl
+                 inner join shopping_menu_info mi
+                            on cl.identifier = mi.menu_id
+    </select>
+
+    <select id="queryDataByDataTableName" resultType="Map">
+        select *
+        from ${tableName}
+        where id = #{dataId}
+    </select>
+
+
+    <delete id="delOrderList" parameterType="java.util.List">
+        delete from order_list
+        <where>
+            <if test="orderIds != null and orderIds.size() != '' ">order_id in
+                <foreach collection="orderIds" index="index" item="orderId" open="(" separator="," close=")">
+                    #{orderId}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+
+    <delete id="delOrderInfo" parameterType="java.util.List">
+        delete from order_info
+        <where>
+            <if test="orderIds != null and orderIds.size() != '' ">order_id in
+                <foreach collection="orderIds" index="index" item="orderId" open="(" separator="," close=")">
+                    #{orderId}
+                </foreach>
+            </if>
+        </where>
+    </delete>
+
+    <select id="selectUserName" resultType="String">
+        select username
+        from sys_user
+    </select>
+
+    <select id="queryDataNum" resultType="java.lang.Integer">
+        select count(*)
+        from order_info oi
+        where oi.create_time BETWEEN #{beginTime} and #{endTime}
+    </select>
+
+    <select id="selectOrder" resultType="Map">
+        select *
+        from order_list
+        where order_id = #{orderId}
+          and data_id = #{dataId}
+          and identifier = #{identifier}
+    </select>
+
+    <select id="selectByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT order_id
+        FROM `order_info`
+        where user_id = #{userId}
+        ORDER BY create_time desc
+    </select>
+
+    <select id="selectFileSize" resultType="Long">
+        select sum(file_size)
+        from htht_basis_data_info
+        where 1=1
+        <if test="datas!= null and datas.size()!= 0">
+            and tree_id in
+            <foreach collection="datas" index="index" item="item" open="(" separator="," close=")">
+                #{item.dataId}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="queryBasicDataByDataTableName" resultType="Map">
+        select *
+        from ${tableName}
+        where tree_id = #{dataId}
+    </select>
+
+    <insert id="insertOrderDataList">
+        insert into order_list
+        (order_id, data_id, identifier,data_type)
+        values
+        <foreach collection="datas" item="item" index="index" separator=",">
+            (#{item.orderId},#{item.dataId},#{item.identifier},#{item.dataType})
+        </foreach>
+    </insert>
+
+
+    <select id="queryTotalDataList" resultType="Map">
+        select *
+        from ${tableName}
+        <where>
+            ${tableColumn} in
+            <foreach collection="dataIdList" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insertOrderFileInfo">
+        INSERT INTO order_file_info (id, create_time, update_time, file_path, file_name, file_size, save_day,sys_category_id)
+        VALUES (#{id}, #{createTime}, #{updateTime}, #{filePath}, #{fileName}, #{fileSize}, #{saveDay},#{sysCategoryId})
+    </insert>
+
+    <!-- 更新 -->
+    <update id="updateOrderFileInfo">
+        UPDATE
+            order_file_info
+        set update_time = #{updateTime}
+        where file_path = #{filePath}
+    </update>
+
+    <delete id="deleteByFileName">
+        DELETE
+        FROM order_file_info
+        WHERE file_path = #{filePath}
+    </delete>
+
+    <!-- 按ID查询 -->
+    <select id="selectOrderFile" resultType="com.njht.webyun.management.order.entity.OrderFileInfo">
+        SELECT id,
+               create_time,
+               update_time,
+               file_path,
+               file_name,
+               file_size,
+               save_day
+        FROM order_file_info
+        WHERE file_path = #{filePath}
+        limit 1
+    </select>
+
+    <select id="querySatelliteDataList" resultType="Map">
+        select di.*,cl.source_file_size,dfi.tif_file_size
+        from htht_dms_sate_data_info as di
+        inner join htht_dms_sate_data_file_info dfi
+        inner join (select dtf.id as source_file_id,dtf.file_name,dtf.file_size as source_file_size
+        from htht_dms_sate_data_task_file dtf
+        where dtf.id in (select source_file_id
+        from htht_dms_sate_data_file_info
+        where data_id in
+        <foreach collection="dataIdList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        )) cl
+        on
+        di.id= dfi.data_id
+        and dfi.source_file_id = cl.source_file_id
+    </select>
+
+
+    <select id="queryOrgDiataIdList" resultType="String">
+        select source_file_id
+        from htht_dms_sate_data_file_info
+        where data_id in
+        <foreach collection="dataIdList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <select id="querySatelliteDataList2" resultType="Map">
+        select di.*,
+               dfi.thumbnail_file_url  as png_url,
+               dfi.thumbnail_file_name as file_name,
+               cl.source_file_size,
+               cl.file_name            as data_name
+        from htht_dms_sate_data_info as di
+                 inner join htht_dms_sate_data_file_info dfi
+                 inner join (select dtf.id as source_file_id, dtf.file_name, dtf.file_size as source_file_size
+                             from htht_dms_sate_data_task_file dtf
+                             where dtf.id in (
+                                 select source_file_id
+                                 from htht_dms_sate_data_file_info
+                                 where data_id = #{sourceFileId})
+        ) cl
+                            on
+                                    di.id = dfi.data_id
+                                    and dfi.source_file_id = cl.source_file_id
+    </select>
+
+    <select id="queryBusinessDataByDataTableName" resultType="Map">
+        select pfi.id as sub_data,
+               pi.cycle,
+               pi.name,
+               pi.issue,
+               pi.mark,
+               pi.product_path,
+               pi.region_id,
+               pi.satellite,
+               pi.resolution,
+               pfi.file_type,
+               pfi.relative_path,
+               pfi.file_name,
+               pfi.file_size,
+               qri.fullname
+        from htht_cluster_schedule_product_info as pi
+                 inner join htht_cluster_schedule_product_file_info as pfi
+                 inner join htht_region_info as qri
+                            on pi.id = pfi.product_info_id
+                                and pi.region_id = qri.regionid
+        where pi.id = #{dataId}
+    </select>
+
+    <select id="selectThematicDataList" resultType="Map">
+        SELECT tti.thematic_file_id,tti.issue,tti.file_size
+        FROM htht_thematic_data_file_info dfi
+        inner join htht_thematic_tif_info tti
+        on dfi.id = tti.thematic_file_id
+        where 1 = 1
+        and dfi.id in
+        <foreach collection="dataIdList" item="dataId" separator="," open="(" close=")">
+            #{dataId}
+        </foreach>
+    </select>
+
+    <select id="queryThematicDataByDataTableName" resultType="Map">
+        SELECT dfi.cycle,dfi.mark,tti.file_name,tti.issue,tti.file_type,tti.file_size
+        FROM htht_thematic_data_file_info dfi
+                 inner join htht_thematic_tif_info tti
+                            on dfi.id = tti.thematic_file_id
+        where dfi.id = #{dataId}
+    </select>
+
+    <select id="insertOrderThematicDataList">
+        insert into order_list
+        (order_id, data_id, identifier,query_time)
+        values
+        <foreach collection="datas" item="item" index="index" separator=",">
+            (#{item.orderId},#{item.dataId},#{item.identifier},#{item.queryTime})
+        </foreach>
+    </select>
+    <select id="querySatelliteThematicdDataList"
+           resultMap="thematicData">
+        SELECT
+        d.id as d_id,
+        d.file_name as d_file_name,
+        d.space_resolution,
+        d.time_resolution,
+        d.file_size as d_file_size,
+        d.data_type,
+        d.file_type as d_file_type,
+        f.id as f_id,
+        f.file_type as f_file_type,
+        f.file_size as f_file_size,
+        f.file_url,
+        f.file_name as f_file_name
+        FROM `htht_satellite_thematic_data_info` as d
+        ,htht_satellite_thematic_data_file_info as f
+        where
+            d.id=f.data_id
+        and d.id in
+        <foreach collection="set" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and f.file_type ='tif'
+        and f.version='0'
+
+    </select>
+    <select id="querySatelliteThematicdDataTableName" resultMap="thematicData">
+        SELECT
+        d.id as d_id,
+        d.file_name as d_file_name,
+        d.space_resolution,
+        d.time_resolution,
+        d.file_size as d_file_size,
+        d.data_type,
+        d.file_type as d_file_type,
+        f.id as f_id,
+        f.file_type as f_file_type,
+        f.file_size as f_file_size,
+        f.file_url,
+        f.file_name as f_file_name
+        FROM `htht_satellite_thematic_data_info` as d
+        ,htht_satellite_thematic_data_file_info as f
+        where
+        d.id=f.data_id
+        and d.id =#{dataId}
+        and f.version='0'
+
+    </select>
+    <select id="getUserAuthorityInfo" resultType="java.lang.String">
+        SELECT
+	        sf.FUN_CODE
+        FROM
+	        sys_fun sf
+	        LEFT JOIN sys_role_fun srf ON sf.FUN_ID = srf.FUN_ID
+	        LEFT JOIN `sys_role_user` sru ON sru.ROLE_ID = srf.ROLE_ID
+        WHERE
+	        sru.USER_ID = #{userId}
+	        AND sf.FUN_TYPE = 0
+    </select>
+    <select id="getUserRoles" resultType="java.lang.String">
+        SELECT ROLE_ID FROM `sys_role_user` where USER_ID = #{userId}
+    </select>
+
+    <resultMap id="thematicData" type="com.njht.webyun.management.thematicData.entity.SatelliteThematicDataInfoDTO">
+        <id property="id" column="d_id"/>
+        <result property="fileName" column="d_file_name"/>
+        <result property="spaceResolution" column="space_resolution"/>
+        <result property="timeResolution" column="time_resolution"/>
+        <result property="fileType" column="d_file_type"/>
+        <result property="fileSize" column="d_file_size"/>
+        <result property="dataType" column="data_type"/>
+        <collection property="listFiles" ofType="com.njht.webyun.management.thematicData.entity.SatelliteThematicFileDataInfoDTO">
+            <id property="id" column="f_id"/>
+            <result property="fileName"  column="f_file_name"/>
+            <result property="fileType" column="f_file_type"/>
+            <result property="fileSize" column="f_file_size"/>
+            <result property="fileUrl" column="file_url"/>
+        </collection>
+    </resultMap>
+</mapper>

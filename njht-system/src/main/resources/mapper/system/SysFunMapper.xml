@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.system.dao.mapper.SysFunMapper">
+
+    <resultMap id="funTreeMap" type="map">
+        <id column="FUN_ID" property="id" javaType="int" jdbcType="NUMERIC" />
+        <result column="FUN_NAME" property="text" javaType="String" jdbcType="VARCHAR" />
+        <result column="STATE" property="state" javaType="String" jdbcType="VARCHAR" />
+        <association property="attributes" javaType="map" resultMap="funTreeAttrMap" />
+        <collection property="children" ofType="TreeJson" column="{parentId=FUN_ID,userId=USER_ID}" select="selectFunsByParentId" />
+    </resultMap>
+
+    <resultMap id="funTreeAttrMap" type="map">
+        <result column="PARENT_ID" property="parentId" javaType="int" jdbcType="NUMERIC" />
+        <result column="SORT_NUM" property="sortNum" javaType="int" jdbcType="NUMERIC" />
+        <result column="LEVEL_NUM" property="levelNum" javaType="int" jdbcType="NUMERIC" />
+    </resultMap>
+
+    <resultMap id="functionTreeMap" type="map">
+        <id column="FUN_ID" property="funId" javaType="int" jdbcType="NUMERIC" />
+        <result column="FUN_NAME" property="funName" javaType="String" jdbcType="VARCHAR" />
+        <collection property="children" ofType="TreeJson" column="{parentId=FUN_ID,userId=USER_ID}"  select="selectFunctionsForTree" />
+    </resultMap>
+
+    <resultMap id="functionTreeCheckMap" type="map">
+        <id column="FUN_ID" property="funId" javaType="int" jdbcType="NUMERIC" />
+        <result column="FUN_NAME" property="funName" javaType="String" jdbcType="VARCHAR" />
+        <result column="CHECK_STATU" property="checkStatu" javaType="boolean" jdbcType="BOOLEAN" />
+        <collection property="children" ofType="TreeJson" column="{parentId=FUN_ID,userId=USER_ID,roleId=ROLE_ID}"  select="selectFunContainCheck" />
+    </resultMap>
+
+    <resultMap id="selectFunctionsByUserIdMap" type="map">
+        <id column="FUN_ID" property="funId" javaType="int" jdbcType="NUMERIC" />
+        <result column="ENABLED" property="enabled" javaType="boolean" jdbcType="NUMERIC" />
+    </resultMap>
+
+
+    <select id="selectFunsByParentId" parameterType="map" resultMap="funTreeMap">
+        <choose>
+            <when test="userId > 0">
+                SELECT o.FUN_ID, o.FUN_NAME,o.PARENT_ID,o.SORT_NUM, o.LEVEL_NUM,
+                (select if((count(1)=0), 'open', 'closed') from SYS_FUN where DELETED = 0 AND parent_id = o.fun_id) as state
+                ,${userId} as USER_ID
+                FROM SYS_FUN o
+                where
+                o.`FUN_ID` IN ( SELECT FUN_ID FROM SYS_FUN where FUN_ID in (select distinct f.FUN_ID from sys_role_user u, sys_role_fun f
+                          where u.role_id = f.role_id and u.user_id = #{userId,jdbcType=NUMERIC})
+                  or parent_id = 0
+                  and FIND_IN_SET(FUN_ID, Get_FunChild_List(o.FUN_ID))
+                )
+                AND o.DELETED = 0 AND o.PARENT_ID = #{parentId,jdbcType=NUMERIC} ORDER BY o.SORT_NUM ASC
+            </when>
+            <otherwise>
+                SELECT o.FUN_ID, o.FUN_NAME,o.PARENT_ID,o.SORT_NUM, o.LEVEL_NUM, (select if((count(1)=0), 'open', 'closed')
+                from SYS_FUN where DELETED = 0 AND parent_id = o.fun_id) as state,${userId} as USER_ID
+                FROM SYS_FUN o WHERE o.DELETED = 0 AND o.PARENT_ID = #{parentId,jdbcType=NUMERIC} ORDER BY o.SORT_NUM ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insertFunUrl" parameterType="map">
+        INSERT INTO SYS_FUN_URL (FUN_ID, URL_ID) VALUES (#{funId,jdbcType=NUMERIC}, #{urlId,jdbcType=NUMERIC})
+    </insert>
+
+    <delete id="deleteFunUrl" parameterType="int">
+        DELETE FROM SYS_FUN_URL WHERE FUN_ID = #{funId,jdbcType=NUMERIC}
+
+    </delete>
+
+    <select id="selectFunctions" resultType="int">
+        SELECT FUN_ID FROM SYS_FUN WHERE DELETED = 0 ORDER BY SORT_NUM ASC
+    </select>
+
+    <select id="selectFunctionsForTree" parameterType="map" resultMap="functionTreeMap">
+        <choose>
+            <when test="userId > 0">
+                SELECT o.FUN_ID, o.FUN_NAME,${userId} as USER_ID
+                FROM SYS_FUN o
+                where exists (
+                SELECT FUN_ID
+                FROM SYS_FUN
+                where （FUN_ID in (select distinct f.FUN_ID
+                from sys_role_user u, sys_role_fun f
+                where u.role_id = f.role_id
+                and u.user_id = #{userId,jdbcType=NUMERIC}) or FUN_ID &lt; 0）
+                and FIND_IN_SET(FUN_ID, Get_FunChild_List(o.FUN_ID))
+                )
+                AND DELETED = 0 AND PARENT_ID = #{parentId,jdbcType=NUMERIC} ORDER BY SORT_NUM ASC
+            </when>
+            <otherwise>
+                SELECT FUN_ID, FUN_NAME,${userId} as USER_ID FROM SYS_FUN WHERE DELETED = 0 AND PARENT_ID = #{parentId,jdbcType=NUMERIC} ORDER BY SORT_NUM ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--查看所有功能树，且包含根据角色id查询已经选择的功能   20200427-->
+    <select id="selectFunContainCheck" parameterType="map" resultMap="functionTreeCheckMap">
+        <choose>
+            <when test="userId > 0">
+                SELECT o.FUN_ID, o.FUN_NAME,${userId} as USER_ID,${roleId} as ROLE_ID,
+                 (SELECT IF(COUNT(0)=1,TRUE,FALSE) FROM SYS_ROLE_FUN srf WHERE srf.ROLE_ID = #{roleId,jdbcType=NUMERIC} and srf.FUN_ID=o.FUN_ID) as CHECK_STATU
+                FROM SYS_FUN o
+                where o.fun_id in (
+                SELECT FUN_ID
+                FROM SYS_FUN
+                where FUN_ID in (select distinct f.FUN_ID
+                from sys_role_user u, sys_role_fun f
+                where u.role_id = f.role_id
+                and u.user_id = #{userId,jdbcType=NUMERIC}) or FUN_ID &lt; 0
+                and FIND_IN_SET(FUN_ID, Get_FunChild_List(o.FUN_ID))
+                )
+                AND DELETED = 0 AND PARENT_ID = #{parentId,jdbcType=NUMERIC} ORDER BY SORT_NUM ASC
+            </when>
+            <otherwise>
+                SELECT sf.FUN_ID, sf.FUN_NAME,${userId} as USER_ID,${roleId} as ROLE_ID,
+                  (SELECT IF(COUNT(0)=1,TRUE,FALSE) FROM SYS_ROLE_FUN srf WHERE srf.ROLE_ID = #{roleId,jdbcType=NUMERIC} and srf.FUN_ID=sf.FUN_ID) as CHECK_STATU
+                FROM SYS_FUN sf WHERE sf.DELETED = 0 AND sf.PARENT_ID = #{parentId,jdbcType=NUMERIC} ORDER BY sf.SORT_NUM ASC
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="selectCountByFunId" parameterType="map" resultType="int">
+        SELECT COUNT(1) FROM sys_fun where FUN_ID = #{funId,jdbcType=NUMERIC}
+    </select>
+
+
+    <select id="selectCountByNameAndParentId" parameterType="map" resultType="int">
+        SELECT COUNT(1) FROM sys_fun where FUN_NAME = #{funName,jdbcType=VARCHAR} AND PARENT_ID = #{parentId,jdbcType=NUMERIC} AND DELETED = 0
+        <if test="funId > 0">
+            AND FUN_ID != #{funId,jdbcType=NUMERIC}
+        </if>
+    </select>
+    <insert id="insertFun" parameterType="com.njht.webyun.system.model.sysFun.SysFun">
+        INSERT INTO SYS_FUN
+        (FUN_ID, FUN_NAME, PARENT_ID, SORT_NUM, LEVEL_NUM, DELETED, CREATED_BY, CREATED_DATE, LAST_UPDATED_BY, LAST_UPDATED_DATE)
+        VALUES
+        (#{funId,jdbcType=NUMERIC},#{funName,jdbcType=VARCHAR},#{parentId,jdbcType=NUMERIC},#{sortNum,jdbcType=NUMERIC},#{levelNum,jdbcType=NUMERIC},#{deleted,jdbcType=NUMERIC},
+        #{createdBy,jdbcType=NUMERIC},#{createdDate,jdbcType=TIMESTAMP},#{lastUpdatedBy,jdbcType=NUMERIC}, #{lastUpdatedDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <delete id="deleteFun" parameterType="int">
+        delete from SYS_FUN
+		where FIND_IN_SET(fun_id, Get_FunChild_List(#{funId,jdbcType=NUMERIC}))
+    </delete>
+
+    <update id="updateFun" parameterType="com.njht.webyun.system.model.sysFun.SysFun">
+        UPDATE SYS_FUN SET FUN_NAME = #{funName,jdbcType=VARCHAR},SORT_NUM = #{sortNum,jdbcType=NUMERIC},
+        LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC}, LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+        WHERE FUN_ID = #{funId,jdbcType=NUMERIC}
+    </update>
+
+    <update id="updateFunSortNum" parameterType="com.njht.webyun.system.model.sysFun.SysFun">
+        UPDATE SYS_FUN SET SORT_NUM = #{sortNum,jdbcType=NUMERIC},
+        LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC}, LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+        WHERE FUN_ID = #{funId,jdbcType=NUMERIC}
+    </update>
+
+    <update id="updateFunLevel" parameterType="map">
+        UPDATE SYS_FUN SET LEVEL_NUM = #{levelNum,jdbcType=NUMERIC}, LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC}, LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+        WHERE FUN_ID = #{funId,jdbcType=NUMERIC}
+    </update>
+
+    <update id="updateSysFunSelf" parameterType="com.njht.webyun.system.model.sysFun.SysFun">
+        UPDATE SYS_FUN
+        SET
+        LEVEL_NUM = #{levelNum,jdbcType=NUMERIC},
+        PARENT_ID = #{parentId,jdbcType=NUMERIC},
+        LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+        LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+         WHERE FUN_ID = #{funId,jdbcType=NUMERIC}
+    </update>
+
+    <select id="selectFunctionsByRoleId" parameterType="int" resultType="int">
+        SELECT FUN_ID FROM SYS_ROLE_FUN s WHERE s.ROLE_ID = #{value,jdbcType=NUMERIC} AND S.FUN_ID NOT IN (SELECT F.PARENT_ID FROM SYS_FUN F where DELETED=0)
+    </select>
+
+    <!-- 用户登录时功能权限的查询-->
+    <select id="selectFunctionsByUserId" parameterType="int" resultMap="selectFunctionsByUserIdMap">
+        <choose>
+            <when test="userId > 0">
+                SELECT fun_id ,SIGN(FUN_ID) AS ENABLED FROM sys_role_fun srf,sys_role_user sru WHERE srf.`ROLE_ID`=sru.`ROLE_ID` AND sru.`USER_ID`= #{userId,jdbcType=NUMERIC}
+            </when>
+            <otherwise>
+                SELECT FUN_ID, SIGN(FUN_ID) AS ENABLED FROM SYS_FUN
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getFunIdByUserId" resultType="com.njht.webyun.system.model.sysFun.SysFun" parameterType="com.njht.webyun.system.model.sysMenu.SysMenu">
+        SELECT	m.fun_id funId	FROM sys_fun m 	WHERE m.`PARENT_ID`=#{parentId}
+        order by m.SORT_NUM asc
+    </select>
+
+</mapper>

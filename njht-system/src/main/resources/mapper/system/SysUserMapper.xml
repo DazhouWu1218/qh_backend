@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.njht.webyun.system.dao.mapper.SysUserMapper" >
+
+    <resultMap id="userMap" type="com.njht.webyun.system.model.sysUser.SysUser" >
+        <id column="USER_ID" jdbcType="INTEGER" property="userId" />
+        <result column="USERNAME" jdbcType="VARCHAR" property="username" />
+        <result column="REAL_NAME" jdbcType="VARCHAR" property="realName" />
+        <result column="PWD" jdbcType="CHAR" property="password" />
+        <result column="ORG_ID" jdbcType="INTEGER" property="orgId" />
+        <result column="DEPARTMENT_ID" jdbcType="INTEGER" property="departmentId"/>
+        <result column="LOCKED" property="locked" javaType="boolean" jdbcType="NUMERIC" />
+        <result column="ERROR_TIME" jdbcType="INTEGER" property="errorTime" />
+        <result column="AGE" jdbcType="INTEGER" property="age" />
+        <result column="BIRTHDAY" jdbcType="TIMESTAMP" property="birthday" />
+        <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+        <result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+        <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+        <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+        <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+        <result column="USER_PIC_SUFFIX" jdbcType="VARCHAR" property="userPicSuffix" />
+        <result column="LAST_LOGIN_DATE" jdbcType="TIMESTAMP" property="lastLoginDate" />
+        <result column="LAST_LOGIN_IP" jdbcType="VARCHAR" property="lastLoginIp" />
+        <result column="DELETED" jdbcType="INTEGER" property="deleted" />
+        <result column="CREATED_BY" jdbcType="INTEGER" property="createdBy" />
+        <result column="CREATED_DATE" jdbcType="TIMESTAMP" property="createdDate" />
+        <result column="LAST_UPDATED_BY" jdbcType="INTEGER" property="lastUpdatedBy" />
+        <result column="LAST_UPDATED_BY_NAME" jdbcType="VARCHAR" property="lastUpdatedByName" />
+        <result column="LAST_UPDATED_DATE" jdbcType="TIMESTAMP" property="lastUpdatedDate" />
+        <result column="USER_PIC_DATA" jdbcType="LONGVARBINARY" property="userPicData" />
+        <result column="ABOUT" jdbcType="LONGVARCHAR" property="about" />
+        <result column="ORG_CODE" property="orgCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="ORG_NAME" property="orgName" javaType="String" jdbcType="VARCHAR" />
+        <result column="INHERITED_NAME" property="inheritedName" javaType="String" jdbcType="VARCHAR" />
+        <collection property="roles" ofType="com.njht.webyun.model.SysRole" select="getRolesByRoleId" column="USER_ID"></collection>
+
+    </resultMap>
+
+    <resultMap id="userMap2" type="com.njht.webyun.model.CurrentUser" >
+        <id column="USER_ID" jdbcType="INTEGER" property="userId" />
+        <result column="USERNAME" jdbcType="VARCHAR" property="username" />
+        <result column="REAL_NAME" jdbcType="VARCHAR" property="realName" />
+        <result column="PWD" jdbcType="CHAR" property="password" />
+        <result column="ORG_ID" jdbcType="INTEGER" property="orgId" />
+        <result column="DEPARTMENT_ID" jdbcType="INTEGER" property="departmentId"/>
+        <result column="LOCKED" property="locked" javaType="boolean" jdbcType="NUMERIC" />
+        <result column="ERROR_TIME" jdbcType="INTEGER" property="errorTime" />
+        <result column="AGE" jdbcType="INTEGER" property="age" />
+        <result column="BIRTHDAY" jdbcType="TIMESTAMP" property="birthday" />
+        <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+        <result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
+        <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+        <result column="ADDRESS" jdbcType="VARCHAR" property="address" />
+        <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+        <result column="USER_PIC_SUFFIX" jdbcType="VARCHAR" property="userPicSuffix" />
+        <result column="LAST_LOGIN_DATE" jdbcType="TIMESTAMP" property="lastLoginDate" />
+        <result column="LAST_LOGIN_IP" jdbcType="VARCHAR" property="lastLoginIp" />
+        <result column="DELETED" jdbcType="INTEGER" property="deleted" />
+        <result column="CREATED_BY" jdbcType="INTEGER" property="createdBy" />
+        <result column="CREATED_DATE" jdbcType="TIMESTAMP" property="createdDate" />
+        <result column="LAST_UPDATED_BY" jdbcType="INTEGER" property="lastUpdatedBy" />
+        <result column="LAST_UPDATED_BY_NAME" jdbcType="VARCHAR" property="lastUpdatedByName" />
+        <result column="LAST_UPDATED_DATE" jdbcType="TIMESTAMP" property="lastUpdatedDate" />
+        <result column="USER_PIC_DATA" jdbcType="LONGVARBINARY" property="userPicData" />
+        <result column="ABOUT" jdbcType="LONGVARCHAR" property="about" />
+        <result column="ORG_CODE" property="orgCode" javaType="String" jdbcType="VARCHAR" />
+        <result column="ORG_NAME" property="orgName" javaType="String" jdbcType="VARCHAR" />
+        <result column="INHERITED_NAME" property="inheritedName" javaType="String" jdbcType="VARCHAR" />
+        <collection property="roles" ofType="com.njht.webyun.model.SysRole" select="getRolesByRoleId" column="USER_ID"></collection>
+
+    </resultMap>
+
+    <resultMap id="RoleMap" type="com.njht.webyun.system.model.sysRole.SysRole" >
+        <id column="role_id" property="roleId" jdbcType="INTEGER" />
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+        <result column="org_id" property="orgId" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="deleted" property="deleted" jdbcType="BIT" />
+        <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+        <result column="created_date" property="createdDate" jdbcType="TIMESTAMP" />
+        <result column="last_updated_by" property="lastUpdatedBy" jdbcType="INTEGER" />
+        <result column="last_updated_date" property="lastUpdatedDate" jdbcType="TIMESTAMP" />
+        <result column="updated_name" property="updatedName" jdbcType="VARCHAR" />
+        <result column="created_name" property="createdName" jdbcType="VARCHAR" />
+        <result column="inherited_name" property="inheritedName" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="RoleMap2" type="com.njht.webyun.model.SysRole" >
+        <id column="role_id" property="roleId" jdbcType="INTEGER" />
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+        <result column="org_id" property="orgId" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="deleted" property="deleted" jdbcType="BIT" />
+        <result column="created_by" property="createdBy" jdbcType="INTEGER" />
+        <result column="created_date" property="createdDate" jdbcType="TIMESTAMP" />
+        <result column="last_updated_by" property="lastUpdatedBy" jdbcType="INTEGER" />
+        <result column="last_updated_date" property="lastUpdatedDate" jdbcType="TIMESTAMP" />
+        <result column="updated_name" property="updatedName" jdbcType="VARCHAR" />
+        <result column="created_name" property="createdName" jdbcType="VARCHAR" />
+        <result column="inherited_name" property="inheritedName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="selectUsersByRoleIdMap" type="map">
+        <id column="USER_ID" property="userId" javaType="int"
+            jdbcType="NUMERIC" />
+        <result column="USERNAME" property="username" javaType="String"
+                jdbcType="VARCHAR" />
+        <result column="REAL_NAME" property="realName"
+                javaType="String" jdbcType="VARCHAR" />
+        <result column="ORG_NAME" property="orgName" javaType="String"
+                jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+    USER_ID, USERNAME, REAL_NAME, PWD, ORG_ID, DEPARTMENT_ID,LOCKED, ERROR_TIME, AGE, BIRTHDAY, PHONE,
+    MOBILE, EMAIL, ADDRESS, REMARK, USER_PIC_SUFFIX, LAST_LOGIN_DATE, LAST_LOGIN_IP,
+    DELETED, CREATED_BY, CREATED_DATE, LAST_UPDATED_BY, LAST_UPDATED_DATE,    USER_PIC_DATA, ABOUT
+    </sql>
+
+    <select id="queryByName" parameterType="String" resultMap="userMap2">
+        SELECT u.*, o.ORG_ID, o.ORG_CODE, o.ORG_NAME, o.INHERITED_NAME
+        FROM SYS_USER u, SYS_ORG o WHERE u.ORG_ID = o.ORG_ID AND u.USERNAME= #{username,jdbcType=VARCHAR} AND u.DELETED = 0
+    </select>
+
+   <!-- <select id="queryByName" resultMap="userMap" parameterType="java.lang.String">
+         SELECT
+            u.*,r.`ROLE_ID` AS rid,r.`ROLE_NAME` AS rname
+         FROM sys_user u
+         LEFT JOIN sys_role_user ur ON u.`USER_ID`=ur.`USER_ID`
+         LEFT JOIN sys_role r ON ur.`ROLE_ID`=r.`ROLE_ID`
+         WHERE u.`USERNAME`= #{name}
+    </select>-->
+
+    <select id="getUsers" resultMap="userMap" parameterType="com.njht.webyun.system.model.sysUser.UserQuery">
+        SELECT u.USER_ID, u.USERNAME, u.REAL_NAME, u.ORG_ID, o.ORG_NAME,
+        o.INHERITED_NAME, u.LOCKED, u.PHONE, u.MOBILE, u.EMAIL, u.ADDRESS,
+        u.REMARK, u.LAST_LOGIN_DATE, u.LAST_LOGIN_IP,
+        u.CREATED_DATE,u.LAST_UPDATED_BY,
+        u.LAST_UPDATED_DATE, GET_REAL_NAME(u.CREATED_BY) AS CREATED_BY_NAME,
+        GET_REAL_NAME(u.LAST_UPDATED_BY) AS LAST_UPDATED_BY_NAME
+        FROM SYS_USER
+        u, SYS_ORG o WHERE u.ORG_ID = o.ORG_ID AND u.USER_ID > 0 AND
+        u.DELETED
+        = 0
+        <if test="username != null and username != ''">
+            AND (INSTR(u.USERNAME,#{username,jdbcType=VARCHAR}) > 0 or INSTR(u.REAL_NAME,#{username,jdbcType=VARCHAR}) > 0)
+        </if>
+        <if test="orgId != null and orgId > 0 ">
+        <choose>
+            <when test="containSub == true">
+                AND u.ORG_ID IN (
+                   SELECT ORG_ID FROM sys_org WHERE FIND_IN_SET(org_id, Get_OrgChild_List(#{orgId,jdbcType=NUMERIC}))
+                )
+            </when>
+            <otherwise>
+                AND u.ORG_ID = #{orgId,jdbcType=NUMERIC}
+            </otherwise>
+        </choose>
+        </if>
+        ORDER BY u.LAST_UPDATED_DATE DESC, u.USER_ID DESC
+
+    </select>
+
+     <insert id="addUsers" parameterType="map" >
+       	INSERT INTO SYS_USER
+		(USER_ID, USERNAME, REAL_NAME, PWD, ORG_ID, ERROR_TIME, PHONE, MOBILE,
+		EMAIL,
+		ADDRESS, REMARK, LAST_LOGIN_DATE, LAST_LOGIN_IP,
+		LOCKED, DELETED,
+		CREATED_BY, CREATED_DATE, LAST_UPDATED_BY,
+		LAST_UPDATED_DATE,age)
+		VALUES
+		(#{userId,jdbcType=NUMERIC}, #{username,jdbcType=VARCHAR},
+		#{realName,jdbcType=VARCHAR},
+		#{pwd,jdbcType=VARCHAR},
+		#{orgId,jdbcType=NUMERIC},
+		#{errorTime,jdbcType=NUMERIC},
+		#{phone,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		#{lastLoginDate,jdbcType=TIMESTAMP},
+		#{lastLoginIp,jdbcType=VARCHAR}, #{locked,jdbcType=NUMERIC},
+		#{deleted,jdbcType=NUMERIC},
+		#{createdBy,jdbcType=NUMERIC},
+		#{createdDate,jdbcType=TIMESTAMP},
+		#{lastUpdatedBy,jdbcType=NUMERIC},
+		#{lastUpdatedDate,jdbcType=TIMESTAMP},
+		#{age,jdbcType=NUMERIC})
+    </insert>
+
+    <update id="editUsers" parameterType="map" >
+
+        update sys_user
+        <set>
+            <if test="username != null">
+                USERNAME = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="realName != null">
+                REAL_NAME = #{realName,jdbcType=VARCHAR},
+            </if>
+            <if test="pwd != null">
+                PWD = #{pwd,jdbcType=CHAR},
+            </if>
+            <if test="orgId != null">
+                ORG_ID = #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="departmentId != null">
+                DEPARTMENT_ID = #{departmentId,jdbcType=INTEGER},
+            </if>
+            <if test="locked != null">
+                LOCKED = #{locked,jdbcType=INTEGER},
+            </if>
+            <if test="errorTime != null">
+                ERROR_TIME = #{errorTime,jdbcType=INTEGER},
+            </if>
+            <if test="age != null">
+                AGE = #{age,jdbcType=INTEGER},
+            </if>
+            <if test="birthday != null">
+                BIRTHDAY = #{birthday,jdbcType=TIMESTAMP},
+            </if>
+            <if test="phone != null">
+                PHONE = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                MOBILE = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                EMAIL = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                REMARK = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="userPicSuffix != null">
+                USER_PIC_SUFFIX = #{userPicSuffix,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginDate != null">
+                LAST_LOGIN_DATE = #{lastLoginDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastLoginIp != null">
+                LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="deleted != null">
+                DELETED = #{deleted,jdbcType=INTEGER},
+            </if>
+            <if test="createdBy != null">
+                CREATED_BY = #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="createdDate != null">
+                CREATED_DATE = #{createdDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdatedBy != null">
+                LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdatedDate != null">
+                LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userPicData != null">
+                USER_PIC_DATA = #{userPicData,jdbcType=LONGVARBINARY},
+            </if>
+            <if test="about != null">
+                ABOUT = #{about,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where USER_ID = #{userId,jdbcType=INTEGER}
+
+    </update>
+
+    <!-- 支持批量删除，逻辑删除 -->
+     <update id="deleteUser" parameterType="map">
+        UPDATE SYS_USER SET
+            DELETED = #{deleted,jdbcType=NUMERIC},
+            LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+            LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+        WHERE user_id = #{userId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectUserByName" parameterType="String" resultMap="userMap">
+    SELECT u.USER_ID, u.REAL_NAME, u.PWD, o.ORG_ID, o.ORG_CODE,
+		o.ORG_NAME,
+		o.INHERITED_NAME, u.LOCKED, u.ERROR_TIME FROM SYS_USER u, SYS_ORG o WHERE
+		u.ORG_ID =
+		o.ORG_ID AND u.USERNAME= #{username,jdbcType=VARCHAR} AND
+		u.DELETED =
+		0
+    </select>
+
+    <update id="updateUserPassword" parameterType="map">
+        UPDATE SYS_USER
+		SET PWD = #{pwd,jdbcType=VARCHAR},LAST_UPDATED_BY =
+		#{lastUpdatedBy,jdbcType=NUMERIC}, LAST_UPDATED_DATE =
+		#{lastUpdatedDate,jdbcType=TIMESTAMP}
+		WHERE USER_ID = #{userId,jdbcType=NUMERIC}
+    </update>
+
+    <update id="updateUserLocked" parameterType="map">
+      UPDATE SYS_USER SET LOCKED = #{locked,jdbcType=NUMERIC},
+      ERROR_TIME=0,
+      LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+      LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP} WHERE USER_ID = #{userId,jdbcType=NUMERIC}
+    </update>
+
+    <!--查询角色已添加的用户-->
+    <select id="getUsersByRoleId" parameterType="com.njht.webyun.system.model.sysRole.UserRoleQuery" resultMap="userMap" >
+        SELECT u.`USER_ID`,u.`USERNAME`,u.`REAL_NAME`,GET_ORG_NAME(u.org_id) as ORG_NAME
+        FROM sys_role_user r, sys_user u
+        WHERE u.`USER_ID` = r.`USER_ID` AND r.`ROLE_ID` = #{roleId,jdbcType=NUMERIC} AND u.`USER_ID` > -1 AND u.`DELETED` = 0
+         AND u.ORG_ID IN (SELECT ORG_ID FROM sys_org WHERE FIND_IN_SET(org_id, Get_OrgChild_List(#{orgId,jdbcType=NUMERIC})) )
+
+    </select>
+
+    <!--查询未添加的用户信息，支持分页和多条件-->
+    <select id="getUsersWhetherExcepte" parameterType="com.njht.webyun.system.model.sysRole.UserRoleQuery" resultMap="userMap">
+        SELECT DISTINCT u.`USER_ID`,u.`USERNAME`,u.`REAL_NAME`,u.LAST_UPDATED_DATE,GET_ORG_NAME(u.org_id) as ORG_NAME
+          FROM sys_user u WHERE u.USER_ID > -1 AND u.DELETED = 0
+        <if test="excepted != null and excepted != ''">
+            AND NOT EXISTS (SELECT a.user_id FROM sys_user a WHERE u.USER_ID = a.USER_ID AND a.USER_ID IN (${excepted}))
+        </if>
+        <if test="username != null" >
+            and  u.USERNAMElike '%${username}%'
+        </if>
+        <if test="orgId != null and orgId>0" >
+            <choose>
+                <when test="containSub == true">
+                    AND u.ORG_ID IN (
+                    SELECT ORG_ID FROM sys_org WHERE FIND_IN_SET(org_id, Get_OrgChild_List(#{orgId,jdbcType=NUMERIC}))
+                    )
+                </when>
+                <otherwise>
+                    and u.org_id =${orgId}
+                </otherwise>
+            </choose>
+        </if>
+        <if test="sort != null and sort != '' and order != null and order != '' ">
+            order by ${sort} ${order}
+        </if>
+        ORDER BY u.LAST_UPDATED_DATE DESC
+    </select>
+
+<!-- 整合的，为新加入的 20200421 -->
+    <insert id="insertHistoryPassword" parameterType="map">
+        INSERT INTO
+        USER_PWD_HISTORY VALUES
+        (#{userId,jdbcType=NUMERIC},#{historyPwd,jdbcType=VARCHAR},#{lastUpdateDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="queryHistoryPassword" parameterType="map"
+            resultType="map">
+        SELECT  USER_ID, HISTORY_PWD, CAST(LAST_UPDATE_DATE AS DATE) AS         LAST_UPDATE_DATE
+        FROM USER_PWD_HISTORY
+        WHERE USER_ID =  #{userId,jdbcType=NUMERIC} ORDER BY LAST_UPDATE_DATE DESC
+        <if test="recentTimes != null and recentTimes > 0">
+            LIMIT  #{recentTimes,jdbcType=NUMERIC}
+        </if>
+    </select>
+
+    <update id="updateByUserSelf" parameterType="map">
+        UPDATE SYS_USER
+        SET
+        user_pic_data = #{userPicData,jdbcType=VARCHAR},
+        LAST_UPDATED_BY = #{userId,jdbcType=NUMERIC},
+        LAST_UPDATED_DATE = SYSDATE()
+        WHERE USER_ID = #{userId,jdbcType=NUMERIC}
+    </update>
+
+    <select id="queryByUserId" resultMap="userMap" parameterType="java.lang.Integer">
+        SELECT    u.*   FROM SYS_USER u   WHERE u.`USER_ID`= #{userId}
+    </select>
+
+    <update id="updateUserErrorInfo" parameterType="map">
+        UPDATE SYS_USER SET ERROR_TIME = #{errorTime,jdbcType=NUMERIC} WHERE USER_ID = #{userId,jdbcType=NUMERIC}
+    </update>
+
+    <select id="getRolesByRoleId" resultMap="RoleMap2">
+        SELECT r.* FROM sys_role_user h,sys_role r where
+          h.`ROLE_ID`=r.`ROLE_ID` and h.`USER_ID` =#{USER_ID}
+    </select>
+
+    <select id="selectUsersByRoleId" parameterType="list"
+            resultMap="selectUsersByRoleIdMap">
+		SELECT
+		u.USER_ID,u.USERNAME,u.REAL_NAME,GET_ORG_NAME(u.ORG_ID) AS ORG_NAME
+		FROM SYS_ROLE_USER r, SYS_USER u
+		WHERE u.USER_ID = r.USER_ID AND
+		r.ROLE_ID = #{roleId,jdbcType=NUMERIC} AND
+		u.USER_ID > 0 AND u.DELETED
+		= 0
+	</select>
+
+    <select id="selectUsersExceptByPage" parameterType="map"
+            resultMap="selectUsersByRoleIdMap">
+        SELECT u.USER_ID,u.USERNAME,u.REAL_NAME,GET_ORG_NAME(u.ORG_ID) AS
+        ORG_NAME FROM SYS_USER u WHERE u.USER_ID > 0 AND u.DELETED = 0
+        <if test="excepteds != null and excepteds.size>0">
+            AND NOT EXISTS (SELECT a.USER_ID FROM SYS_USER a WHERE u.USER_ID =a.USER_ID AND a.USER_ID IN
+            <foreach collection="excepteds" item="knowledge" separator="," open="(" close=")">
+                #{knowledge,jdbcType=NUMERIC}
+            </foreach>
+            )
+        </if>
+        <if test="username != null and username != ''">
+            AND INSTR(CONCAT(u.USERNAME, u.REAL_NAME),
+            #{username,jdbcType=VARCHAR}) > 0
+        </if>
+        <choose>
+            <when test="containSub == true">
+
+                and FIND_IN_SET(u.ORG_ID, GET_ORG_CHILD(#{orgId,jdbcType=NUMERIC}))
+            </when>
+            <otherwise>
+                AND u.ORG_ID = #{orgId,jdbcType=NUMERIC}
+            </otherwise>
+        </choose>
+        ORDER BY u.LAST_UPDATED_DATE DESC
+    </select>
+
+    <select id="userIdList" resultMap="userMap2">
+        select USER_ID,USERNAME,REAL_NAME,ORG_ID  from SYS_USER
+    </select>
+
+</mapper>

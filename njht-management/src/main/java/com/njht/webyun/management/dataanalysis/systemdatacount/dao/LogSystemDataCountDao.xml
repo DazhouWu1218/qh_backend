@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.management.dataanalysis.systemdatacount.dao.LogSystemDataCountDao">
+
+    <select id="selectByCategoryAndDate" resultType="com.njht.webyun.management.dataanalysis.systemdatacount.dto.LogSystemDataCountDTO">
+        SELECT htht_uus_log_sys_data_count.date date,
+               htht_uus_log_sys_data_count.data_size,
+               htht_uus_log_sys_data_category.data_name,
+               htht_uus_log_sys_data_category.data_type,
+               htht_uus_log_sys_data_category.assert_download
+
+        FROM htht_uus_log_sys_data_count
+                 JOIN htht_uus_log_sys_data_category
+                      ON htht_uus_log_sys_data_count.data_category_id = htht_uus_log_sys_data_category.id
+        WHERE htht_uus_log_sys_data_count.date = #{date}
+          AND htht_uus_log_sys_data_count.data_category_id = #{categoryId}
+    </select>
+
+
+    <insert id="insertNew">
+        insert into htht_uus_log_sys_data_count(date, data_size, data_category_id)
+        values (#{date}, #{dataSize}, #{categoryId});
+    </insert>
+
+
+    <update id="updateDataSizeByCategoryIdAndDate">
+        update htht_uus_log_sys_data_count
+        set data_size=#{dataSize}
+        where date = #{date}
+          and data_category_id = #{categoryId}
+    </update>
+
+    <select id="selectDataTypeByDataName" resultType="long">
+        select id
+        from htht_uus_log_sys_data_category
+        where data_name = #{dataName}
+          and assert_download = #{isDownload}
+    </select>
+
+    <select id="selectSystemDataCountByDay"
+            resultType="com.njht.webyun.management.dataanalysis.systemdatacount.dto.LogSystemDataCountByDayDTO">
+        select htht_uus_log_sys_data_count.date date, sum(htht_uus_log_sys_data_count.data_size) count
+        from htht_uus_log_sys_data_count
+                 JOIN htht_uus_log_sys_data_category
+                      ON htht_uus_log_sys_data_count.data_category_id = htht_uus_log_sys_data_category.id
+        where htht_uus_log_sys_data_category.assert_download = #{assertDownload}
+          and htht_uus_log_sys_data_count.date between #{startDay} and #{endDay}
+        group by htht_uus_log_sys_data_count.date
+        order by htht_uus_log_sys_data_count.date asc
+    </select>
+
+    <select id="countAllHistory" resultType="long">
+        select sum(data_size)
+        from htht_uus_log_sys_data_count
+                 JOIN htht_uus_log_sys_data_category
+                      ON htht_uus_log_sys_data_count.data_category_id = htht_uus_log_sys_data_category.id
+        where htht_uus_log_sys_data_category.assert_download = #{assertDownload}
+    </select>
+
+
+    <select id="statisticByDataType" resultType="com.njht.webyun.management.dataanalysis.systemdatacount.dto.LogSystemDataCountDTO">
+        SELECT sum(htht_uus_log_sys_data_count.data_size) data_size,
+               htht_uus_log_sys_data_category.data_name,
+               htht_uus_log_sys_data_category.data_type,
+               htht_uus_log_sys_data_category.assert_download,
+               htht_uus_log_sys_data_category.data_type_sort,
+               htht_uus_log_sys_data_category.data_name_sort
+        FROM htht_uus_log_sys_data_count
+                 JOIN htht_uus_log_sys_data_category
+                      ON htht_uus_log_sys_data_count.data_category_id = htht_uus_log_sys_data_category.id
+        WHERE htht_uus_log_sys_data_category.assert_download = #{isDownload}
+        GROUP BY htht_uus_log_sys_data_count.data_category_id
+    </select>
+</mapper>

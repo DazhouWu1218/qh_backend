@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.publish.product.dao.DataCategoryDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.entity.category.DataCategoryEntity" id="dataCategoryMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="iconPath" column="icon_path"/>
+        <result property="menu" column="menu"/>
+        <result property="menuId" column="menu_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="text" column="text"/>
+        <result property="treeKey" column="tree_key"/>
+        <result property="sortKey" column="sort_key"/>
+    </resultMap>
+
+<!--    <select id="selectTreeList" resultType="com.njht.entity.category.DataCategoryEntity">-->
+<!--        SELECT DISTINCT c.id id,c.text,c.parent_id parent_id,c.create_time create_time,c.sort_key,c.img_url,c.menu-->
+<!--			FROM sys_role_user ur, sys_role r, htht_role_category rc,htht_cluster_schedule_data_category c-->
+<!--		WHERE  ur.ROLE_ID = r.ROLE_ID-->
+<!--			AND r.ROLE_ID = rc.role_id-->
+<!--			AND rc.category_id = c.id-->
+<!--			AND ur.USER_ID = #{userId}-->
+<!--			AND c.tree_key  = #{treeKey}-->
+<!--		ORDER BY c.sort_key ASC;-->
+<!--    </select>-->
+<!--    <select id="selectParentIds" resultType="java.lang.String">-->
+<!--        SELECT DISTINCT c.parent_id-->
+<!--			FROM sys_role_user ur, sys_role r, htht_role_category rc,htht_cluster_schedule_data_category c-->
+<!--		WHERE ur.ROLE_ID = r.ROLE_ID-->
+<!--			AND r.ROLE_ID = rc.role_id-->
+<!--			AND rc.category_id = c.id-->
+<!--			AND ur.USER_ID = #{userId}-->
+<!--    </select>-->
+    <select id="getParentNameByProductIds" resultType="com.njht.entity.category.DataCategoryEntity">
+        SELECT a.text,c.id FROM `htht_cluster_schedule_data_category` a
+        LEFT JOIN htht_cluster_schedule_data_category b
+        ON a.id = b.parent_id
+        LEFT JOIN htht_cluster_schedule_product c
+        ON b.id = c.tree_id
+        where c.id in
+        <foreach collection="idList" index="index" item="id" open="(" separator="," close=")" >
+            #{id}
+        </foreach>
+    </select>
+    <select id="selectTreeListByRoleId" resultType="com.njht.entity.category.DataCategoryEntity">
+        SELECT * FROM `htht_cluster_schedule_data_category` a
+        LEFT JOIN htht_role_category r
+        ON a.id = r.category_id
+        WHERE r.role_id = #{roleId}
+    </select>
+<!--    <select id="selectHotProductList" resultType="com.njht.entity.category.DataCategoryEntity">-->
+<!--        SELECT DISTINCT c.*-->
+<!--			FROM sys_role_user ur, sys_role r, htht_role_category rc,htht_cluster_schedule_data_category c-->
+<!--		WHERE ur.ROLE_ID = r.ROLE_ID-->
+<!--			AND r.ROLE_ID = rc.role_id-->
+<!--			AND rc.category_id = c.id-->
+<!--			AND ur.USER_ID = #{userId} and is_hot = "1"-->
+<!--    </select>-->
+
+
+</mapper>

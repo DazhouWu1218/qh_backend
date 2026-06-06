@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.njht.webyun.system.dao.mapper.SysMenuMapper" >
+
+    <resultMap id="BaseResultMap" type="map" >
+		<id column="MENU_ID" property="menuId" javaType="INTEGER" jdbcType="NUMERIC" />
+		<result column="MENU_NAME" property="menuName" javaType="String" jdbcType="VARCHAR" />
+		<result column="ROUTE_ID" property="routeId" javaType="INTEGER" jdbcType="NUMERIC" />
+		<result column="ROUTE_URL" property="routeUrl" javaType="String" jdbcType="VARCHAR" />
+		<result column="ICON" property="icon" javaType="String" jdbcType="VARCHAR" />
+		<result column="STATE" property="state" javaType="String" jdbcType="VARCHAR" />
+		<result column="PARENT_ID" property="parentId" javaType="INTEGER" jdbcType="NUMERIC" />
+		<result column="BUSINESS" property="business" javaType="String" jdbcType="VARCHAR" />
+		<result column="SORT_NUM" property="sortNum" javaType="INTEGER" jdbcType="NUMERIC" />
+		<result column="LEVEL_NUM" property="levelNum" javaType="INTEGER" jdbcType="NUMERIC" />
+		<result column="OPERATION" property="operation" javaType="INTEGER" jdbcType="NUMERIC" />
+		<result column="DELETED" property="deleted" javaType="INTEGER" jdbcType="NUMERIC" />
+		<result column="CREATED_BY"  property="createdBy" javaType="INTEGER" jdbcType="NUMERIC"/>
+		<result column="CREATED_DATE"  property="createdDate" jdbcType="TIMESTAMP"/>
+		<result column="LAST_UPDATED_BY" property="lastUpdatedBy" javaType="INTEGER" jdbcType="NUMERIC"/>
+		<result column="LAST_UPDATED_DATE" property="lastUpdatedDate" jdbcType="TIMESTAMP"  />
+	</resultMap>
+
+	<resultMap id="FunMap" type="map">
+		<id column="FUN_ID" jdbcType="INTEGER" property="funId" />
+		<result column="FUN_NAME" jdbcType="NUMERIC" property="funName" />
+		<result column="FUN_CODE" jdbcType="VARCHAR" property="funCode" />
+		<result column="FUN_TYPE" jdbcType="NUMERIC" property="funType" />
+		<result column="URL_PATTERN" jdbcType="VARCHAR" property="urlPattern" />
+		<result column="OPERATION" jdbcType="NUMERIC" property="operation"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		MENU_ID, MENU_NAME, MENU_URL, ICON, PARENT_ID, FUN_ID, SORT_NUM, LEVEL_NUM, DELETED,
+		CREATED_BY, CREATED_DATE, LAST_UPDATED_BY, LAST_UPDATED_DATE
+	</sql>
+
+   	<resultMap id="RoleMenuResultTreeMap" type="com.njht.webyun.system.model.sysMenu.SysMenu">
+		<id column="MENU_ID" jdbcType="INTEGER" property="menuId" />
+		<result column="MENU_NAME" jdbcType="VARCHAR" property="menuName" />
+		<result column="ROUTE_ID" jdbcType="VARCHAR" property="menuName" />
+		<result column="ROUTE_URL" jdbcType="VARCHAR" property="menuName" />
+		<result column="ICON" jdbcType="VARCHAR" property="icon" />
+		<result column="PARENT_ID" jdbcType="INTEGER" property="parentId" />
+		<result column="BUSINESS_ID" jdbcType="INTEGER" property="VARCHAR" />
+		<result column="SORT_NUM" jdbcType="INTEGER" property="sortNum" />
+		<result column="LEVEL_NUM" jdbcType="INTEGER" property="levelNum" />
+		<result column="VISIBLE" jdbcType="INTEGER" property="visible" />
+		<result column="DELETED" jdbcType="INTEGER" property="deleted" />
+		<result column="CREATED_BY" jdbcType="INTEGER" property="createdBy" />
+		<result column="CREATED_DATE" jdbcType="TIMESTAMP" property="createdDate" />
+		<result column="LAST_UPDATED_BY" jdbcType="INTEGER" property="lastUpdatedBy" />
+		<result column="LAST_UPDATED_DATE" jdbcType="TIMESTAMP" property="lastUpdatedDate" />
+		<!--<collection property="roles" ofType="com.aoto.system.model.sysRole.SysRole">
+			<id column="ROLE_ID" jdbcType="INTEGER" property="roleId" />
+			<result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+		</collection>-->
+		<!-- ofType表示集合包含的元素类型 -->
+		<collection property="children" ofType="TreeJson" column="{parentId=menuId,userId=userId}" select="getMenusByUserIdAndParentId" />
+	</resultMap>
+
+	<resultMap id="menuTreeMap" extends="BaseResultMap" type="map">
+		<collection property="function" ofType="TreeJson" column="{routeId=ROUTE_ID,userId=USER_ID}" select="selectFunByParentId"/>
+		<collection property="children" ofType="TreeJson" column="{parentId=MENU_ID,userId=USER_ID}" select="selectMenusByParentId" />
+	</resultMap>
+
+	<resultMap id="menuTreeMap3" extends="BaseResultMap" type="map">
+		<collection property="function" ofType="TreeJson" column="{roleId=ROLE_ID,routeId=ROUTE_ID}" select="getAllFunsByRoleId"/>
+		<collection property="children" ofType="TreeJson" column="{parentId = MENU_ID,roleId=ROLE_ID}" select="getAllMenusByRoleId" />
+	</resultMap>
+
+	<resultMap id="menuTreeMap4" extends="BaseResultMap" type="map">
+		<collection property="function" ofType="TreeJson" column="{routeId=ROUTE_ID}" select="selectFunsByVisitor"/>
+		<collection property="children" ofType="TreeJson" column="{parentId = MENU_ID}" select="selectMenusByVisitor" />
+	</resultMap>
+
+	<resultMap id="menuTreeMap5" extends="BaseResultMap" type="map">
+		<collection property="function" ofType="TreeJson" column="{routeId=ROUTE_ID}" select="selectFunsByVisitor"/>
+		<collection property="children" ofType="TreeJson" column="{parentId = MENU_ID}" select="selectAllMenus" />
+	</resultMap>
+
+	<resultMap id="menuTreeMap2" type="map">
+		<id column="MENU_ID" property="id" javaType="int" jdbcType="NUMERIC" />
+		<result column="ROUTE_ID" property="routeId" javaType="int" jdbcType="INTEGER" />
+		<result column="ROUTE_URL" property="routeUrl" javaType="String" jdbcType="VARCHAR" />
+		<result column="MENU_NAME" property="menuName" javaType="String" jdbcType="VARCHAR" />
+		<result column="state" property="state" javaType="String" jdbcType="VARCHAR" />
+		<result column="PARENT_ID" property="parentId" javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="selectMenusByParentId" parameterType="map" resultMap="menuTreeMap">
+		<choose>
+			<when test="userId > 0">
+				select m.MENU_ID, m.MENU_NAME, m.ROUTE_ID, r.ROUTE_URL,m.ICON, m.PARENT_ID, m.BUSINESS,m.SORT_NUM, m.LEVEL_NUM, m.DELETED,
+				(select case when srm.operation is NULL THEN 0 else srm.operation end) AS operation,
+				(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_menu where parent_id = m.menu_id and deleted = 0) as state,
+				#{userId,jdbcType=NUMERIC} as USER_ID
+				from sys_menu m
+				LEFT JOIN sys_route r ON m.ROUTE_ID = r.ROUTE_ID
+				INNER JOIN sys_role_menu srm ON srm.MENU_ID = m.MENU_ID
+				INNER JOIN sys_role_user sru ON srm.ROLE_ID = sru.ROLE_ID AND sru.USER_ID = #{userId,jdbcType=NUMERIC}
+				where m.deleted = 0 AND m.PARENT_ID = #{parentId,jdbcType=NUMERIC}
+				ORDER BY m.sort_num ASC
+			</when>
+			<otherwise>
+				SELECT o.MENU_ID, o.MENU_NAME, o.ROUTE_ID,t.route_url, o.ICON, o.PARENT_ID, o.BUSINESS, o.SORT_NUM, o.LEVEL_NUM, o.DELETED,1 AS operation,
+				(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_menu where parent_id = o.menu_id and deleted = 0) as state, #{userId} as USER_ID
+				FROM sys_menu o
+				left join sys_route t on o.route_id = t.route_id
+				WHERE o.DELETED = 0 AND o.PARENT_ID = #{parentId,jdbcType=NUMERIC}
+				order by o.sort_num asc
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="selectFunByParentId" resultMap="FunMap" parameterType="map">
+		<choose>
+			<when test="userId > 0">
+				SELECT f.fun_id,f.fun_name,f.fun_code,f.fun_type,su.URL_PATTERN,
+				(select case when srf.operation is NULL THEN 0 else srf.operation end) as OPERATION
+				FROM sys_fun f
+				inner JOIN sys_role_fun srf ON srf.FUN_ID = f.FUN_ID
+				inner JOIN sys_role_user sru ON srf.ROLE_ID = sru.ROLE_ID AND sru.USER_ID = #{userId,jdbcType=INTEGER}
+				LEFT JOIN sys_url su ON su.URL_ID = f.URL_ID
+				where f.route_id = #{routeId,jdbcType=INTEGER} and f.deleted = 0
+			</when>
+			<otherwise>
+				SELECT f.fun_id,f.fun_name,f.fun_code,f.fun_type,su.URL_PATTERN,1 AS OPERATION
+				FROM sys_fun f
+				LEFT JOIN sys_url su ON su.URL_ID = f.URL_ID
+				where f.route_id = #{routeId,jdbcType=INTEGER} and f.deleted = 0
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="selectAllMenus" parameterType="map" resultMap="menuTreeMap5">
+			SELECT o.MENU_ID, o.MENU_NAME, o.ROUTE_ID,t.route_url, o.ICON, o.PARENT_ID, o.BUSINESS, o.SORT_NUM, o.LEVEL_NUM, o.DELETED,1 AS operation,
+			(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_menu where parent_id = o.menu_id and deleted = 0) as state
+			FROM sys_menu o
+			left join sys_route t on o.route_id = t.route_id
+			WHERE o.DELETED = 0 AND o.PARENT_ID = #{parentId,jdbcType=NUMERIC}
+			order by o.sort_num asc
+	</select>
+
+	<select id="selectAllFuns" resultMap="FunMap" parameterType="map">
+			SELECT f.fun_id,f.fun_name,f.fun_code,f.fun_type,su.URL_PATTERN,1 AS OPERATION
+			FROM sys_fun f
+			LEFT JOIN sys_url su ON su.URL_ID = f.URL_ID
+			where f.route_id = #{routeId,jdbcType=INTEGER} and f.deleted = 0
+	</select>
+
+	<select id="selectMenusByVisitor" parameterType="map" resultMap="menuTreeMap4">
+			select m.MENU_ID, m.MENU_NAME, m.ROUTE_ID, r.ROUTE_URL,m.ICON, m.PARENT_ID, m.BUSINESS,m.SORT_NUM, m.LEVEL_NUM, m.DELETED,svmf.operation,
+			(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_menu where parent_id = m.menu_id and deleted = 0) as state
+			from sys_menu m
+			LEFT JOIN sys_route r ON m.ROUTE_ID = r.ROUTE_ID
+			RIGHT JOIN sys_visitor_menu_fun svmf ON m.menu_id = svmf.menu_id AND svmf.type = 1
+			where m.deleted = 0 AND m.PARENT_ID = #{parentId,jdbcType=NUMERIC}
+			ORDER BY m.sort_num ASC
+	</select>
+
+	<select id="selectFunsByVisitor" resultMap="FunMap" parameterType="map">
+			SELECT f.fun_id,f.fun_name,f.fun_code,f.fun_type,su.URL_PATTERN,svmf.OPERATION
+			FROM sys_fun f
+			LEFT JOIN sys_url su ON su.URL_ID = f.URL_ID
+			RIGHT JOIN sys_visitor_menu_fun svmf ON svmf.fun_id = f.fun_id AND svmf.type = 2
+			WHERE f.route_id = #{routeId,jdbcType=INTEGER}
+	</select>
+
+	<select id="getAllMenusByRoleId" parameterType="map" resultMap="menuTreeMap3">
+			SELECT o.MENU_ID, o.MENU_NAME, o.ROUTE_ID,t.route_url, o.ICON, o.PARENT_ID, o.BUSINESS, o.SORT_NUM, o.LEVEL_NUM, o.DELETED,#{roleId,jdbcType=INTEGER} as ROLE_ID,
+			(select case when srm.operation is NULL THEN 0 else srm.operation end) as OPERATION,
+			(select CASE COUNT(1) WHEN 0  THEN 'open' ELSE 'close' END from sys_menu where parent_id = o.menu_id and deleted = 0) as state
+			FROM sys_menu o
+			left join sys_route t on o.route_id = t.route_id
+			left join sys_role_menu srm on srm.menu_id = o.menu_id and srm.role_id = #{roleId,jdbcType = NUMERIC}
+			WHERE o.DELETED = 0 AND o.PARENT_ID = #{parentId,jdbcType=NUMERIC}
+			order by o.sort_num asc
+	</select>
+
+	<select id="getAllFunsByRoleId" parameterType="map" resultMap="FunMap">
+			select sf.fun_id,sf.fun_name,sf.fun_code,sf.fun_type,su.url_pattern,
+			(select case when srf.operation is NULL THEN 0 else srf.operation end) as operation
+				from sys_fun sf
+				left join sys_role_fun srf on sf.fun_id = srf.fun_id and srf.role_id = #{roleId,jdbcType=INTEGER}
+				LEFT JOIN sys_url su ON su.URL_ID = sf.URL_ID
+				where sf.route_id = #{routeId,jdbcType=INTEGER} and sf.deleted = 0
+	</select>
+
+	<select id="getMenusByUserIdAndParentId"   resultMap="RoleMenuResultTreeMap" parameterType="com.njht.webyun.system.model.sysMenu.SysMenu">
+		<choose>
+			<when test="userId > 1">
+				SELECT
+					m.*,m.menu_id as menuId,#{userId}
+				AS userId
+				FROM sys_menu m
+				WHERE m.`PARENT_ID`=#{parentId}
+					AND m.menu_id IN (SELECT f.fun_id FROM sys_role_user u, sys_role_fun f WHERE u.role_id = f.role_id AND u.user_id = #{userId,jdbcType=NUMERIC} )
+				order by m.sort_num asc
+			</when>
+			<otherwise>
+				SELECT
+					m.*,m.menu_id as menuId,#{userId} AS userId
+				FROM sys_menu m
+				WHERE m.`PARENT_ID`=#{parentId}
+				order by m.sort_num asc
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="getSysMenusByUserId"   resultMap="RoleMenuResultTreeMap" parameterType="com.njht.webyun.system.model.sysMenu.SysMenu">
+		SELECT	m.*,m.route_id,r.route_url,m.MENU_ID as menuId,#{userId} as userId	FROM sys_menu m,sys_route r 	WHERE m.`PARENT_ID`=#{parentId} and m.route_id=r.route_id
+		and m.deleted = 0
+		order by m.SORT_NUM asc
+	</select>
+
+
+	<select id="checkUrlOrName" resultType="int">
+		select count(1) from sys_menu m where
+			replace(m.menu_url,'/','')=replace(#{menuUrl},'/','')
+			<if test="menuId != null and menuId!=''" >
+				AND menu_id != #{menuId}
+			</if>
+<!--			<if test="parentId != null and parentId!=''" >
+				AND parent_id = #{parentId}
+			</if>-->
+	</select>
+
+	<insert id="addSysMenu" parameterType="com.njht.webyun.system.model.sysMenu.SysMenu" useGeneratedKeys="true" keyProperty="menuId">
+		insert into sys_menu(MENU_NAME,ROUTE_ID,ICON,PARENT_ID,BUSINESS,SORT_NUM,LEVEL_NUM,DELETED,CREATED_BY,CREATED_DATE,LAST_UPDATED_BY,LAST_UPDATED_DATE)
+		values (
+			#{menuName,jdbcType=VARCHAR},
+			#{routeId,jdbcType=INTEGER},
+			#{icon,jdbcType=VARCHAR},
+			#{parentId,jdbcType=INTEGER},
+			#{business,jdbcType=VARCHAR},
+			#{sortNum,jdbcType=INTEGER},
+			#{levelNum,jdbcType=INTEGER},
+			0,
+			#{createdBy,jdbcType=INTEGER},
+			#{createdDate,jdbcType=TIMESTAMP},
+			#{lastUpdatedBy,jdbcType=INTEGER},
+			#{lastUpdatedDate,jdbcType=TIMESTAMP})
+	</insert>
+
+	<update id="editSysMenu" parameterType="com.njht.webyun.system.model.sysMenu.SysMenu">
+		update sys_menu set
+			MENU_NAME = #{menuName,jdbcType=VARCHAR},
+			ROUTE_ID = #{routeId,jdbcType=VARCHAR},
+			ICON = #{icon,jdbcType=VARCHAR},
+			PARENT_ID = #{parentId,jdbcType=INTEGER},
+			BUSINESS = #{business,jdbcType=VARCHAR},
+			SORT_NUM = #{sortNum,jdbcType=INTEGER},
+			LEVEL_NUM = #{levelNum,jdbcType=INTEGER},
+			LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=INTEGER},
+			LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+		where MENU_ID = #{menuId,jdbcType=INTEGER}
+	</update>
+
+	<delete id="removeSysMenu" parameterType="java.lang.Integer" >
+		delete from SYS_MENU
+		where  FIND_IN_SET(menu_id, Get_MenuChild_List(#{menuId,jdbcType=NUMERIC}))
+	</delete>
+
+	<update id="updateSysMenuSortNum" parameterType="com.njht.webyun.system.model.sysMenu.SysMenu">
+		UPDATE sys_menu
+		SET
+			SORT_NUM = #{sortNum,jdbcType=NUMERIC},
+			LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+			LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+	 	WHERE MENU_ID = #{menuId,jdbcType=NUMERIC}
+	</update>
+
+	<update id="updateSysMenuSelf" parameterType="com.njht.webyun.system.model.sysMenu.SysMenu">
+		UPDATE sys_menu
+		SET
+			LEVEL_NUM = #{levelNum,jdbcType=NUMERIC},
+			PARENT_ID = #{parentId,jdbcType=NUMERIC},
+			LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+			LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+		WHERE MENU_ID = #{menuId,jdbcType=NUMERIC}
+	</update>
+
+	<update id="updateSysMenuLevel" parameterType="map">
+		UPDATE sys_menu
+			SET
+		LEVEL_NUM = #{levelNum,jdbcType=NUMERIC},
+		LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+	 	LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+		WHERE MENU_ID = #{menuId,jdbcType=NUMERIC}
+	</update>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+		select
+		<include refid="Base_Column_List" />
+		from menu
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<!-- 根据菜单URL获取菜单的层级属性信息 -->
+	<!-- 判断url时，去掉‘/’，对部分系统的路由做兼容 20210317-->
+	<select id="selectMenuByUrl" parameterType="java.lang.String" resultType="map">
+         select sm.MENU_NAME as parentName,sm.PARENT_ID as parentId,t.menu_name as menuName,t.menu_id as menuId from sys_menu sm
+         right join
+            (select t.PARENT_ID,t.MENU_NAME ,t.menu_id from sys_menu t LEFT JOIN sys_route r on t.route_id = r.route_id WHERE ( r.ROUTE_URL=#{menuUrl,jdbcType=VARCHAR}  or replace(r.ROUTE_URL,'/','')=#{menuUrl,jdbcType=VARCHAR}) and t.DELETED=0 limit 1) t
+         on sm.MENU_ID=t.PARENT_ID
+    </select>
+
+	<!-- 首页菜单快捷入口：用户常用 和 标准常用  -->
+	<select id="getUserCommonFunction" parameterType="java.util.List" resultMap="menuTreeMap2">
+		SELECT
+		o.ROUTE_ID,
+		r.ROUTE_URL,
+		o.PARENT_ID,
+		o.MENU_ID,
+		o.MENU_NAME
+		FROM
+		sys_behavior_log s ,sys_menu o,sys_route r
+		WHERE
+		s.MENU_ID = o.MENU_ID AND o.route_id = r.route_id
+		AND
+		s.MENU_ID in
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		<if test="userId != null and userId != -1">
+			AND s.USER_ID = #{userId}
+		</if>
+		GROUP  BY s.MENU_ID order by COUNT(s.MENU_ID) DESC  limit 0,6
+	</select>
+</mapper>

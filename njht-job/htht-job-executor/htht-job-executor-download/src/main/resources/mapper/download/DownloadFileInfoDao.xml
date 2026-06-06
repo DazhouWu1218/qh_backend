@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.executor.download.dao.DownloadFileInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.htht.executor.download.entity.DownloadFileInfoEntity" id="downloadFileInfoMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="bz" column="bz"/>
+        <result property="dataTime" column="data_time"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="format" column="format"/>
+        <result property="orbiteid" column="orbiteid"/>
+        <result property="realFileName" column="real_file_name"/>
+        <result property="zt" column="zt"/>
+    </resultMap>
+    <delete id="deleteByFileName">
+        DELETE FROM htht_cluster_schedule_download_file_info where file_name = #{fileName}
+    </delete>
+    <select id="selectFileListByTime" resultType="com.htht.executor.download.entity.DownloadFileInfoEntity">
+        SELECT file_path,file_name FROM `htht_cluster_schedule_download_file_info`
+        where data_time &gt;= #{beginTime} and data_time &lt;= #{endTime} and zt = "1"
+    </select>
+    <select id="selectFileNameListByTime" resultType="java.lang.String">
+        SELECT file_name FROM `htht_cluster_schedule_download_file_info`
+        where data_time &gt;= #{beginTime} and data_time &lt;= #{endTime} and zt = "1"
+        <if test="bz!=null and bz!='' ">
+            and bz = #{bz}
+        </if>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.executor.satellite.dao.SateDataTaskFileDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.htht.executor.satellite.entity.SateDataTaskFileEntity" id="sateDataTaskFileMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="taskId" column="task_id"/>
+        <result property="diskId" column="disk_id"/>
+        <result property="fileRealName" column="file_real_name"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="relativePath" column="relative_path"/>
+        <result property="assertDirectory" column="assert_directory"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="description" column="description"/>
+    </resultMap>
+    <select id="selectFileNameBySatellite" resultType="java.lang.String">
+        SELECT a.file_name FROM `htht_dms_sate_data_task_file` a
+        LEFT JOIN htht_dms_sate_data_file_info fi
+        ON a.id = fi.source_file_id
+        LEFT JOIN htht_dms_sate_data_info i
+        ON fi.data_id = i.id
+        <where>
+            TO_DAYS(i.update_time) = TO_DAYS(now())
+            <if test="satelliteId != null and satelliteId != '' ">
+                and i.satellite_id = #{satelliteId}
+            </if>
+            <if test="sensorId != null and sensorId != '' ">
+                and i.sensor_id = #{sensorId}
+            </if>
+            <if test="resolution != null and resolution != '' ">
+                and i.resolution = #{resolution}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.management.business.dao.ProductCategoryDao">
+
+	<resultMap id="ProductCategoryMap" type="com.njht.webyun.management.business.entity.ProductCategory">
+		<id property="id" column="id" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="version" column="version" />
+		<result property="iconPath" column="icon_path" />
+		<result property="menu" column="menu" />
+		<result property="menuId" column="menu_id" />
+		<result property="parentId" column="parent_id" />
+		<result property="text" column="text" />
+		<result property="treeKey" column="tree_key" />
+		<result property="sortKey" column="sort_key" />
+	</resultMap>
+
+	<select id="selectCategoryByUserId" resultType="com.njht.webyun.management.business.entity.HthtDataCategory">
+		SELECT DISTINCT c.id id,c.text as name,c.parent_id parent_id,c.create_time create_time,c.sort_key,c.img_url,c.menu
+			FROM sys_role_user ur, sys_role r, htht_role_category rc,htht_cluster_schedule_data_category c
+		WHERE  ur.ROLE_ID = r.ROLE_ID
+			AND r.ROLE_ID = rc.role_id
+			AND rc.category_id = c.id
+			AND ur.USER_ID = #{userId}
+		ORDER BY c.sort_key ASC;
+	</select>
+
+	<select id="selectProductInfo" resultType="com.njht.webyun.management.business.entity.ProductVo">
+		SELECT
+			id as value, name as label
+		FROM
+			`htht_cluster_schedule_product`
+		where
+			tree_id
+		in (
+			SELECT
+			id
+			FROM
+				`htht_cluster_schedule_data_category`
+			WHERE
+				parent_id = #{id}
+		)
+	</select>
+
+	<select id="getParentId" resultType="String">
+		SELECT parent_id FROM `htht_cluster_schedule_data_category` where id = #{treeId};
+	</select>
+
+	<!-- 新增 -->
+	<insert id="saveData">
+-- 		INSERT INTO
+-- 			htht_data_category (id,create_time,version,parent_id,name,sort_key,tree_key)
+-- 		VALUES
+-- 			(#{id},now(),#{version},#{parentId},#{name},#{sortKey},#{treeKey})
+	</insert>
+
+	<select id="selectIdByName" resultType="string">
+		select DISTINCT name from test
+	</select>
+	<select id="selectParentIds" resultType="java.lang.String">
+		SELECT DISTINCT c.parent_id
+			FROM sys_role_user ur, sys_role r, htht_role_category rc,htht_cluster_schedule_data_category c
+		WHERE
+			ur.ROLE_ID = r.ROLE_ID
+			AND r.ROLE_ID = rc.role_id
+			AND rc.category_id = c.id
+			AND ur.USER_ID = #{userId}
+	</select>
+	<select id="selectCategoryInfo" resultType="com.njht.webyun.management.business.entity.HthtDataCategory">
+		SELECT DISTINCT c.id id, CONCAT(hcs.text,"_",c.text) as name,c.parent_id parent_id,c.create_time create_time,c.sort_key
+			FROM sys_role_user ur, sys_role r, htht_role_category rc,htht_cluster_schedule_data_category c
+		LEFT JOIN
+		 	htht_cluster_schedule_data_category hcs
+		on c.parent_id = hcs.id
+		WHERE ur.ROLE_ID = r.ROLE_ID
+			AND r.ROLE_ID = rc.role_id
+			AND rc.category_id = c.id
+			AND ur.USER_ID = #{userId}
+		ORDER BY c.sort_key ASC
+	</select>
+	<select id="getProductTree" resultType="com.njht.webyun.management.business.entity.HthtDataCategory">
+-- 		SELECT
+-- 			id,parent_id,name,sort_key
+-- 		FROM
+-- 			`htht_data_category`
+-- 		where
+-- 			tree_key = #{identify}
+-- 		ORDER BY
+-- 			sort_key
+-- 		ASC
+	</select>
+
+
+</mapper>

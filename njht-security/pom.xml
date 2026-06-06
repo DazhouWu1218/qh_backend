@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>njht_web_yun</artifactId>
+        <groupId>com.njht.webyun</groupId>
+        <version>1.0.0-QH</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>njht-security</artifactId>
+    <description>通用安全认证模块</description>
+
+    <dependencies>
+        <!-- Spring Web -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
+            <version>${cloud.feign.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.njht.webyun</groupId>
+            <artifactId>njht-common</artifactId>
+            <version>1.0.0-QH</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>easypoi-spring-boot-starter</artifactId>
+                    <groupId>cn.afterturn</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+
+</project>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.njht.webyun.system.dao.mapper.SysDicMapper" >
+
+    <resultMap id="BaseResultMap" type="com.njht.webyun.system.model.sysDic.SysDic" >
+        <id column="DIC_ID" property="dicId" jdbcType="INTEGER" />
+        <result column="DIC_NAME" property="dicName" jdbcType="VARCHAR" />
+        <result column="DIC_TYPE" property="dicType" jdbcType="VARCHAR" />
+        <result column="DIC_KEY" property="dicKey" jdbcType="VARCHAR" />
+        <result column="DIC_VALUE" property="dicValue" jdbcType="VARCHAR" />
+        <result column="DIC_SYMBOL" property="dicSymbol" jdbcType="VARCHAR" />
+        <result column="CREATED_BY" property="createdBy" jdbcType="INTEGER" />
+        <result column="CREATED_DATE" property="createdDate" jdbcType="TIMESTAMP" />
+        <result column="LAST_UPDATED_BY" property="lastUpdatedBy" jdbcType="INTEGER" />
+        <result column="LAST_UPDATED_DATE" property="lastUpdatedDate" jdbcType="TIMESTAMP" />
+        <result column="lastUpdateName" property="lastUpdateName" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+        s.DIC_ID, s.DIC_NAME,s.DIC_TYPE, s.DIC_KEY, s.DIC_VALUE, s.DIC_SYMBOL, s.CREATED_BY, s.CREATED_DATE, s.LAST_UPDATED_BY, s.LAST_UPDATED_DATE
+    </sql>
+
+    <!--根据type查询字典<值>信息-->
+    <select id="selectByType" resultMap="BaseResultMap" parameterType="com.njht.webyun.system.model.sysDic.SysDic" >
+        select 
+        <include refid="Base_Column_List" />
+        from sys_dic s
+        where s.DIC_TYPE = #{dicType,jdbcType=VARCHAR}
+    </select>
+
+    <!--分页查询字典信息-->
+    <select id="getSysDicByPage"  resultMap="BaseResultMap" parameterType="com.njht.webyun.system.model.sysDic.SysDicQuery" >
+        select <include refid="Base_Column_List" />, GET_REAL_NAME(s.`LAST_UPDATED_BY`) AS lastUpdateName
+        from sys_dic s where s.dic_id IN (SELECT MIN(t.dic_id) FROM sys_dic t GROUP BY t.DIC_TYPE)
+        <if test="dicName != null" >
+            and  s.DIC_NAME like '%${dicName}%'
+        </if>
+        <if test="dicType != null" >
+            and  s.DIC_TYPE like '%${dicType}%'
+        </if>
+        <if test="sort != null and sort != '' and order != null and order != '' ">
+            order by ${sort} ${order}
+        </if>
+    </select>
+
+    <!--分页查询字典<值>信息-->
+    <select id="getSysDicValueByPage"  resultMap="BaseResultMap" parameterType="com.njht.webyun.system.model.sysDic.SysDicValueQuery" >
+        select  <include refid="Base_Column_List" />
+        from sys_dic s where s.DIC_NAME=#{dicName} and s.DIC_TYPE=#{dicType}
+        <if test="dicKey != null" >
+            and  s.dic_key like '%${dicKey}%'
+        </if>
+        <if test="dicValue != null" >
+            and  s.DIC_VALUE like '%${dicValue}%'
+        </if>
+        <if test="sort != null and sort != '' and order != null and order != '' ">
+            order by ${sort} ${order}
+        </if>
+    </select>
+
+    <!-- 判断字典名称和类型是否存在 -->
+    <select id="selectDicByNameAndType"  resultType="int" parameterType="com.njht.webyun.system.model.sysDic.SysDic" >
+        SELECT COUNT(1) NUM
+        FROM SYS_DIC
+        WHERE (DIC_NAME=#{dicName} or DIC_TYPE=#{dicType})
+        <if test="dicId != null and dicId != ''">
+            AND dic_id not in
+            (select s.dic_id
+
+            from SYS_DIC s
+                where
+                s.DIC_TYPE = (select f.DIC_TYPE from SYS_DIC f where f.dic_id = #{dicId})
+                or
+                s.DIC_NAME = (select f.DIC_NAME from SYS_DIC f where f.dic_id = #{dicId})
+            )
+        </if>
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from sys_dic
+        where dic_id = #{dicId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByPrimaryKeyList" parameterType="java.util.List" >
+        delete from sys_dic
+        where
+        dic_type in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item.dicType,jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+
+    <insert id="insertDic" parameterType="com.njht.webyun.system.model.sysDic.SysDic" >
+        insert into sys_dic ( DIC_NAME,DIC_TYPE,DIC_KEY,DIC_VALUE, CREATED_BY,
+            CREATED_DATE, LAST_UPDATED_BY, LAST_UPDATED_DATE,DIC_SYMBOL
+            )
+        values ( #{dicName,jdbcType=VARCHAR}, #{dicType,jdbcType=VARCHAR},
+            #{dicKey,jdbcType=VARCHAR}, #{dicValue,jdbcType=VARCHAR}, #{createdBy,jdbcType=INTEGER},
+            #{createdDate,jdbcType=TIMESTAMP}, #{lastUpdatedBy,jdbcType=INTEGER}, #{lastUpdatedDate,jdbcType=TIMESTAMP},#{dicSymbol,jdbcType=VARCHAR}
+            )
+    </insert>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.njht.webyun.system.model.sysDic.SysDic" >
+        UPDATE SYS_DIC SET
+            DIC_NAME = #{dicName,jdbcType=VARCHAR},
+            DIC_TYPE = #{dicType,jdbcType=VARCHAR},
+            DIC_KEY = #{dicKey,jdbcType=VARCHAR},
+            DIC_VALUE = #{dicValue,jdbcType=VARCHAR},
+            DIC_SYMBOL = #{dicSymbol,jdbcType=VARCHAR},
+            LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=NUMERIC},
+            LAST_UPDATED_DATE = #{lastUpdatedDate,jdbcType=TIMESTAMP}
+        WHERE DIC_ID = #{dicId,jdbcType=NUMERIC}
+    </update>
+</mapper>

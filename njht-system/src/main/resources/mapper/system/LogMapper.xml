@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.system.dao.mapper.LogMapper">
+
+
+  <resultMap id="onlineUserMap" type="com.njht.webyun.system.model.sysUser.SysUser">
+    <id column="user_id" property="id" jdbcType="INTEGER"/>
+    <result column="ip" property="lastLoginIp" jdbcType="VARCHAR"/>
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <result column="phone" property="phone" jdbcType="CHAR"/>
+    <result column="telphone" property="telphone" jdbcType="VARCHAR"/>
+    <result column="address" property="address" jdbcType="VARCHAR"/>
+    <result column="username" property="username" jdbcType="VARCHAR"/>
+    <result column="password" property="password" jdbcType="VARCHAR"/>
+    <result column="userface" property="userface" jdbcType="VARCHAR"/>
+    <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    <result column="email" property="email" jdbcType="VARCHAR"/>
+    <result column="orgId" property="orgId" jdbcType="INTEGER"/>
+    <result column="locked" property="locked" jdbcType="BIT"/>
+    <result column="errorTimes" property="errorTimes" jdbcType="INTEGER"/>
+    <result column="last_login_date" property="lastLoginDate" jdbcType="TIMESTAMP"/>
+    <result column="last_login_ip" property="lastLoginIp" jdbcType="VARCHAR"/>
+    <result column="created_by" property="createdBy" jdbcType="INTEGER"/>
+    <result column="created_date" property="createdDate" jdbcType="TIMESTAMP"/>
+    <result column="last_update_by" property="lastUpdateBy" jdbcType="INTEGER"/>
+    <result column="last_update_date" property="lastUpdateDate" jdbcType="TIMESTAMP"/>
+    <result column="org_name" property="orgName" jdbcType="VARCHAR"/>
+<!--
+    <collection property="roles" ofType="com.aoto.login.model.sysRole.SysRole">
+      <id column="rid" property="id"/>
+      <result column="rname" property="name"/>
+      <result column="namezh" property="nameZh"/>
+
+    </collection>-->
+  </resultMap>
+
+  <resultMap id="selectLoginLogsByPageMap" type="com.njht.webyun.system.model.log.LoginLogModel">
+    <result column="USER_ID" property="userId" javaType="int" jdbcType="NUMERIC" />
+    <result column="USERNAME" property="username" javaType="String" jdbcType="VARCHAR" />
+    <result column="REAL_NAME" property="realName" javaType="String" jdbcType="VARCHAR" />
+    <result column="IP" property="ip" javaType="String" jdbcType="VARCHAR" />
+    <result column="INHERITED_NAME" property="inheritedName" javaType="String" jdbcType="VARCHAR" />
+    <result column="LOGIN_DATE" property="loginDate" javaType="Date" jdbcType="TIMESTAMP" />
+    <result column="LOGOUT_DATE" property="logoutDate" javaType="Date" jdbcType="TIMESTAMP" />
+    <result column="OS" property="os" javaType="String" jdbcType="VARCHAR" />
+    <result column="BROWSER" property="browser" javaType="String" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="selectBehaviorLogsByPageMap" type="com.njht.webyun.system.model.log.LoginLogModel">
+    <id column="BEHAVIOR_ID" property="behaviorId" javaType="int" jdbcType="NUMERIC" />
+    <result column="USER_ID" property="userId" javaType="int" jdbcType="NUMERIC" />
+    <result column="USERNAME" property="username" javaType="String" jdbcType="VARCHAR" />
+    <result column="REAL_NAME" property="realName" javaType="String" jdbcType="VARCHAR" />
+    <result column="INHERITED_NAME" property="inheritedName" javaType="String" jdbcType="VARCHAR" />
+    <result column="IP" property="ip" javaType="String" jdbcType="VARCHAR" />
+    <result column="LOGGED_DATE" property="loggedDate" javaType="Date" jdbcType="TIMESTAMP" />
+    <result column="ACTION" property="action" javaType="String" jdbcType="VARCHAR" />
+    <result column="DATA_CHANGED" property="dataChanged" javaType="boolean" jdbcType="NUMERIC" />
+  </resultMap>
+  
+  <resultMap id="selectDataLogsByBehaviorIdMap" type="map">
+    <result column="TABLE_NAME" property="tableName" javaType="String" jdbcType="VARCHAR" />
+    <result column="KEY_VALUE" property="keyValue" javaType="int" jdbcType="VARCHAR" />
+    <result column="COLUMN_NAME" property="columnName" javaType="String" jdbcType="VARCHAR" />
+    <result column="OLD_VALUE" property="oldValue" javaType="String" jdbcType="VARCHAR" />
+    <result column="NEW_VALUE" property="newValue" javaType="String" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <insert id="insertLoginLog" parameterType="com.njht.webyun.system.model.log.LoginLogModel">
+     insert into sys_login_log
+     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sessionId != null">
+       SESSION_ID,
+      </if>
+      <if test="userId != null">
+       USER_ID,
+      </if>
+      <if test="username != null">
+       USERNAME,
+      </if>
+      <if test="realName != null">
+       REAL_NAME,
+      </if>
+      <if test="ip != null">
+       IP,
+      </if>
+      <if test="orgId != null">
+       ORG_ID,
+      </if>
+      <if test="orgName != null">
+       ORG_NAME,
+      </if>
+      <if test="inheritedName != null">
+       INHERITED_NAME,
+      </if>
+      <if test="loginDate != null">
+       LOGIN_DATE,
+      </if>
+      <if test="logoutDate != null">
+       LOGOUT_DATE,
+      </if>
+      <if test="os != null">
+       OS,
+      </if>
+      <if test="browser != null">
+       BROWSER,
+      </if>
+      <if test="userAgent != null">
+       USER_AGENT,
+      </if>
+     </trim>
+     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sessionId != null">
+       #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+       #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+       #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+       #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+       #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null">
+       #{orgId,jdbcType=INTEGER},
+      </if>
+      <if test="orgName != null">
+       #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="inheritedName != null">
+       #{inheritedName,jdbcType=VARCHAR},
+      </if>
+      <if test="loginDate != null">
+       #{loginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logoutDate != null">
+       #{logoutDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="os != null">
+       #{os,jdbcType=VARCHAR},
+      </if>
+      <if test="browser != null">
+       #{browser,jdbcType=VARCHAR},
+      </if>
+      <if test="userAgent != null">
+       #{userAgent,jdbcType=VARCHAR},
+      </if>
+     </trim>
+    </insert>
+
+
+  <select id="selectLoginLogsByPage" parameterType="map" resultMap="selectLoginLogsByPageMap">
+    SELECT SESSION_ID, USER_ID, USERNAME, REAL_NAME, IP, ORG_ID, ORG_NAME, INHERITED_NAME, LOGIN_DATE, LOGOUT_DATE, OS,
+    BROWSER FROM SYS_LOGIN_LOG
+    <where>
+      SESSION_ID = SESSION_ID
+      <if test="username != null and username != ''">
+          AND (USERNAME LIKE '%${username}%'
+        OR REAL_NAME LIKE '%${username}%')
+       </if>
+      <choose>
+        <when test="containSub != null and containSub==true">
+            AND FIND_IN_SET(org_id, Get_OrgChild_List(#{orgId,jdbcType=NUMERIC}))
+        </when>
+        <otherwise>
+          AND ORG_ID = #{orgId,jdbcType=NUMERIC}
+        </otherwise>
+      </choose>
+    </where>
+    ORDER BY
+    <choose>
+      <when test="sort != null and sort!='' and order != null and order!=''">
+        ${sort} ${order}
+      </when>
+      <otherwise>
+        LOGIN_DATE DESC, SESSION_ID DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <insert id="updateLogoutDate" parameterType="map">
+    UPDATE SYS_LOGIN_LOG SET LOGOUT_DATE = #{logoutDate,jdbcType=TIMESTAMP} WHERE SESSION_ID = #{sessionId,jdbcType=VARCHAR}
+  </insert>
+
+
+  <select id="selectBehaviorLogsByPage" parameterType="map" resultMap="selectBehaviorLogsByPageMap">
+    SELECT l.USER_ID, l.USERNAME, l.REAL_NAME, l.INHERITED_NAME, l.IP, t.BEHAVIOR_ID, t.LOGGED_DATE, t.ACTION, t.DATA_CHANGED FROM SYS_BEHAVIOR_LOG t, SYS_LOGIN_LOG l WHERE t.SESSION_ID = l.SESSION_ID
+    <if test="username != null and username != ''">
+      AND (l.USERNAME LIKE '%${username}%'
+      OR l.REAL_NAME LIKE '%${username}%')
+    </if>
+    <choose>
+      <when test="containSub != null and containSub==true">
+          AND FIND_IN_SET(l.org_id, Get_OrgChild_List(#{orgId,jdbcType=NUMERIC}))
+      </when>
+      <otherwise>
+        AND l.ORG_ID = #{orgId,jdbcType=NUMERIC}
+      </otherwise>
+    </choose>
+    <if test="dataChanged == true">
+      AND t.DATA_CHANGED = #{dataChanged, jdbcType=NUMERIC}
+    </if>
+    ORDER BY
+    <choose>
+      <when test="sort != null and sort!='' and order != null and order!=''">
+        ${sort} ${order}
+      </when>
+      <otherwise>
+        logged_date DESC
+      </otherwise>
+    </choose>
+  </select>
+
+    <!-- 过滤器记录后台用户行为 -->
+  <insert id="insertBehaviorLog" parameterType="com.njht.webyun.system.model.log.SysBehaviorLogModel" useGeneratedKeys="true" keyProperty="behaviorId">
+    INSERT INTO SYS_BEHAVIOR_LOG (BEHAVIOR_ID, SESSION_ID, LOGGED_DATE, ACTION, DATA_CHANGED,MENU_ID)
+    VALUES (#{behaviorId,jdbcType=NUMERIC}, #{sessionId,jdbcType=VARCHAR}, #{loggedDate,jdbcType=TIMESTAMP}, #{action,jdbcType=VARCHAR}, #{dataChanged,jdbcType=NUMERIC}, #{menuId,jdbcType=NUMERIC})
+  </insert>
+
+  <update id="clearOnlineLogs">
+    DELETE FROM
+    sys_online_log
+  </update>
+
+  <insert id="insertOnlineLog" parameterType="map">
+    insert into sys_online_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        user_id,
+      </if>
+      <if test="ip != null">
+        ip,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="telphone != null">
+        telphone,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <!--<if test="enabled != null">-->
+        <!--enabled,-->
+      <!--</if>-->
+      <if test="username != null">
+        username,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="userface != null">
+        userface,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="orgId != null">
+        orgId,
+      </if>
+      <!--<if test="locked != null">-->
+        <!--locked,-->
+      <!--</if>-->
+      <if test="errortimes != null">
+        errorTimes,
+      </if>
+      <if test="lastLoginDate != null">
+        last_login_date,
+      </if>
+      <if test="lastLoginIp != null">
+        last_login_ip,
+      </if>
+      <if test="createdBy != null">
+        created_by,
+      </if>
+      <if test="createdDate != null">
+        created_date,
+      </if>
+      <if test="lastUpdateBy != null">
+        last_update_by,
+      </if>
+      <if test="lastUpdateDate != null">
+        last_update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=CHAR},
+      </if>
+      <if test="telphone != null" >
+        #{telphone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <!--<if test="enabled != null" >-->
+        <!--#{enabled,jdbcType=BIT},-->
+      <!--</if>-->
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="userface != null" >
+        #{userface,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=INTEGER},
+      </if>
+      <!--<if test="locked != null" >-->
+        <!--#{locked,jdbcType=BIT},-->
+      <!--</if>-->
+      <if test="errortimes != null" >
+        #{errortimes,jdbcType=INTEGER},
+      </if>
+      <if test="lastLoginDate != null" >
+        #{lastLoginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginIp != null" >
+        #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=INTEGER},
+      </if>
+      <if test="createdDate != null" >
+        #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateBy != null" >
+        #{lastUpdateBy,jdbcType=INTEGER},
+      </if>
+      <if test="lastUpdateDate != null" >
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="selectOnlineLogsByPage" parameterType="map" resultMap="onlineUserMap">
+    SELECT
+      *
+    FROM sys_online_log
+      <if test="sort != null and sort != '' and order != null and order != '' ">
+        order by ${sort}
+        ${order}
+      </if>
+  </select>
+
+    <select id="getLoginBehaviorCountToday" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*) from publish_behavior_log where action = 0 and TO_DAYS(created_date) = TO_DAYS(NOW()) and created_by = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <insert id="addLoginBehavior" parameterType="map">
+        insert into publish_behavior_log (action,deleted,created_date,created_by,last_updated_date,last_updated_by,num)
+        values(
+        0,
+        0,
+        #{createdDate,jdbcType=TIMESTAMP},
+        #{createdBy,jdbcType=INTEGER},
+        #{createdDate,jdbcType=TIMESTAMP},
+        #{createdBy,jdbcType=INTEGER},
+        1
+        )
+    </insert>
+
+    <update id="updateLoginBehavior" parameterType="map">
+        update publish_behavior_log set
+        last_updated_by = #{lastUpdatedBy,jdbcType=INTEGER},
+        last_updated_date = #{lastUpdatedDate,jdbcType=TIMESTAMP},
+        num = num + 1
+        where action = 0 and TO_DAYS(created_date) = TO_DAYS(now()) and created_by = #{lastUpdatedBy,jdbcType=INTEGER}
+    </update>
+
+
+</mapper>

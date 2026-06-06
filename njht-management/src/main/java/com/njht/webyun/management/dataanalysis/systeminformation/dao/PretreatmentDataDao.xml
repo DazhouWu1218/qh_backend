@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.management.dataanalysis.systeminformation.dao.PretreatmentDataDao">
+
+    <select id="getByDataType" resultType="com.njht.webyun.management.dataanalysis.systeminformation.entity.CimissGribDataFileInfoEntity">
+        select *
+        from cimiss_grib_data_file_info
+        where data_type = #{dataType};
+    </select>
+
+    <select id="countFileSizeByDataType" resultType="long">
+        select count(file_size)
+        from cimiss_grib_data_file_info
+        where data_type = #{dataType};
+    </select>
+
+
+    <select id="countAllPretreatmentSateData" resultType="long">
+        select sum(htht_dms_sate_data_file_info.tif_file_size)
+        from htht_dms_sate_data_info
+                 join htht_dms_sate_data_file_info on htht_dms_sate_data_file_info.data_id = htht_dms_sate_data_info.id
+        where htht_dms_sate_data_info.data_type = 0
+    </select>
+
+    <select id="getEmptyFileSizeFilePath"
+            resultType="com.njht.webyun.management.dataanalysis.systeminformation.entity.CimissGribDataFileInfoEntity">
+        select id, file_path
+        from cimiss_grib_data_file_info
+        where data_type = #{dataType}
+          and file_size is null;
+    </select>
+
+    <select id="updateCimssGribDataFileSize">
+        update cimiss_grib_data_file_info
+        set file_size=#{fileSize}
+        where id = #{id}
+    </select>
+
+</mapper>
+

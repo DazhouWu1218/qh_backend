@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.job.admin.algorithm.dao.AlgorithmDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.entity.algorithm.AlgorithmEntity" id="algorithmMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="sortKey" column="sort_key"/>
+        <result property="algorithmPath" column="algorithm_path"/>
+        <result property="algorithmType" column="algorithm_type"/>
+        <result property="algorithmVersion" column="algorithm_version"/>
+        <result property="handlerId" column="handler_id"/>
+        <result property="groupId" column="group_id"/>
+        <result property="registryValue" column="registry_value"/>
+        <result property="type" column="type"/>
+    </resultMap>
+    <select id="selectAddressListByJobId" resultType="java.lang.String">
+        SELECT a.registry_value
+        FROM xxl_job_info AS t
+        LEFT JOIN htht_cluster_schedule_algorithm a
+        ON a.id = t.algorithm_id
+        WHERE t.id = #{jobId}
+    </select>
+    <select id="selectAddressListById" resultType="java.lang.String">
+         SELECT registry_value FROM htht_cluster_schedule_algorithm where id = #{parameterId}
+    </select>
+
+
+</mapper>

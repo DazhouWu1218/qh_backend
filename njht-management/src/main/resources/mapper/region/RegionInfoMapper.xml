@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.management.region.dao.RegionInfoDao">
+
+	<!-- 查询字段 -->
+	<sql id="selectFields">regionid, t_m_regionid, regionlevel, fullname, districtname, enable, longitude_center, latitude_center, longitude_min, longitude_max, latitude_min, latitude_max</sql>
+	<insert id="insert">
+		INSERT INTO `htht_region_geo_info`(`regionid`, `the_gemo`)
+		VALUES (#{regionId},#{geo})
+	</insert>
+
+	<resultMap id="RegionMap" type="com.njht.webyun.management.region.entity.RegionInfo">
+		<id property="regionId" column="regionid" />
+		<result property="tMRegionid" column="t_m_regionid" />
+		<result property="regionlevel" column="regionlevel" />
+		<result property="fullname" column="fullname" />
+		<result property="districtname" column="districtname" />
+		<result property="enable" column="enable" />
+		<result property="theGemo" column="the_gemo" />
+	</resultMap>
+
+	<select id="getRegionName" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT
+			fullname
+		FROM
+			`htht_region_info`
+		where
+			regionid = #{regionId}
+	</select>
+
+
+	<select id="getRegion" parameterType="java.lang.String" resultMap="RegionMap">
+		SELECT
+			a.regionid,a.t_m_regionid,a.regionlevel,a.fullname,a.districtname,a.enable,b.the_gemo
+		FROM
+			`htht_region_info` a
+		LEFT JOIN
+			htht_region_geo_info b
+		ON a.regionid = b.regionid
+		where
+			a.regionid = #{regionId}
+	</select>
+
+	<select id="getRegionByParentid" parameterType="java.lang.String"  resultMap="RegionMap">
+		SELECT
+			regionid,t_m_regionid,regionlevel,fullname,districtname
+		FROM
+			`htht_region_info`
+		where
+			t_m_regionid = #{regionId}
+	</select>
+
+	<update id="update">
+		INSERT INTO `htht_region_geo_info`(`regionid`, `the_gemo`)
+		VALUES (#{regionId},#{theGemo})
+	</update>
+	<update id="updateLabel">
+		UPDATE
+		htht_region_geo_info
+		<set>
+			<if test="label != null">
+				label = #{label}
+			</if>
+		</set>
+		WHERE
+		regionid = #{regionId}
+	</update>
+
+	<!--	<select id="getRegionId" resultMap="RegionMap">-->
+<!--		SELECT-->
+<!--			regionid-->
+<!--		FROM-->
+<!--			`htht_region_info`-->
+<!--		WHERE-->
+<!--			regionlevel = 2-->
+<!--	</select>-->
+
+	<select id="getRegionList" resultMap="RegionMap">
+		SELECT
+			regionid,t_m_regionid,regionlevel,fullname
+		FROM
+			`htht_region_info`
+		WHERE
+			regionlevel = 0
+		or
+			regionlevel = 10
+		or
+			regionlevel = 20
+		or
+			regionLevel = 11
+		or
+			regionLevel = 21
+	</select>
+
+	<select id="getGeo" resultMap="RegionMap">
+		SELECT
+			regionid,the_gemo
+		FROM
+			`htht_region_geo_info`
+		WHERE
+			regionlevel = 10
+		or
+			regionlevel = 11
+
+	</select>
+
+	<select id="getAllGeo" resultType="string">
+		SELECT the_gemo FROM `htht_region_geo_info` where regionlevel = '0' or regionlevel = '10' or regionlevel = '20'
+	</select>
+	
+	<select id="selectRegionInfo" resultType="com.njht.webyun.management.region.entity.RegionInfo">
+		SELECT label,ID as region_id FROM `county`
+	</select>
+    <select id="getServiceRegionList" resultType="com.njht.webyun.management.region.entity.RegionInfo">
+		SELECT
+			regionid,t_m_regionid,regionlevel,fullname
+		FROM
+			`htht_region_info`
+		order by sort_key asc
+	</select>
+	<select id="getLabelAndCodeInfo" resultType="com.njht.webyun.management.region.entity.RegionInfo">
+		SELECT
+			regionid,t_m_regionid,regionlevel,label
+		FROM
+			`htht_region_info`
+	</select>
+
+
+</mapper>

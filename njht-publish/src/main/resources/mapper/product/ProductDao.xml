@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.publish.product.dao.ProductDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.webyun.publish.product.entity.ProductEntity" id="productMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="bz" column="bz"/>
+        <result property="cycle" column="cycle"/>
+        <result property="featureName" column="feature_name"/>
+        <result property="gdbPath" column="gdb_path"/>
+        <result property="iconPath" column="icon_path"/>
+        <result property="isRelease" column="is_release"/>
+        <result property="mapUrl" column="map_url"/>
+        <result property="mark" column="mark"/>
+        <result property="name" column="name"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="productPath" column="product_path"/>
+        <result property="treeId" column="tree_id"/>
+        <result property="issue" column="issue"/>
+        <result property="featurename" column="featurename"/>
+        <result property="gdbpath" column="gdbpath"/>
+        <result property="mapurl" column="mapurl"/>
+        <result property="menu" column="menu"/>
+        <result property="menuId" column="menu_id"/>
+        <result property="storagepath" column="storagepath"/>
+        <result property="userid" column="userid"/>
+        <result property="triggerParam" column="trigger_param"/>
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.data.category.dao.DataCategoryDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.entity.category.DataCategoryEntity" id="dataCategoryMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="iconPath" column="icon_path"/>
+        <result property="menu" column="menu"/>
+        <result property="menuId" column="menu_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="text" column="text"/>
+        <result property="treeKey" column="tree_key"/>
+        <result property="sortKey" column="sort_key"/>
+    </resultMap>
+
+    <select id="selectTreeListByRoleId" resultType="com.njht.entity.category.DataCategoryEntity">
+        SELECT DISTINCT c.*
+        FROM htht_role_category rc,htht_cluster_schedule_data_category c
+        WHERE
+        rc.category_id = c.id
+        <if test="idList != null and idList.size > 0">
+            AND rc.role_id  in
+            <foreach collection="idList" index="index" item="id" open="(" separator="," close=")" >
+                #{id}
+            </foreach>
+        </if>
+        <if test="identify != null and identify!=''">
+            AND tree_key = #{identify}
+        </if>
+        <if test="parentId != null and parentId!=''">
+            AND parent_id = #{parentId}
+        </if>
+        ORDER BY c.sort_key ASC,c.update_time DESC
+    </select>
+
+    <select id="getParentNameByProductIds" resultType="com.njht.entity.category.DataCategoryEntity">
+        SELECT a.text,c.id FROM `htht_cluster_schedule_data_category` a
+        LEFT JOIN htht_cluster_schedule_data_category b
+        ON a.id = b.parent_id
+        LEFT JOIN htht_cluster_schedule_product c
+        ON b.id = c.tree_id
+        where c.id in
+        <foreach collection="idList" index="index" item="id" open="(" separator="," close=")" >
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njht.webyun.management.business.dao.BusinessProductDao">
+
+	<resultMap id="ProductTreeMap" type="com.njht.webyun.management.business.entity.ProductTree">
+		<id property="id" column="id" />
+		<result property="parentId" column="parent_id" />
+		<result property="name" column="text" />
+		<result property="iconPath" column="icon_path" />
+		<result property="mapurl" column="map_url" />
+		<result property="sortno" column="sort_no" />
+		<result property="mark" column="mark" />
+	</resultMap>
+
+	<resultMap id="ProductInfoMap" type="com.njht.webyun.management.business.entity.ProductInfo">
+		<id property="id" column="id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="cycle" column="cycle" />
+		<result property="name" column="name" />
+		<result property="issue" column="issue" />
+		<result property="mark" column="mark" />
+		<result property="mosaicFile" column="mosaic_file" />
+		<result property="regionId" column="region_id" />
+		<result property="regionName" column="fullname" />
+		<result property="satellite" column="satellite"/>
+		<result property="resolution" column="resolution"/>
+		<result property="sensor" column="sensor"/>
+	</resultMap>
+
+	<resultMap id="ProductFileInfoMap" type="com.njht.webyun.management.business.entity.ProductFileInfo">
+		<id property="id" column="id"/>
+<!--		<result property="createTime" column="issue"/>-->
+<!--		<result property="updateTime" column="update_time"/>-->
+<!--		<result property="version" column="version"/>-->
+		<result property="filePath" column="file_path"/>
+		<result property="fileType" column="file_type"/>
+<!--		<result property="productId" column="product_id" />-->
+<!--		<result property="productType" column="product_type" />-->
+		<result property="isDel" column="is_del" />
+		<result property="relativePath" column="relative_path" />
+<!--		<result property="cycle" column="cycle" />-->
+<!--		<result property="issue" column="issue" />-->
+<!--		<result property="menuId" column="menu_id"/>-->
+<!--		<result property="region" column="region" />-->
+<!--		<result property="zt" column="zt" />-->
+		<result property="fileName" column="file_name" />
+<!--		<result property="fileSize" column="file_size" />-->
+<!--		<result property="productInfoId" column="product_info_id" />-->
+	</resultMap>
+
+	<!--
+		property 为user实体类中的字段名，数据中此字段可以不存在
+		javaType 为查询之后返回的结果为什么Java类型
+		ofType 实体类中需要查询的字段为什么类型
+		select 需要执行的sql语句 dao.UserAddressDAO接口中的selectAddressByUserId方法
+		column （为数据库中的字段名）第一次查询返回的结果中需要将哪一个字段作为第二次查询的参数
+		fetchType 是否懒加载，eager 不是  lazy 懒加载
+	-->
+	<resultMap id="ProductInfoDtoMap"  extends="ProductInfoMap" type="com.njht.webyun.management.business.entity.ProductInfoDto">
+		<collection property="productFileInfos" ofType="TreeJson" select="selectProductFileInfos" column="id"></collection>
+	</resultMap>
+
+	<select id="selectProductTreeByUserId" resultMap="ProductTreeMap">
+		SELECT DISTINCT
+			p.id,
+			p.NAME text,
+			p.tree_id parent_id,
+			p.map_url,
+			p.sort_no,
+			p.icon_path,
+			p.mark
+		FROM
+			sys_role_user ur,
+			sys_role r,
+			htht_role_category rc,
+			htht_cluster_schedule_data_category c,
+			htht_cluster_schedule_product p
+		WHERE
+			 ur.ROLE_ID = r.ROLE_ID
+		AND r.ROLE_ID = rc.role_id
+		AND rc.category_id = c.id
+		AND p.tree_id = c.id
+		AND c.tree_key = 'product'
+		AND ur.user_id = #{userId}
+		ORDER BY
+			p.sort_no ASC
+	</select>
+
+	<select id="selectProductList" resultMap="ProductInfoDtoMap">
+        SELECT
+			a.id,a.create_time,a.cycle,CONCAT(e.text,"_",a.name) as name,a.product_path,a.region_id,a.satellite,a.issue,a.mosaic_file,a.mark,a.sensor,a.resolution,b.fullname
+        FROM
+			(
+			SELECT
+			  id,create_time,cycle,name,map_url,product_path,region_id,satellite,issue,mosaic_file,model_identify as mark,sensor,resolution,product_id
+			FROM
+				htht_cluster_schedule_product_info
+			WHERE
+		    is_release = 1
+			<if test="fls!=null and fls.size()!=0 ">AND product_id in
+				<foreach collection="fls" index="index" item="productId" open="(" separator="," close=")" >
+					#{productId}
+				</foreach>
+			</if>
+			<if test="cycles!=null and cycles.size()!=0  ">
+				AND cycle in
+				<foreach collection="cycles" index="index" item="cycle" open="(" separator="," close=")" >
+					#{cycle}
+				</foreach>
+			</if>
+			<if test="dataSources!=null and dataSources.size()!=0 ">
+				AND satellite in
+				<foreach collection="dataSources" index="index" item="dataSource" open="(" separator="," close=")" >
+					#{dataSource}
+				</foreach>
+			</if>
+			<if test="regions!=null and regions.size()!=0">
+				AND region_id in
+				<foreach collection="regions" index="index" item="region" open="(" separator="," close=")" >
+					#{region}
+				</foreach>
+			</if>
+			<if test="mark!=null and mark.size()!=0">
+				AND mark in
+				<foreach collection="mark" index="index" item="n" open="(" separator="," close=")" >
+					#{n}
+				</foreach>
+			</if>
+			<if test="begin!=null and begin!='' ">
+				AND issue &gt; #{begin}
+			</if>
+			<if test="end!=null and end!='' ">
+				AND issue &lt;= #{end}
+			</if>
+		) a
+		LEFT JOIN htht_region_info b
+		ON a.region_id = b.regionid
+		LEFT JOIN htht_cluster_schedule_product c
+		on a.product_id = c.id
+		LEFT JOIN htht_cluster_schedule_data_category d
+		on c.tree_id = d.id
+		LEFT JOIN htht_cluster_schedule_data_category e
+		on e.id = d.parent_id
+		order by regionlevel,regionid asc,issue desc
+	</select>
+
+	<select id="selectProductFileInfos" resultMap="ProductFileInfoMap">
+		select
+			id,file_type,file_path,file_name,is_del,relative_path
+		from
+			htht_cluster_schedule_product_file_info
+		where
+			product_info_id = #{id}
+		order by
+		 	file_name
+		desc
+	</select>
+
+	<select id="selectProductFileInfo" resultType="com.njht.webyun.management.business.entity.ProductFileInfoForgien">
+		select
+			id,file_type,file_name,relative_path as file_url
+		from
+			htht_cluster_schedule_product_file_info
+		where
+			product_info_id = #{id}
+		order by
+		 	file_name
+		desc
+	</select>
+
+	<select id="selectCycles" resultType="String">
+		SELECT
+			DISTINCT cycle
+		FROM
+			`htht_cluster_schedule_product_info`
+		WHERE
+		 	1=1
+		<if test="productIds!=null and productIds.size()!=0">
+			and product_id in
+			<foreach collection="productIds" index="index" item="productId" open="(" separator="," close=")" >
+				#{productId}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="selectDataSources" resultType="String">
+		SELECT
+			DISTINCT satellite
+		FROM
+			`htht_cluster_schedule_product_info`
+		WHERE
+			1=1
+		<if test="productIds!=null and productIds.size()!=0">
+			and product_id in
+			<foreach collection="productIds" index="index" item="productId" open="(" separator="," close=")" >
+				#{productId}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="selectProductId" resultType="String">
+		SELECT
+			id
+		FROM
+			htht_cluster_schedule_product
+		WHERE
+			tree_id = #{treeId}
+	</select>
+
+
+	<select id="selectRegionNameByParameter" resultType="String">
+		select fullname
+		from htht_region_info
+		where regionid = #{regionId}
+	</select>
+
+	<!--统计分析查询tif图-->
+	<select id="selectTifPath" resultType="String">
+		select
+			file_path
+		from
+			htht_cluster_schedule_product_file_info
+		where
+			product_info_id in
+		(SELECT
+			id
+		FROM
+			`htht_cluster_schedule_product_info`
+		where
+			product_id = #{productId}
+		and cycle = #{cycle} AND satellite = #{dataSource}
+		AND
+		region_id = #{regionId}
+		and
+			issue &gt;= #{begin}
+		AND
+			issue &lt;= #{end}
+		)
+		and
+		file_type = 'tif'
+
+	</select>
+
+	<select id="selectProduct" resultType="com.njht.webyun.management.business.entity.Product">
+		SELECT a.mark,CONCAT(c.text,a.name) as name
+		FROM `htht_cluster_schedule_product` a
+		LEFT JOIN htht_cluster_schedule_data_category b
+		on a.tree_id = b.id
+		LEFT JOIN htht_cluster_schedule_data_category c
+		on b.parent_id = c.id
+		where a.id = #{productId}
+	</select>
+
+	<select id="getIssues" resultType="String">
+		SELECT
+			DISTINCT b.issue
+		FROM
+			`htht_cluster_schedule_product_info` a
+		left join
+			htht_cluster_schedule_product_file_info b
+		on a.id = b.product_info_id
+		left join
+			htht_cluster_schedule_product c
+		on a.product_id = c.id
+		where b.issue between #{begin} and #{end}
+		and
+		c.id = #{productId}
+		and  a.satellite = #{dataSource}
+		and  a.cycle = #{cycle}
+		order by b.issue asc
+	</select>
+
+	<select id="getProductInfoList" resultType="com.njht.webyun.management.business.entity.ProductInfo">
+		SELECT
+			a.cycle,a.satellite,CONCAT(d.text,"_",b.name) as name
+		FROM
+			`htht_cluster_schedule_product_info` a
+		LEFT JOIN
+			htht_cluster_schedule_product b
+		ON a.product_id = b.id
+		LEFT JOIN htht_cluster_schedule_data_category c
+		on  b.tree_id = c.id
+		LEFT JOIN htht_cluster_schedule_data_category d
+		on  d.id = c.parent_id
+		where
+			b.tree_id = #{id}
+		GROUP BY
+			cycle,satellite,name
+	</select>
+
+	<select id="getPngInfo" resultType="com.njht.webyun.management.business.entity.PngInfoDto">
+		SELECT a.file_path as file_path,CONCAT(e.text,d.text) as name FROM `htht_cluster_schedule_product_file_info` a
+		LEFT JOIN htht_cluster_schedule_product_info b
+		on a.product_info_id = b.id
+		LEFT JOIN htht_cluster_schedule_product c
+		on b.product_id = c.id
+		LEFT JOIN htht_cluster_schedule_data_category d
+		on c.tree_id = d.id
+		LEFT JOIN htht_cluster_schedule_data_category e
+		on e.id = d.parent_id
+		where a.product_info_id = #{id}  limit 1
+	</select>
+	<select id="selectProductInfoIds" resultType="java.lang.String">
+		SELECT
+			id
+		FROM
+			htht_cluster_schedule_product
+		WHERE
+		1=1
+		<if test="fls!=null and fls.size()!=0 and fls.get(0) != ''">
+			and tree_id in
+			<foreach collection="fls" index="index" item="productId" open="(" separator="," close=")" >
+				#{productId}
+			</foreach>
+		</if>
+	</select>
+	<select id="getParentInfoList" resultType="java.util.Map">
+
+	</select>
+    <select id="getUnitInfo" resultType="com.njht.webyun.management.business.entity.UnitInfo">
+		SELECT unit,max,min,is_ano,mark FROM `htht_product_unit_dictionary` where product_id = #{id}
+	</select>
+
+    <select id="getWordList" resultType="java.lang.String">
+		select file_path from htht_cluster_schedule_product_file_info WHERE issue like CONCAT(#{issue},"%") and (product_type = "doc" or product_type = "docx")
+	</select>
+</mapper>

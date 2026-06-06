@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.htht.executor.satellite.dao.SateDataFileInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.htht.executor.satellite.entity.SateDataFileInfoEntity" id="sateDataFileInfoMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="version" column="version"/>
+        <result property="dataId" column="data_id"/>
+        <result property="sourceFileId" column="source_file_id"/>
+        <result property="archiveFileId" column="archive_file_id"/>
+        <result property="tifFilePath" column="tif_file_path"/>
+        <result property="tifFileUrl" column="tif_file_url"/>
+        <result property="tifFileName" column="tif_file_name"/>
+        <result property="tifFileSize" column="tif_file_size"/>
+        <result property="thumbnailFilePath" column="thumbnail_file_path"/>
+        <result property="thumbnailFileUrl" column="thumbnail_file_url"/>
+        <result property="thumbnailFileName" column="thumbnail_file_name"/>
+        <result property="thumbnailFileSize" column="thumbnail_file_size"/>
+        <result property="thumbChartFilePath" column="thumb_chart_file_path"/>
+        <result property="thumbChartFileUrl" column="thumb_chart_file_url"/>
+        <result property="thumbChartFileName" column="thumb_chart_file_name"/>
+        <result property="thumbChartFileSize" column="thumb_chart_file_size"/>
+    </resultMap>
+
+
+</mapper>

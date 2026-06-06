@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.publish.sys.dao.RoleDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.webyun.publish.sys.entity.RoleEntity" id="roleMap">
+        <result property="roleId" column="ROLE_ID"/>
+        <result property="roleName" column="ROLE_NAME"/>
+        <result property="orgId" column="ORG_ID"/>
+        <result property="remark" column="REMARK"/>
+        <result property="deleted" column="DELETED"/>
+        <result property="createdBy" column="CREATED_BY"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="lastUpdatedBy" column="LAST_UPDATED_BY"/>
+        <result property="lastUpdatedDate" column="LAST_UPDATED_DATE"/>
+    </resultMap>
+    <select id="selectRoleNameByUserId" resultType="java.lang.String">
+        SELECT ROLE_NAME FROM `sys_role` r
+        LEFT JOIN sys_role_user sr
+        ON r.ROLE_ID = sr.ROLE_ID where sr.USER_ID = #{userId}
+    </select>
+    <select id="selectFunCodeByUserId" resultType="java.lang.String">
+        SELECT sf.FUN_CODE FROM `sys_fun` sf
+        LEFT JOIN sys_role_fun srf
+        ON sf.FUN_ID = srf.FUN_ID
+        LEFT JOIN sys_role_user sru
+        ON srf.ROLE_ID = sru.ROLE_ID
+        WHERE sru.USER_ID = #{userId} and sf.FUN_CODE = "result-toolbar" and OPERATION = 1
+    </select>
+
+
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.njht.webyun.publish.behavior.dao.BehaviorDownloadLogDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.njht.webyun.publish.behavior.entity.BehaviorDownloadLogEntity" id="behaviorDownloadLogMap">
+        <result property="id" column="id"/>
+        <result property="behaviorId" column="behavior_id"/>
+        <result property="produceName" column="produce_name"/>
+        <result property="satellite" column="satellite"/>
+        <result property="cycle" column="cycle"/>
+        <result property="resolution" column="resolution"/>
+        <result property="regionId" column="region_id"/>
+        <result property="deleted" column="DELETED"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+        <result property="createdBy" column="CREATED_BY"/>
+        <result property="lastUpdatedDate" column="LAST_UPDATED_DATE"/>
+        <result property="lastUpdatedBy" column="LAST_UPDATED_BY"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileNum" column="file_num"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="menuId" column="menu_id"/>
+        <result property="issue" column="issue"/>
+    </resultMap>
+
+    <select id="selectCountInfo" resultType="java.util.Map">
+        SELECT
+        (SELECT COUNT(*) FROM `publish_behavior_download_log` WHERE  CREATED_DATE &gt;= #{weekStartTime} and CREATED_DATE &lt;= #{endTime} )as week,
+        (SELECT COUNT(*) FROM `publish_behavior_download_log` WHERE  CREATED_DATE &gt;= #{monStartTime} and CREATED_DATE &lt;= #{endTime} )as mon,
+        (SELECT COUNT(*) FROM `publish_behavior_download_log` WHERE  CREATED_DATE &gt;= #{yearStartTime} and CREATED_DATE &lt;= #{endTime} ) as year
+    </select>
+
+    <select id="selectFileNumList" resultType="com.njht.webyun.publish.behavior.entity.BehaviorDownloadLogEntity">
+        SELECT file_num,menu_id,CREATED_DATE FROM `publish_behavior_download_log`
+        WHERE  CREATED_DATE &gt;= #{startTime} and CREATED_DATE &lt;= #{endTime}
+    </select>
+    <select id="selectFileCountInfo" resultType="java.lang.Integer">
+        SELECT SUM(file_num)  FROM `publish_behavior_download_log`
+    </select>
+
+</mapper>
